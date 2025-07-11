@@ -8,6 +8,8 @@ on:
 jobs:
   update-hash:
     name: Update hash
+    permissions:
+      contents: write
     runs-on: windows-latest
     steps:
       - name: Checkout repository
@@ -23,5 +25,4 @@ jobs:
           Get-Item "./f95/*", "./lc/*" | ForEach-Object -Process {(Get-Content $_) -replace '[a-f0-9]{40}', $CommitHash | Set-Content $_}
           git add -A
           git commit --amend --no-edit
-          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/Edexaal/scripts.git
           git push --force origin main
