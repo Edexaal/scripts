@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - 'f95/auto-open-filter-drawer.user.js'
+      - 'lc/game-post-only.user.js'
 
 jobs:
   update-hash:
@@ -24,5 +27,5 @@ jobs:
           $CommitHash = (git rev-parse HEAD)
           Get-Item "./f95/*", "./lc/*" | ForEach-Object -Process {(Get-Content $_) -replace '[a-f0-9]{40}', $CommitHash | Set-Content $_}
           git add -A
-          git commit --amend --no-edit
+          git commit -m "Fix library references"
           git push --force origin main
