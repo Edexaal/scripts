@@ -6,4 +6,5 @@ $Files = Get-Item "./f95/*", "./lc/*"
 foreach ($File in $Files) {
     (Get-Content $File) -replace '[a-f0-9]{40}', $CommitHash | Set-Content $File
 }
+git add -A
 git commit --amend --no-edit
