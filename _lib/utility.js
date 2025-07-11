@@ -1,7 +1,6 @@
 // ==UserScript==
 // @name        Edexal Utility Library
 // @namespace   1330126-edexal
-// @icon        -
 // @license     Unlicense
 // @version     1.1
 // @author      Edexal
