@@ -10,8 +10,8 @@
 // @description Adds more action buttons to the toolbar when making a game request on f95.
 // @homepageURL https://sleazyfork.org/en/scripts/500283-f95-quick-game-templates
 // @supportURL  https://github.com/Edexal/monkey-scripts/issues
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@57a7c3b57a1fe98b437559957f72f38b8304870d/_lib/utility.js
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@57a7c3b57a1fe98b437559957f72f38b8304870d/_lib/game-request-templates.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@22c124e51194cd5297f3830b61448da90684101f/_lib/utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@22c124e51194cd5297f3830b61448da90684101f/_lib/game-request-templates.js
 // ==/UserScript==
 (() => {
   let styleCSS = `

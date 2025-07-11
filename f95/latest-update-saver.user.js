@@ -13,7 +13,7 @@
 // @description Save your filters from the Latest Update Page & load them when you need it!
 // @homepageURL https://sleazyfork.org/en/scripts/523141-f95-latest-update-saver
 // @supportURL  https://github.com/Edexal/monkey-scripts/issues
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@57a7c3b57a1fe98b437559957f72f38b8304870d/_lib/utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@22c124e51194cd5297f3830b61448da90684101f/_lib/utility.js
 // ==/UserScript==
 (async function () {
   /*NOTE: F95 uses FontAwesome v5.15.4*/
