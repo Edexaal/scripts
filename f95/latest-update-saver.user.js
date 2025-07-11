@@ -13,7 +13,7 @@
 // @description Save your filters from the Latest Update Page & load them when you need it!
 // @homepageURL https://sleazyfork.org/en/scripts/523141-f95-latest-update-saver
 // @supportURL  https://github.com/Edexal/monkey-scripts/issues
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@refs/heads/main/_lib/utility.user.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@refs/heads/main/_lib/utility.js
 // ==/UserScript==
 (async function () {
   /*NOTE: F95 uses FontAwesome v5.15.4*/
@@ -58,56 +58,56 @@
           .save-bg {
             opacity: 0.6;
           }
-          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_settings #btn-settings_SlotA a::before,
-          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_settings #btn-settings_SlotB a::before,
-          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_settings #btn-settings_SlotC a::before,
-          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_settings #btn-settings_SlotD a::before
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotA a::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotB a::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotC a::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotD a::before
           {
             color: orange !important;
           }
 
-          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_settings #btn-settings_SlotA a:not(.filter-selected).has-save::before,
-          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_settings #btn-settings_SlotB a:not(.filter-selected).has-save::before,
-          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_settings #btn-settings_SlotC a:not(.filter-selected).has-save::before,
-          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_settings #btn-settings_SlotD a:not(.filter-selected).has-save::before {
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotA a:not(.filter-selected).has-save::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotB a:not(.filter-selected).has-save::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotC a:not(.filter-selected).has-save::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotD a:not(.filter-selected).has-save::before {
             color: #8cf048 !important;
           }
 
-          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_settings #btn-settings_SlotA a.filter-selected::before,
-          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_settings #btn-settings_SlotB a.filter-selected::before,
-          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_settings #btn-settings_SlotC a.filter-selected::before,
-          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_settings #btn-settings_SlotD a.filter-selected::before,
-          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_settings #btn-settings_Load a::before,
-          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_settings #btn-settings_Save a::before,
-          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_settings #btn-settings_Delete a::before,
-          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_settings #btn-settings_Auto-Load a::before{
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotA a.filter-selected::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotB a.filter-selected::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotC a.filter-selected::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotD a.filter-selected::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_Load a::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_Save a::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_Delete a::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_Auto-Load a::before{
             color: yellow !important;
           }
 
-          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_settings a.filter-selected::before,
-          #btn-settings_Delete a:active,
-          #btn-settings_Load a:active,
-          #btn-settings_Save a:active,
-          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_settings a.auto-selected::before
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver a.filter-selected::before,
+          #btn-saver_Delete a:active,
+          #btn-saver_Load a:active,
+          #btn-saver_Save a:active,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver a.auto-selected::before
           {
             background-color: #641c1c !important;
           }
 
-          #btn-settings_Delete a:active,
-          #btn-settings_Load a:active,
-          #btn-settings_Save a:active {
+          #btn-saver_Delete a:active,
+          #btn-saver_Load a:active,
+          #btn-saver_Save a:active {
             opacity: 0.6;
           }
 
-          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_settings #btn-settings_Save a {
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_Save a {
             border-right: 2px solid #ffe722;
           }
 
-          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_settings #btn-settings_Auto-Load a {
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_Auto-Load a {
             border-left: 2px solid #ffe722;
           }
 
-          div#filter-block_settings h4 {
+          div#filter-block_saver h4 {
             color: #fc9b46 !important;
           }
 
@@ -126,7 +126,7 @@
 
   function createSection() {
     let section = document.createElement('div');
-    section.id = 'filter-block_settings';
+    section.id = 'filter-block_saver';
     section.classList.add('filter-block');
     return section;
   }
@@ -134,7 +134,7 @@
   function createHeader() {
     let h = document.createElement('h4');
     h.classList.add('filter-block_title');
-    let txtNode = document.createTextNode('Settings');
+    let txtNode = document.createTextNode('Saver');
     h.append(txtNode);
     return h;
   }
@@ -148,12 +148,12 @@
   //Utility function for creating buttons
   function createBtn(name, eventFunc, classNames) {
     let innerContainer = document.createElement('div');
-    innerContainer.id = `btn-settings_${name.replace(/ /, "")}`;
+    innerContainer.id = `btn-saver_${name.replace(/ /, "")}`;
     innerContainer.classList.add('filter-block_button-wrap');
 
     let a = document.createElement('a');
     a.href = "#";
-    a.setAttribute('data-settings', name);
+    a.setAttribute('data-saver', name);
     a.classList.add('filter-block_button');
     if (!!classNames) {
       a.classList.add(...classNames);
@@ -171,11 +171,11 @@
   }
 
   function getSelectedSlot() {
-    return document.querySelector("#filter-block_settings a.filter-selected");
+    return document.querySelector("#filter-block_saver a.filter-selected");
   }
 
   function getSlotByName(name) {
-    return document.querySelector(`[data-settings="${name}"]`);
+    return document.querySelector(`[data-saver="${name}"]`);
   }
 
   function addHasSaveStyle(slot) {
@@ -183,7 +183,7 @@
   }
 
   function addAutoLoadStyle() {
-    const autoBtn = document.querySelector('#btn-settings_Auto-Load a');
+    const autoBtn = document.querySelector('#btn-saver_Auto-Load a');
     autoBtn.classList.add('auto-selected');
   }
 
@@ -192,7 +192,7 @@
   }
 
   function removeAutoLoadStyle() {
-    const autoBtn = document.querySelector('#btn-settings_Auto-Load a');
+    const autoBtn = document.querySelector('#btn-saver_Auto-Load a');
     autoBtn.classList.remove('auto-selected');
   }
 
@@ -202,7 +202,7 @@
     if (!!!chosenSlot) {
       return;
     }
-    GM.setValue(chosenSlot.dataset.settings, location.href);
+    GM.setValue(chosenSlot.dataset.saver, location.href);
     addHasSaveStyle(chosenSlot);
     let saveNotice = document.querySelector('#save-notice');
     let saveNoticeBG = document.querySelector('#top');
@@ -221,7 +221,7 @@
     try {
       let chosenSlot = getSelectedSlot();
       if (!!chosenSlot) {
-        let url = await GM.getValue(chosenSlot.dataset.settings);
+        let url = await GM.getValue(chosenSlot.dataset.saver);
         if (!!url) {
           location.href = url;
         }
@@ -235,18 +235,18 @@
     e.preventDefault();
     const classAtrribute = 'filter-selected';
     const currentSlot = getSelectedSlot();
-    if (!!currentSlot && currentSlot.dataset.settings !== e.target.dataset.settings) {
+    if (!!currentSlot && currentSlot.dataset.saver !== e.target.dataset.saver) {
       currentSlot.classList.remove(classAtrribute);
     }
     e.target.classList.add(classAtrribute);
-    GM.setValue(storageKeys.LastSlot, e.target.dataset.settings);
+    GM.setValue(storageKeys.LastSlot, e.target.dataset.saver);
   }
 
   function deleteEvent(e) {
     e.preventDefault();
     const slot = getSelectedSlot();
     if (!!slot) {
-      GM.deleteValue(slot.dataset.settings);
+      GM.deleteValue(slot.dataset.saver);
       removeHasSaveStyle(slot);
     }
   }
@@ -289,15 +289,15 @@
     if (!!lastSlotName) {
       const slot = getSlotByName(lastSlotName);
       slot.click();
-      const loadBtn = document.querySelector('#btn-settings_Load a');
+      const loadBtn = document.querySelector('#btn-saver_Load a');
       loadBtn.click();
     }
     addAutoLoadStyle();
 
   }
 
-  function getSettingsSect() {
-    let settingsSect = createSection();
+  function getSaverSect() {
+    let saverSect = createSection();
     let header = createHeader();
     let contentWrap = createSectWrap();
     let btnList = [createBtn('Load', loadAsyncEvent, ['fas', 'fa-upload']),
@@ -306,19 +306,19 @@
     btnList.push(createBtn('Auto-Load', autoLoadEvent, ['fas', 'fa-magic']));
     btnList.push(createBtn('Delete', deleteEvent, ['fas', 'fa-trash-alt']));
     contentWrap.append(...btnList);
-    settingsSect.append(header, contentWrap);
+    saverSect.append(header, contentWrap);
 
-    return settingsSect;
+    return saverSect;
   }
 
-  function addSettingsSect() {
+  function addSaverSect() {
     let titleEl = document.querySelector('.content-block_filter-title');
-    titleEl.after(getSettingsSect());
+    titleEl.after(getSaverSect());
 
     addSaveNotice();
   }
 
-  addSettingsSect();
+  addSaverSect();
   initHasSave();
   initAutoLoad();
 
