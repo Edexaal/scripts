@@ -2,7 +2,7 @@
 // @name         LC Random Bookmark Picker
 // @namespace    1330126-edexal
 // @license      Unlicense
-// @version      1.1.2
+// @version      1.2
 // @description  Randomly picks a bookmark from your LC bookmark page. Just press the 'Random' button.
 // @author       Edexal
 // @match        *://lewdcorner.com/account/bookmarks*

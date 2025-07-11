@@ -2,7 +2,7 @@
 // @name        F95 Game Request Templates
 // @namespace   1330126-edexal
 // @license     Unlicense
-// @version     1.0.1
+// @version     1.1
 // @author      Edexal
 // @description Templates for creating game requests on F95
 // ==/UserScript==
