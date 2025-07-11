@@ -12,7 +12,7 @@
 // @description Display only the 1st post of a game thread. This completely removes all replies (and more) from the thread.
 // @homepageURL https://sleazyfork.org/en/scripts/522360-f95-game-post-only
 // @supportURL  https://github.com/Edexal/monkey-scripts/issues
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@82ae10f18698e0537297057dd47854347171a6c0/_lib/utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@d7076cd0f78cb21725c6373996e6b3399e816d88/_lib/utility.js
 // ==/UserScript==
 (async () => {
   const labels = {
