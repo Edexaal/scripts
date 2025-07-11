@@ -13,6 +13,7 @@
 // @require      https://cdn.jsdelivr.net/gh/Edexaal/scripts@22c124e51194cd5297f3830b61448da90684101f/_lib/utility.js
 // ==/UserScript==
 (() => {
+  const TEST = "vs";
   const BOOKMARK_QUERY = 'bmpos';
 
   //CSS styles
