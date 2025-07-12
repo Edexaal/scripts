@@ -10,7 +10,7 @@
 // @grant        none
 // @homepageURL  https://sleazyfork.org/en/scripts/499994-lc-random-bookmark-picker
 // @supportURL   https://github.com/Edexal/monkey-scripts/issues
-// @require      https://cdn.jsdelivr.net/gh/Edexaal/scripts@d384a657bb7cb775155b4636bee23e1d6b62d0d0/_lib/utility.js
+// @require      https://cdn.jsdelivr.net/gh/Edexaal/scripts@ff38688cdb9d3399ebd443775790422961c5dcae/_lib/utility.js
 // ==/UserScript==
 (() => {
   const BOOKMARK_QUERY = 'bmpos';
