@@ -7,7 +7,7 @@
 // @grant       GM.deleteValue
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     3.1
+// @version     3.2
 // @author      Edexal
 // @description Display only the 1st post of a game thread. This completely removes all replies (and more) from the thread.
 // @homepageURL https://sleazyfork.org/en/scripts/522360-f95-game-post-only
@@ -316,12 +316,18 @@
     });
   }
 
+  function removeThreadWarning() {
+    let warningBlock = document.querySelector('div.blockMessage.blockMessage--warning');
+    deleteEls(warningBlock);
+  }
+
   function showFirstPostOnly() {
     //Thread Post Container Ref
     let opContainer = document.querySelector("article.message-threadStarterPost").parentNode;
     opContainer.replaceChildren(opContainer.children.item(0));
     removePagination();
     removeScrollbarBtns();
+    removeThreadWarning();
   }
 
   async function initSettings() {
