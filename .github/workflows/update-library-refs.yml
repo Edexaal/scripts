@@ -19,11 +19,11 @@ jobs:
 
       - name: Establish Library Reference
         shell: pwsh
-        run: | 
+        run: |
+          $CommitHash = (git rev-parse HEAD)
           git fetch origin main
           git worktree add ../main origin/main
           Set-Location ../main
-          $CommitHash = (git rev-parse HEAD)
           Get-Item "./f95/*", "./lc/*" | ForEach-Object -Process {(Get-Content $_) -replace '[a-f0-9]{40}', $CommitHash | Set-Content $_}
           git config --global user.name ${{ secrets.USER_NAME }}
           git config --global user.email ${{ secrets.EMAIL }}
