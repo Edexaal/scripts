@@ -16,7 +16,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "http-server -c5 -p 8176"
   },
   "devDependencies": {
     "http-server": "^14.1.1"
