@@ -1,0 +1,24 @@
+{
+  "name": "monkey-scripts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "My collection of userscripts.",
+  "homepage": "https://github.com/Edexaal/scripts#readme",
+  "bugs": {
+    "url": "https://github.com/Edexaal/scripts/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Edexaal/scripts.git"
+  },
+  "license": "Unlicense",
+  "author": "Edexaal",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
