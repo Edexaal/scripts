@@ -8,7 +8,7 @@
 // @grant       GM.listValues
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     2.1
+// @version     2.1.1
 // @author      Edexal
 // @description Save your filters from the Latest Update Page & load them when you need it!
 // @homepageURL https://sleazyfork.org/en/scripts/523141-f95-latest-update-saver
@@ -66,13 +66,6 @@
             color: orange !important;
           }
 
-          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotA a:not(.filter-selected).has-save::before,
-          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotB a:not(.filter-selected).has-save::before,
-          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotC a:not(.filter-selected).has-save::before,
-          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotD a:not(.filter-selected).has-save::before {
-            color: #8cf048 !important;
-          }
-
           #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotA a.filter-selected::before,
           #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotB a.filter-selected::before,
           #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotC a.filter-selected::before,
@@ -83,6 +76,14 @@
           #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_Auto-Load a::before{
             color: yellow !important;
           }
+          
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotA a.has-save::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotB a.has-save::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotC a.has-save::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotD a.has-save::before {
+            color: #8cf048 !important;
+          }
+
 
           #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver a.filter-selected::before,
           #btn-saver_Delete a:active,
