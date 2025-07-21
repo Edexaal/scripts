@@ -4,12 +4,12 @@
 // @match       *://f95zone.to/forums/game-requests.3/post-thread*
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @grant       none
-// @version     1.3
+// @version     1.3.1
 // @author      Edexal
 // @license     Unlicense
 // @description Adds more action buttons to the toolbar when making a game request on f95.
 // @homepageURL https://sleazyfork.org/en/scripts/500283-f95-quick-game-templates
-// @supportURL  https://github.com/Edexal/monkey-scripts/issues
+// @supportURL  https://github.com/Edexaal/scripts/issues
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@ff38688cdb9d3399ebd443775790422961c5dcae/_lib/utility.js
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@ff38688cdb9d3399ebd443775790422961c5dcae/_lib/game-request-templates.js
 // ==/UserScript==

@@ -2,14 +2,14 @@
 // @name         LC Random Bookmark Picker
 // @namespace    1330126-edexal
 // @license      Unlicense
-// @version      1.2
+// @version      1.2.1
 // @description  Randomly picks a bookmark from your LC bookmark page. Just press the 'Random' button.
 // @author       Edexal
 // @match        *://lewdcorner.com/account/bookmarks*
 // @icon         https://external-content.duckduckgo.com/ip3/lewdcorner.com.ico
 // @grant        none
 // @homepageURL  https://sleazyfork.org/en/scripts/499994-lc-random-bookmark-picker
-// @supportURL   https://github.com/Edexal/monkey-scripts/issues
+// @supportURL   https://github.com/Edexaal/scripts/issues
 // @require      https://cdn.jsdelivr.net/gh/Edexaal/scripts@ff38688cdb9d3399ebd443775790422961c5dcae/_lib/utility.js
 // ==/UserScript==
 (() => {
