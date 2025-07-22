@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - lib
+    paths:
+      - '_lib/**.js'
 
 jobs:
   update-hash-and-version:
