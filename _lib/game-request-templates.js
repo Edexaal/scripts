@@ -2,7 +2,7 @@
 // @name        F95 Game Request Templates
 // @namespace   1330126-edexal
 // @license     Unlicense
-// @version     1.1
+// @version     2.0
 // @author      Edexal
 // @description Templates for creating game requests on F95
 // ==/UserScript==
@@ -17,7 +17,7 @@ function _getRules() {
 [/LIST]`;
 }
 
-function getUpdateTemplate() {
+function getUpdateTempl() {
   return {
     title: "[Store][$Price] Game Name [Version]",
     body: `Title:
@@ -29,7 +29,7 @@ ${_getRules()}`
   };
 }
 
-function getRequestTemplate() {
+function getRequestTempl() {
   return {
     title: "[Store][$Price] Game Name [Version]",
     body: `Title:
@@ -41,26 +41,21 @@ ${_getRules()}`
   };
 }
 
-function getNewTemplate() {
-  return {
-    title: "[GAME ENGINE] Game Name [Version][Developer]",
-    body: `[CENTER](COVER ART; DELETE THIS)
+function _getNewTemplTitle() {
+    return "[GAME ENGINE] Game Name [Version][Developer]";
+}
+
+function _getNewTemplTop() {
+    return `[CENTER](COVER ART; DELETE THIS)
 
 [B]Overview:[/B]
 (STORY OVERVIEW GOES HERE AND USE A SPOILER TAG IN-CASE OF A WALL OF TEXT; DELETE THIS)[/CENTER]
 
-[B]Thread Updated[/B]: (USE "YYYY-MM-DD" NUMBERS ONLY, DATE ADDED TO F95ZONE ; DELETE THIS)
-[B]Release Date[/B]: (USE "YYYY-MM-DD" NUMBERS ONLY, DATE RELEASE BY DEV; DELETE THIS)
-[B]Developer[/B]: (DEVELOPER NAME/SOCIAL LINKS HERE) Patreon - Website
-[B]Publisher[/B]: (REMOVE IF NOT APPLICABLE)
-[B]Translator[/B]: (REMOVE IF NOT APPLICABLE)
-[B]Censored[/B]: (Yes/No)
-[B]Version[/B]:
-[B]OS[/B]: (REN'PY GAMES WITH "PC" IN THE TITLE INCLUDE BOTH WINDOWS + LINUX, MAKE SURE TO TYPE BOTH; DELETE THIS)
-[B]Language[/B]: English
-[B]Voice[/B]: English (REMOVE IF NOT APPLICABLE)
-[B]VNDB[/B]: Link (LINK TO VNDB PAGE - REMOVE IF NOT APPLICABLE)
-[B]Store[/B]: DLSite - Steam (STORE PAGES - REMOVE IF NOT APPLICABLE)
+[B]Thread Updated[/B]: (USE "YYYY-MM-DD" NUMBERS ONLY, DATE ADDED TO F95ZONE; DELETE THIS)
+[B]Release Date[/B]: (USE "YYYY-MM-DD" NUMBERS ONLY, DATE RELEASE BY DEV; DELETE THIS)`;
+}
+function _getNewTemplBottom(){
+    return `[B]Store[/B]: DLSite - Steam (STORE PAGES - REMOVE IF NOT APPLICABLE)
 [B]Other Games[/B]: (LINKS TO OTHER GAMES BY DEVELOPER FOUND ON F95ZONE - REMOVE IF NOT APPLICABLE)
 [B]Genre[/B]:
 [SPOILER]
@@ -98,6 +93,40 @@ function getNewTemplate() {
 [B]Extras[/B]: WALKTHROUGH - 100% SAVE - MOD - MOD2 - MOD3[/SIZE]
 [SIZE=1](THANK YOU NOTES AND UNOFFICIAL ANDROID MESSAGE GOES, ALWAYS AT THE VERY BOTTOM OF ALL DL LINKS; EXAMPLE: "Unofficial build by [USER=1]@F95[/USER]. Thank you [USER=2222]@Bloo[/USER] for sharing the game and [USER=92]@TCMS[/USER] for the walkthrough."; DELETE THIS LINE)[/SIZE]
 
-(SAMPLES/SCREENSHOTS; DELETE THIS)[/CENTER]`
+(SAMPLES/SCREENSHOTS; DELETE THIS)[/CENTER]`;
+}
+
+function _buildNewTempl(body) {
+  return {
+    title: _getNewTemplTitle(),
+    body: `${_getNewTemplTop()}
+${body}
+${_getNewTemplBottom()}`
   };
+}
+
+function getNewVNDBTempl() {
+    return _buildNewTempl(`[B]Original Title[/B]: (TITLE IN ORIGINAL LANGUAGE; REMOVE IF ORIGINAL TITLE IS ENGLISH)
+[B]Aliases[/B]: (OTHER TITLES OF GAME; REMOVE IF ORIGINAL TITLE IS ENGLISH OR THERE ARE NO OTHER ALIASES)
+[B]Developer[/B]: (DEVELOPER NAME/SOCIAL LINKS HERE) Patreon - Website
+[B]Publisher[/B]: (REMOVE IF NOT APPLICABLE)
+[B]Translator[/B]: (REMOVE IF NOT APPLICABLE)
+[B]Censored[/B]: (Yes/No)
+[B]Version[/B]:
+[B]OS[/B]: (REN'PY GAMES WITH "PC" IN THE TITLE INCLUDE BOTH WINDOWS + LINUX, MAKE SURE TO TYPE BOTH; DELETE THIS)
+[B]Language[/B]: English
+[B]Voices[/B]: English (REMOVE IF NOT APPLICABLE)
+[B]Length[/B]: ~2hrs (REMOVE IF NOT APPLICABLE)
+[B]VNDB[/B]: Link (LINK TO VNDB PAGE - REMOVE IF NOT APPLICABLE)`);
+}
+
+function getNewStandardTempl() {
+    return _buildNewTempl(`[B]Developer[/B]: (DEVELOPER NAME/SOCIAL LINKS HERE) Patreon - Website
+[B]Publisher[/B]: (REMOVE IF NOT APPLICABLE)
+[B]Translator[/B]: (REMOVE IF NOT APPLICABLE)
+[B]Censored[/B]: (Yes/No)
+[B]Version[/B]:
+[B]OS[/B]: (REN'PY GAMES WITH "PC" IN THE TITLE INCLUDE BOTH WINDOWS + LINUX, MAKE SURE TO TYPE BOTH; DELETE THIS)
+[B]Language[/B]: English
+[B]Voices[/B]: English (REMOVE IF NOT APPLICABLE)`);
 }
