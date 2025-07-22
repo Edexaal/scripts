@@ -23,7 +23,7 @@ jobs:
           echo "Checking git version....."
           git --version
           
-          COMMIT_HASH = $(git rev-parse HEAD)
+          COMMIT_HASH=$(git rev-parse HEAD)
           echo "Current commit hash: $COMMIT_HASH"
           
           git fetch origin main
