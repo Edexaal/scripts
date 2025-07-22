@@ -7,12 +7,12 @@
 // @grant       GM.deleteValue
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     3.2.1
+// @version     3.2.2
 // @author      Edexal
 // @description Display only the 1st post of a game thread. This completely removes all replies (and more) from the thread.
 // @homepageURL https://sleazyfork.org/en/scripts/522360-f95-game-post-only
 // @supportURL  https://github.com/Edexaal/scripts/issues
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@2b3c017d786f3e0c776a170d08fcb16e131de50a/_lib/utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@13041a5bb674e772ddf82bdecfe007efe616569c/_lib/utility.js
 // ==/UserScript==
 (async () => {
   const labels = {
