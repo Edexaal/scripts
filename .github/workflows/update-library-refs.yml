@@ -38,7 +38,8 @@ jobs:
         run: |
           set -e
           TARGET_DIRS=(./f95 ./lc)
-          
+         
+          cd "${GITHUB_WORKSPACE}" 
           ls -la $TARGET_DIRS
           
           for DIR in "${TARGET_DIRS[@]}"; do
