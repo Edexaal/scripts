@@ -6,25 +6,53 @@ on:
       - lib
 
 jobs:
-  update-hash:
-    name: Update hash
+  update-hash-and-version:
+    name: Update hash and version
     permissions:
       contents: write
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout lib branch
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Establish Library Reference
-        shell: pwsh
+      - name: Update Library Reference
         run: |
-          $CommitHash = (git rev-parse HEAD)
+          set -e
+          COMMIT_HASH = $(git rev-parse HEAD)
           git fetch origin main
           git worktree add ../main origin/main
-          Set-Location ../main
-          Get-Item "./f95/*", "./lc/*" | ForEach-Object -Process {(Get-Content $_) -replace '[a-f0-9]{40}', $CommitHash | Set-Content $_}
+          cd ../main
+         
+          find ./f95 ./lc -type f -exec sed -i -E "s/[a-f0-9]{40}/$COMMIT_HASH/g" {} +
+
+      - name: Bump @version patch
+        run: |
+          set -e
+          TARGET_DIRS=(./f95 ./lc)
+          
+          for DIR in "${TARGET_DIRS[@]}"; do
+            find "$DIR" -type f -name "*.user.js" | while read -r FILE; do
+              echo "Processing: $FILE"
+          
+              VERSION_LINE=$(grep -E "//\s*@version\s+[0-9]+\.[0-9]+(\.[0-9]+)?" "$FILE")
+              CURRENT_VERSION=$(echo "$VERSION_LINE" | grep -oE "[0-9]+\.[0-9]+(\.[0-9]+)?")
+              
+              if [[ "$CURRENT_VERSION" =~ ^[0-9]+\.[0-9]+$ ]]; then
+                CURRENT_VERSION="${CURRENT_VERSION}.0"
+              fi
+          
+              IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
+              NEW_VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
+          
+              sed -i "s|@version $CURRENT_VERSION|@version $NEW_VERSION|" "$FILE"
+              echo "Updated $FILE to version $NEW_VERSION"
+            done
+          done
+
+      - name: Commit bumped versions
+        run: |
           git config --global user.name ${{ secrets.USER_NAME }}
           git config --global user.email ${{ secrets.EMAIL }}
           git add -A
