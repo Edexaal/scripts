@@ -50,7 +50,7 @@ jobs:
               IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
               NEW_VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
           
-              sed -i "s|@version $CURRENT_VERSION|@version $NEW_VERSION|" "$FILE"
+              sed -i -E "s|@version $CURRENT_VERSION|@version $NEW_VERSION|" "$FILE"
               echo "Updated $FILE to version $NEW_VERSION"
             done
           done
