@@ -20,11 +20,18 @@ jobs:
       - name: Update Library Reference
         run: |
           set -e
+          echo "Checking git version....."
+          git --version
+          
           COMMIT_HASH = $(git rev-parse HEAD)
+          echo "Current commit hash: $COMMIT_HASH"
+          
           git fetch origin main
           git worktree add ../main origin/main
           cd ../main
          
+          echo "Files to patch SHA:"
+          find ./f95 ./lc -type f 
           find ./f95 ./lc -type f -exec sed -i -E "s/[a-f0-9]{40}/$COMMIT_HASH/g" {} +
 
       - name: Bump @version patch
