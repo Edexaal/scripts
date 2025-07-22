@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/lewdcorner.com.ico
 // @license     Unlicense
-// @version     2.1.2
+// @version     2.1.3
 // @author      Edexal
 // @description Display only the 1st post of a game thread. This completely removes all replies (and more) from the thread.
 // @homepageURL https://sleazyfork.org/en/scripts/522359-lc-game-post-only
