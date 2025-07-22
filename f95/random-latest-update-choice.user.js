@@ -10,7 +10,7 @@
 // @description Randomly selects a resource(e.g. game,asset,animation) from the 'Latest Update' page. Just press the '?' button in the filter drawer.
 // @homepageURL https://sleazyfork.org/en/scripts/499998-f95-random-latest-update-choice
 // @supportURL  https://github.com/Edexaal/scripts/issues
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@533e7fcad926cc452c25bb359fd3f5c23b78daa5/_lib/utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@39b9b095a363132d77eeaba6e92c04efd6e1a102/_lib/utility.js
 // ==/UserScript==
 (() => {
   const LATEST_PAGE_QUERY = 'lppos';
