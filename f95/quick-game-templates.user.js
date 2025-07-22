@@ -4,7 +4,7 @@
 // @match       *://f95zone.to/forums/game-requests.3/post-thread*
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @grant       none
-// @version     1.3.1
+// @version     1.4
 // @author      Edexal
 // @license     Unlicense
 // @description Adds more action buttons to the toolbar when making a game request on f95.
@@ -19,34 +19,37 @@
         color:yellow !important;
     }
     `;
-  const NEW_TEMPLATE = getNewTemplate();
-  const REQ_TEMPLATE = getRequestTemplate();
-  const UPDATE_TEMPLATE = getUpdateTemplate();
+  const NEW_STANDARD_TEMPLATE = getNewStandardTempl();
+  const NEW_VNDB_TEMPLATE = getNewVNDBTempl();
+  const REQ_TEMPLATE = getRequestTempl();
+  const UPDATE_TEMPLATE = getUpdateTempl();
 
   function addButton() {
     let toolbarEl = document.querySelector('.fr-toolbar');
-    toolbarEl.insertAdjacentHTML('beforeend', '<div class="fr-separator fr-vs" role="separator" aria-orientation="vertical"></div>' +
-      '<button aria-controls="dropdown-menu-xfTemp-1" aria-expanded="false" aria-haspopup="false" class="fr-command fr-btn fr-dropdown fr-btn-font_awesome edexal-btn" data-cmd="xfTemp"\n' +
-      '        id="xfTemp-1" role="button" tabindex="-1"\n' +
-      '        type="button" title="Templates">\n' +
-      '    <i aria-hidden="true" class="fas fa-file-word"></i>\n' +
-      '    <span class="fr-sr-only">Templates</span>\n' +
-      '</button>\n' +
-      '<div aria-hidden="true" aria-labelledby="xfTemp-1" class="fr-dropdown-menu" id="dropdown-menu-xfTemp-1" role="listbox">\n' +
-      '    <div class="fr-dropdown-wrapper" role="presentation">\n' +
-      '        <div class="fr-dropdown-content" role="presentation">\n' +
-      '            <ul class="fr-dropdown-list" role="presentation">\n' +
-      '                <li role="presentation"><a class="fr-command" data-cmd="xfTemp" data-param1="xfTempNew" role="option"\n' +
-      '                                           tabindex="-1" title="New Game Template">New Game Template</a></li>\n' +
-      '                <li role="presentation"><a class="fr-command" data-cmd="xfTemp" data-param1="xfTempReq" role="option"\n' +
-      '                                           tabindex="-1" title="Request Game Template">Request Game Template</a></li>\n' +
-      '                <li role="presentation"><a class="fr-command" data-cmd="xfTemp" data-param1="xfTempUpdate" role="option"\n' +
-      '                                           tabindex="-1" title="Update Game Template">Update Game Template</a></li>\n' +
-      '            </ul>\n' +
-      '        </div>\n' +
-      '    </div>\n' +
-      '</div>' +
-      '<button id="xfTagList-1" title="Go To Tag List" type="button" tabindex="-1" role="button" class="fr-command fr-btn fr-btn-xf_font_awesome_5 edexal-btn" data-cmd="xfTagList"><i class="far fa-tags" aria-hidden="true"></i><span class="fr-sr-only">Go To Tag List</span></button>');
+    toolbarEl.insertAdjacentHTML('beforeend', `<div class="fr-separator fr-vs" role="separator" aria-orientation="vertical"></div>
+      <button aria-controls="dropdown-menu-xfTemp-1" aria-expanded="false" aria-haspopup="false" class="fr-command fr-btn fr-dropdown fr-btn-font_awesome edexal-btn" data-cmd="xfTemp"
+              id="xfTemp-1" role="button" tabindex="-1"
+              type="button" title="Templates">
+          <i aria-hidden="true" class="fas fa-file-word"></i>
+          <span class="fr-sr-only">Templates</span>
+      </button>
+      <div aria-hidden="true" aria-labelledby="xfTemp-1" class="fr-dropdown-menu" id="dropdown-menu-xfTemp-1" role="listbox">
+          <div class="fr-dropdown-wrapper" role="presentation">
+              <div class="fr-dropdown-content" role="presentation">
+                  <ul class="fr-dropdown-list" role="presentation">
+                      <li role="presentation"><a class="fr-command" data-cmd="xfTemp" data-param1="xfTempStandard" role="option"
+                                                 tabindex="-1" title="${NEW_STANDARD_TEMPLATE.label}">${NEW_STANDARD_TEMPLATE.label}</a></li>
+                      <li role="presentation"><a class="fr-command" data-cmd="xfTemp" data-param1="xfTempVNDB" role="option"
+                                                 tabindex="-1" title="${NEW_VNDB_TEMPLATE.label}">${NEW_VNDB_TEMPLATE.label}</a></li>
+                      <li role="presentation"><a class="fr-command" data-cmd="xfTemp" data-param1="xfTempRequest" role="option"
+                                                 tabindex="-1" title="${REQ_TEMPLATE.label}">${REQ_TEMPLATE.label}</a></li>
+                      <li role="presentation"><a class="fr-command" data-cmd="xfTemp" data-param1="xfTempUpdate" role="option"
+                                                 tabindex="-1" title="${UPDATE_TEMPLATE.label}">${UPDATE_TEMPLATE.label}</a></li>
+                  </ul>
+              </div>
+          </div>
+      </div>
+      <button id="xfTagList-1" title="Go To Tag List" type="button" tabindex="-1" role="button" class="fr-command fr-btn fr-btn-xf_font_awesome_5 edexal-btn" data-cmd="xfTagList"><i class="far fa-tags" aria-hidden="true"></i><span class="fr-sr-only">Go To Tag List</span></button>`);
   }
 
   function refreshTextArea() {
@@ -64,6 +67,9 @@
     e.target.classList.remove('fr-selected');
     document.querySelector('[placeholder~=title]').value = template.title; //Thread title Element
   }
+  function setBtnEvent(templateObj) {
+    document.querySelector(`[title="${templateObj.label}"]`).addEventListener('click', (e) => displayTextClick(e, templateObj));
+  }
 
   function goToTagListClick(e) {
     window.open("https://f95zone.to/threads/tags-rules-and-list-updated-2024-01-29.10394");
@@ -78,9 +84,11 @@
     edexal.applyCSS(styleCSS);
     addButton();
     displayPrefixPlaceholder();
-    document.querySelector('[title=\"New Game Template\"]').addEventListener('click', (e) => displayTextClick(e, NEW_TEMPLATE));
-    document.querySelector('[title=\"Request Game Template\"]').addEventListener('click', (e) => displayTextClick(e, REQ_TEMPLATE));
-    document.querySelector('[title=\"Update Game Template\"]').addEventListener('click', (e) => displayTextClick(e, UPDATE_TEMPLATE));
+
+    setBtnEvent(NEW_STANDARD_TEMPLATE);
+    setBtnEvent(NEW_VNDB_TEMPLATE);
+    setBtnEvent(REQ_TEMPLATE);
+    setBtnEvent(UPDATE_TEMPLATE);
     document.querySelector('#xfTagList-1').addEventListener('click', (e) => goToTagListClick(e));
   }
 
