@@ -39,8 +39,9 @@ jobs:
           set -e
           TARGET_DIRS=(./f95 ./lc)
           
+          ls -la $TARGET_DIRS
+          
           for DIR in "${TARGET_DIRS[@]}"; do
-            find "$DIR" -type f -name "*.user.js"
             find "$DIR" -type f -name "*.user.js" | while read -r FILE; do
               echo "Processing: $FILE"
           
