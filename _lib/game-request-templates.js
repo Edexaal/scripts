@@ -2,7 +2,7 @@
 // @name        F95 Game Request Templates
 // @namespace   1330126-edexal
 // @license     Unlicense
-// @version     2.0
+// @version     2.1
 // @author      Edexal
 // @description Templates for creating game requests on F95
 // ==/UserScript==
@@ -19,6 +19,7 @@ function _getRules() {
 
 function getUpdateTempl() {
   return {
+    label: 'Update Game',
     title: "[Store][$Price] Game Name [Version]",
     body: `Title:
 Thread: (link to thread on F95zone)
@@ -31,6 +32,7 @@ ${_getRules()}`
 
 function getRequestTempl() {
   return {
+    label: 'Request Game',
     title: "[Store][$Price] Game Name [Version]",
     body: `Title:
 Developer website:
@@ -96,8 +98,9 @@ function _getNewTemplBottom(){
 (SAMPLES/SCREENSHOTS; DELETE THIS)[/CENTER]`;
 }
 
-function _buildNewTempl(body) {
+function _buildNewTempl(label, body) {
   return {
+    label,
     title: _getNewTemplTitle(),
     body: `${_getNewTemplTop()}
 ${body}
@@ -106,7 +109,7 @@ ${_getNewTemplBottom()}`
 }
 
 function getNewVNDBTempl() {
-    return _buildNewTempl(`[B]Original Title[/B]: (TITLE IN ORIGINAL LANGUAGE; REMOVE IF ORIGINAL TITLE IS ENGLISH)
+    return _buildNewTempl('New Game (JP VNDB)', `[B]Original Title[/B]: (TITLE IN ORIGINAL LANGUAGE; REMOVE IF ORIGINAL TITLE IS ENGLISH)
 [B]Aliases[/B]: (OTHER TITLES OF GAME; REMOVE IF ORIGINAL TITLE IS ENGLISH OR THERE ARE NO OTHER ALIASES)
 [B]Developer[/B]: (DEVELOPER NAME/SOCIAL LINKS HERE) Patreon - Website
 [B]Publisher[/B]: (REMOVE IF NOT APPLICABLE)
@@ -121,7 +124,7 @@ function getNewVNDBTempl() {
 }
 
 function getNewStandardTempl() {
-    return _buildNewTempl(`[B]Developer[/B]: (DEVELOPER NAME/SOCIAL LINKS HERE) Patreon - Website
+    return _buildNewTempl('New Game (Standard)',`[B]Developer[/B]: (DEVELOPER NAME/SOCIAL LINKS HERE) Patreon - Website
 [B]Publisher[/B]: (REMOVE IF NOT APPLICABLE)
 [B]Translator[/B]: (REMOVE IF NOT APPLICABLE)
 [B]Censored[/B]: (Yes/No)
