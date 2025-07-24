@@ -1,0 +1,92 @@
+// ==UserScript==
+// @name        F95 Game Thread Search
+// @namespace   1330126-edexal
+// @match       *://f95zone.to/sam/latest_alpha/*
+// @grant       none
+// @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
+// @license     Unlicense
+// @version     1.0.1
+// @author      Edexal
+// @description Search for a game thread using the website's search query instead of through the filter drawer.
+// @homepageURL https://sleazyfork.org/en/scripts/543545-f95-game-thread-search
+// @supportURL  https://github.com/Edexaal/scripts/issues
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@533e7fcad926cc452c25bb359fd3f5c23b78daa5/_lib/utility.js
+// ==/UserScript==
+(() => {
+  const btn = {
+    id: 'thread_search_btn',
+    content: 'Thread Search',
+    el: null
+  };
+
+  const styleCSS = `
+#${btn.id} {
+    display: block;
+    background: linear-gradient(to top left, rgb(0 0 0 / 0.2), rgb(0 0 0 / 0.2) 30%, rgb(0 0 0 / 0)) #ba4545;
+    color: yellow;
+    width: 100%;
+    height: 40px;
+    margin: 10px auto 5px auto;
+    font-size: 0.875em;
+    font-weight: bold;
+    border: 1px solid #a4a4a4;
+    border-radius: 5px;
+    transition: opacity .2s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+        opacity: 0.8;
+        cursor: pointer;
+    }
+
+    &:active {
+        opacity: 0.6;
+    }
+}`;
+
+  function addButton() {
+    btn.el = document.createElement('button');
+    btn.el.id = btn.id;
+    const txtNode = document.createTextNode(btn.content);
+    btn.el.append(txtNode);
+    const containerEl = document.querySelector('#filter-block_search');
+    containerEl.append(btn.el);
+  }
+
+  function searchEvent(e) {
+    e.preventDefault();
+    let query = document.querySelector('#input-title_search').value.trim();
+    if (!query) {
+      return;
+    }
+    query = query.replaceAll(" ", "+");
+    const searchURL = `https://f95zone.to/search/1/?q=${query}&t=post&c[nodes][0]=2&c[title_only]=1&o=date&g=1`;
+    console.log(query);
+    location.assign(searchURL);
+  }
+
+  function toggleBtnEvent(e) {
+    const isSelected = e.classList.contains('on');
+    btn.el.style.display = isSelected ? "none" : "block";
+  }
+
+  function setObserver() {
+    const observer = new MutationObserver((records, observeObj) => {
+      for (const record of records) {
+        if (record.type === "attributes") {
+          toggleBtnEvent(record.target);
+        }
+      }
+
+    });
+    observer.observe(document.querySelector("#filter-search_type .filter-search_type-creator"), {attributes: true});
+  }
+
+  function run() {
+    edexal.applyCSS(styleCSS);
+    addButton();
+    document.querySelector(`#${btn.id}`).addEventListener('click', searchEvent, {capture: true});
+    setObserver();
+  }
+
+  run();
+})();
