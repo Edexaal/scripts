@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0.3
+// @version     1.0.4
 // @author      Edexal
 // @description Search for a game thread using the website's search query instead of through the filter drawer.
 // @homepageURL https://sleazyfork.org/en/scripts/543545-f95-game-thread-search
@@ -17,6 +17,11 @@
     id: 'thread_search_btn',
     content: 'Thread Search',
     el: null
+  };
+  const el = {
+    creator: null,
+    gameCatBtn: null,
+    titleInput: null
   };
 
   const styleCSS = `
@@ -43,6 +48,12 @@
     }
 }`;
 
+  function initElements() {
+    el.creator = document.querySelector("#filter-search_type .filter-search_type-creator");
+    el.gameCatBtn = document.querySelector("#btn-cat_games .filter-block_button");
+    el.titleInput = document.querySelector('#input-title_search');
+  }
+
   function addButton() {
     btn.el = document.createElement('button');
     btn.el.id = btn.id;
@@ -54,38 +65,56 @@
 
   function searchEvent(e) {
     e.preventDefault();
-    let query = document.querySelector('#input-title_search').value.trim();
+    let query = el.titleInput.value.trim();
     if (!query) {
       return;
     }
     query = query.replaceAll(" ", "+");
     const searchURL = `https://f95zone.to/search/1/?q=${query}&t=post&c[nodes][0]=2&c[title_only]=1&o=date&g=1`;
-    console.log(query);
     location.assign(searchURL);
   }
 
-  function toggleBtnEvent(e) {
+  function isGameCategory() {
+    return !location.href.includes('cat=') || location.href.includes('cat=games');
+  }
+
+  function toggleBtnVisibility(e) {
     const isSelected = e.classList.contains('on');
     btn.el.style.display = isSelected ? "none" : "block";
   }
 
-  function setObserver() {
+  function setSearchTypeObserver() {
     const observer = new MutationObserver((records, observeObj) => {
       for (const record of records) {
-        if (record.type === "attributes") {
-          toggleBtnEvent(record.target);
+        if (record.type === "attributes" && isGameCategory()) {
+          toggleBtnVisibility(record.target);
         }
       }
 
     });
-    observer.observe(document.querySelector("#filter-search_type .filter-search_type-creator"), {attributes: true});
+    observer.observe(el.creator, {attributes: true});
+  }
+
+  function setCategoryObserver() {
+    const observer = new MutationObserver((records, observerObj) => {
+      for (const record of records) {
+        if (record.type === "attributes" && isGameCategory()) {
+          toggleBtnVisibility(el.creator);
+        } else if (record.type === "attributes" && !isGameCategory()) {
+          btn.el.style.display = 'none';
+        }
+      }
+    });
+    observer.observe(el.gameCatBtn, {attributes: true});
   }
 
   function run() {
     edexal.applyCSS(styleCSS);
+    initElements();
     addButton();
     btn.el.addEventListener('click', searchEvent, {capture: true});
-    setObserver();
+    setSearchTypeObserver();
+    setCategoryObserver();
   }
 
   run();
