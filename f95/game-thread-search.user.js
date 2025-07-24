@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0.2
+// @version     1.0.3
 // @author      Edexal
 // @description Search for a game thread using the website's search query instead of through the filter drawer.
 // @homepageURL https://sleazyfork.org/en/scripts/543545-f95-game-thread-search
@@ -84,7 +84,7 @@
   function run() {
     edexal.applyCSS(styleCSS);
     addButton();
-    document.querySelector(`#${btn.id}`).addEventListener('click', searchEvent, {capture: true});
+    btn.el.addEventListener('click', searchEvent, {capture: true});
     setObserver();
   }
 
