@@ -7,7 +7,7 @@
 // @grant       GM.deleteValue
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     3.2.3
+// @version     3.3
 // @author      Edexal
 // @description Display only the 1st post of a game thread. This completely removes all replies (and more) from the thread.
 // @homepageURL https://sleazyfork.org/en/scripts/522360-f95-game-post-only
@@ -26,11 +26,17 @@
   };
   //Apply custom styles in a style tag
   const styleCSS = `
+    header.message-attribution {
+      position: relative; 
+    }
+    
     #vm-gpo {
-      position: fixed;
-	    top: 15vh;
-	    right: 1vw;
       z-index: 999999;
+      
+      &.tooltip {
+        top: 25px;
+        right: 20px;
+      }
 
       div.tooltip-content-inner {
         display:flex;
@@ -63,7 +69,7 @@
             padding: 0.625rem 0;
             border-radius: 8px;
             border: 1px solid black;
-            transition: opacity 375ms, transform 125ms;
+            transition: opacity 375ms, transform 125ms, background-color .15s;
             &[for="close"] {
               color: #ffcb00;
             }
@@ -85,18 +91,19 @@
         &:active {
           transform: scale(0.9);
         }
-
       }
     }
     #vmgpo-icon {
       color: yellow;
+      transition: color .2s;
       &:hover {
         color: #f5a3a3;
+        cursor: pointer;
       }
     }
     .tooltip--vmgpo {
       max-width: 100%;
-      width: 280px;
+      width: 250px;
       padding: 0 15px;
     }
     .tooltip--vmgpo .tooltip-content {
@@ -114,16 +121,6 @@
     }
     .p-footer {
       z-index: auto;
-    }
-    @media screen and (max-width: 650px) {
-      #vm-gpo{
-        top: 220px;
-      }
-    }
-    @media screen and (max-width: 357px){
-      #vm-gpo{
-        top: 260px;
-      }
     }
   `;
 
@@ -171,6 +168,9 @@
     const accountLI = createList("Account Items", labels.account);
     const navbarLI = createList("Navigation Bar", labels.navbar);
     const closeLI = createList("", labels.close, ['fas', 'fa-times-circle']);
+    closeLI.style.pointerEvents = "none";
+    closeLI.style.visibility = "hidden";
+    closeLI.style.position = "absolute";
 
     ul.append(closeLI, breadcrumbLI, footerLI, recommendLI, replyLI, accountLI, navbarLI);
     vmGPOInner.append(h2, ul);
@@ -181,14 +181,11 @@
 
   function createIcon() {
     const li = document.createElement('li');
-    const a = document.createElement('a');
-    a.href = "#";
-    a.title = "Game post settings";
     const span = document.createElement('span');
     span.classList.add("fas", "fa-cog");
     span.id = "vmgpo-icon";
-    a.append(span);
-    li.append(a);
+    span.title = "Game post settings";
+    li.append(span);
     document.querySelector('.message-attribution-opposite--list').prepend(li);
   }
 
@@ -200,12 +197,9 @@
     setClickEvent(`label[for="${labelName}"]`, callback);
   }
 
-  function showSettingsEvent(e) {
-    document.querySelector('#vm-gpo').style.display = "initial";
-  }
-
-  function closeSettingsEvent(e) {
-    document.querySelector('#vm-gpo').style.display = "none";
+  function toggleSettingsEvent(e) {
+    const menu = document.querySelector('#vm-gpo');
+    menu.style.display = menu.style.display === 'initial' ? 'none' : 'initial';
   }
 
   function deleteEls(el) {
@@ -373,6 +367,7 @@
     return isGame;
   }
 
+
   /*Checks if thread is a GAME type*/
   if (isGameThread()) {
     edexal.applyCSS(styleCSS);
@@ -380,14 +375,14 @@
     createTooltip();
     initSettings();
     showFirstPostOnly();
-    setClickEvent('#vmgpo-icon', showSettingsEvent);
+    setClickEvent('#vmgpo-icon', toggleSettingsEvent);
     setLabelEvent(labels.breadcrumbs, removeBreadcrumbsEvent);
     setLabelEvent(labels.footer, removeFooterEvent);
     setLabelEvent(labels.recommend, removeRecomendationsEvent);
     setLabelEvent(labels.reply, removeReplyItemsEvent);
     setLabelEvent(labels.account, removeAccountItemsEvent);
     setLabelEvent(labels.navbar, removeNavbarEvent);
-    setLabelEvent(labels.close, closeSettingsEvent);
+    setLabelEvent(labels.close, toggleSettingsEvent);
   }
 
 })();
