@@ -176,7 +176,7 @@
     vmGPOInner.append(h2, ul);
     vmGPOContent.append(vmGPOInner);
     vmGPO.append(vmGPOContent);
-    document.querySelector("header.message-attribution").append(vmGPO);
+    document.querySelector(".message-attribution").append(vmGPO);
   }
 
   function createIcon() {
@@ -318,7 +318,9 @@
 
   function removeThreadWarning() {
     let warningBlock = document.querySelector('div.blockMessage.blockMessage--warning');
-    deleteEls(warningBlock);
+    if (warningBlock) {
+      deleteEls(warningBlock);
+    }
   }
 
   function showFirstPostOnly() {
@@ -377,7 +379,7 @@
     createIcon();
     createTooltip();
     initSettings();
-    showFirstPostOnly();//
+    showFirstPostOnly();
     setClickEvent('#vmgpo-icon', showSettingsEvent);
     setLabelEvent(labels.breadcrumbs, removeBreadcrumbsEvent);
     setLabelEvent(labels.footer, removeFooterEvent);
