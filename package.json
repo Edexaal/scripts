@@ -14,9 +14,12 @@
   "license": "Unlicense",
   "author": "Edexaal",
   "type": "module",
+  "imports": {
+    "#lib/*": "./modules/lib/*"
+  },
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "new": "node ./modules/new-script.mjs",
     "start": "http-server -c5 -p 8176"
   },
   "devDependencies": {
