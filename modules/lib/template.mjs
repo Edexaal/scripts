@@ -6,7 +6,7 @@ function getEnvValue(envVar) {
 function getTemplate() {
   const env = process.env;
   return `// ==UserScript==
-// @name        -
+// @name        ${getEnvValue(env.SCRIPT_NAME)}
 // @namespace   ${getEnvValue(env.NAMESPACE)}
 // @match       ${getEnvValue(env.MATCH_URL)}
 // @grant       none
