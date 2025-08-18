@@ -5,9 +5,9 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0
+// @version     1.1
 // @author      Edexal
-// @description Improves mobile experience a bit
+// @description Improves mobile experience
 // @homepageURL -
 // @supportURL  https://github.com/Edexaal/scripts/issues
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@18e8de8f54ed4045d4b6e000b4b43a4f136b7612/_lib/utility.js
@@ -66,9 +66,13 @@
   }
 }`;
 
+  function isLatestUpdatePage() {
+    return location.pathname.includes('sam/latest_alpha');
+  }
+
   function setScrollBtn(selector, targetSelector, scrollType, altTargetSelector) {
     const scrollBtn = document.querySelector(selector);
-    if(!scrollBtn) return;
+    if (!scrollBtn) return;
     scrollBtn.removeAttribute('data-xf-click');
     scrollBtn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -90,7 +94,7 @@
       '#top');
   }
 
-  function assignTabItem(name,pathURL,oldFaIcons,newFaIcons,itemPos){
+  function assignTabItem(name, pathURL, oldFaIcons, newFaIcons, itemPos) {
     const tabItem = document.querySelector(`.uix_tabBar .uix_tabList .uix_tabItem:nth-of-type(${itemPos})`);
     if (!tabItem) return;
     tabItem.href = pathURL;
@@ -102,14 +106,29 @@
   }
 
   function initTabItems() {
-    assignTabItem('Latest Updates','/sam/latest_alpha/',['far','fa-comment-alt-exclamation'],['far','fa-gem'],2);
-    assignTabItem('Bookmarks','/account/bookmarks/',['far','fa-user'],['far','fa-bookmark'],1);
+    assignTabItem('Latest Updates', '/sam/latest_alpha/', ['far', 'fa-comment-alt-exclamation'], ['far', 'fa-gem'], 2);
+    assignTabItem('Bookmarks', '/account/bookmarks/', ['far', 'fa-user'], ['far', 'fa-bookmark'], 1);
+  }
+
+  /*Removes all effects from tiles on Latest Update Page
+   by removing all event listeners from tiles*/
+  function removeTileHoverEffects() {
+    if(!isLatestUpdatePage()) return;
+    const tilesWrapper = document.querySelector('#latest-page_main-wrap');
+    const tilesWrapperClone = tilesWrapper.cloneNode();
+    tilesWrapperClone.append(...tilesWrapper.childNodes);
+    const fragment = document.createDocumentFragment();
+    fragment.append(tilesWrapperClone);
+    tilesWrapper.replaceWith(fragment);
   }
 
   function run() {
+    //Run only on mobile
+    if(window.innerWidth >= 480) return;
     edexal.applyCSS(STYLE_CSS);
     initTabItems();
     initScrollBtns();
+    setTimeout(removeTileHoverEffects,2000);
   }
 
   run();
