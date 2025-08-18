@@ -1,4 +1,5 @@
 import process from 'node:process';
+
 function getEnvValue(envVar) {
   return envVar ? envVar : '-';
 }
@@ -18,7 +19,10 @@ function getTemplate() {
 // @homepageURL -
 // @supportURL  ${getEnvValue(env.SUPPORT_URL)}
 // @require     -
-// ==/UserScript==`;
+// ==/UserScript==
+(async() =>{
+
+})()`;
 }
 
 export {getTemplate};
