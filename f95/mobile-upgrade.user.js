@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.1.1
+// @version     1.2
 // @author      Edexal
 // @description Improves mobile experience
 // @homepageURL https://sleazyfork.org/en/scripts/546346-f95-mobile-upgrade
@@ -64,7 +64,47 @@
       margin:initial;
     }
   }
+  /*Styles for reactions*/
+  button.reaction.actionBar-action {
+    position: relative;
+    cursor: pointer;
+  }
+  .reactTooltip {
+    position: absolute;
+    bottom: 30px;
+    right: -70px;
+    width: 180px;
+    z-index: 5;
+    background-color: #242629;
+    border: 1px solid #343638;
+    border-radius: 8px;
+    max-width: unset;
+    gap: 2px;
+  }
+   .actionBar .reaction.reaction--imageHidden.reaction--1 i {
+      padding-right: 0;
+      margin-right: 0;
+  } 
+  .reaction.reaction--imageHidden img {
+    display: unset;
+  }
+  .reaction.reaction--imageHidden > img {
+    display: none;
+  }
+  .reaction-text {
+    margin-left: 6px;
+  }
+  .has-reaction .reaction-text {
+    margin-left: 0;
+  }
 }`;
+  const SELECTOR = {
+    likeBtns: 'a.reaction.actionBar-action',
+    reactionBtns: 'button.reaction.actionBar-action',
+    thread: '.p-body-main',
+    latestUpdate: '#latest-page_main-wrap'
+  };
+  let REACTION_BAR;
 
   function isLatestUpdatePage() {
     return location.pathname.includes('sam/latest_alpha');
@@ -113,8 +153,8 @@
   /*Removes all effects from tiles on Latest Update Page
    by removing all event listeners from tiles*/
   function removeTileHoverEffects() {
-    if(!isLatestUpdatePage()) return;
-    const tilesWrapper = document.querySelector('#latest-page_main-wrap');
+    if (!isLatestUpdatePage()) return;
+    const tilesWrapper = document.querySelector(SELECTOR.latestUpdate);
     const tilesWrapperClone = tilesWrapper.cloneNode();
     tilesWrapperClone.append(...tilesWrapper.childNodes);
     const fragment = document.createDocumentFragment();
@@ -122,13 +162,105 @@
     tilesWrapper.replaceWith(fragment);
   }
 
+  function createReaction(idNum, altName) {
+    const a = document.createElement('a');
+    a.href = `/posts/10864040/react?reaction_id=${idNum}`;
+    a.classList.add('reaction', `reaction--${idNum}`);
+    a.dataset.reactionId = idNum;
+    const img = document.createElement('img');
+    img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+    img.classList.add('reaction-sprite', 'js-reaction');
+    img.alt = altName;
+    img.title = altName;
+    img.dataset.extraClass = "tooltip--basic tooltip--noninteractive";
+    img.dataset.delayIn = 50;
+    img.dataset.delayOut = 50;
+    a.append(img);
+    return a;
+  }
+
+  function createReactionBar() {
+    const divBar = document.createElement('div');
+    divBar.classList.add('reactTooltip');
+    let reactions = [
+      createReaction(1, 'Like'),
+      createReaction(14, 'Heart'),
+      createReaction(13, "Jizzed my pants"),
+      createReaction(12, "Yay, update!"),
+      createReaction(3, "Haha"),
+      createReaction(9, "Hey there"),
+      createReaction(4, "Wow"),
+      createReaction(7, "Thinking Face"),
+      createReaction(5, "Sad"),
+      createReaction(18, "Disagree"),
+      createReaction(8, "Angry")
+    ];
+    divBar.append(...reactions);
+    REACTION_BAR = divBar;
+  }
+
+  function initReactionBtns(likeBtns) {
+    for (const likeBtn of likeBtns) {
+      let reactBtn;
+      if (!likeBtn.classList.contains('has-reaction')) {
+        reactBtn = document.createElement('button');
+        likeBtn.classList.remove('reaction--small')
+        reactBtn.dataset.postId = likeBtn.getAttribute('data-th-react-plus-content-id');
+      } else {
+        reactBtn = document.createElement('a');
+        reactBtn.href = likeBtn.href;
+      }
+      reactBtn.classList.add(...likeBtn.classList);
+      reactBtn.append(...likeBtn.childNodes);
+      likeBtn.replaceWith(reactBtn);
+    }
+  }
+
+  function updateReactionBtnURLs(postId) {
+    REACTION_BAR.querySelectorAll('a').forEach(el => {
+      el.href = el.href.replace(/\/[0-9]+\//, `/${postId}/`);
+    });
+  }
+
+  function addReactionBarEvent(e) {
+    updateReactionBtnURLs(e.currentTarget.dataset.postId);
+    e.currentTarget.append(REACTION_BAR);
+  }
+
+  function removeReactionBarEvent(e) {
+    if (!e.target.closest(SELECTOR.reactionBtns)) {
+      REACTION_BAR.remove();
+    }
+  }
+
+  function addReactionBtnEvents() {
+    const reactionBtns = document.querySelectorAll(SELECTOR.reactionBtns);
+    for (const reactBtn of reactionBtns) {
+      reactBtn.addEventListener('click', addReactionBarEvent);
+    }
+  }
+
+  function setRemoval() {
+    document.querySelector(SELECTOR.thread).addEventListener('click', removeReactionBarEvent);
+  }
+
+  function initReaction() {
+    const likeBtns = document.querySelectorAll(SELECTOR.likeBtns);
+    if(!likeBtns || !likeBtns.length) return;
+    createReactionBar();
+    initReactionBtns(likeBtns);
+    addReactionBtnEvents();
+    setRemoval();
+  }
+
   function run() {
     //Run only on mobile
-    if(window.innerWidth >= 480) return;
+    if (window.innerWidth >= 480) return;
     edexal.applyCSS(STYLE_CSS);
     initTabItems();
     initScrollBtns();
-    setTimeout(removeTileHoverEffects,2000);
+    initReaction();
+    setTimeout(removeTileHoverEffects, 2000);
   }
 
   run();
