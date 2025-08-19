@@ -2,7 +2,7 @@
 // @name         F95 Random Bookmark Picker
 // @namespace    1330126-edexal
 // @license      Unlicense
-// @version      1.2.3
+// @version      1.2.4
 // @description  Randomly picks a bookmark from your f95-like bookmark page. Just press the 'Random' button.
 // @author       Edexal
 // @match        *://f95zone.to/account/bookmarks*
@@ -10,7 +10,7 @@
 // @grant        none
 // @homepageURL  https://sleazyfork.org/en/scripts/490810-f95-random-bookmark-picker
 // @supportURL   https://github.com/Edexaal/scripts/issues
-// @require      https://cdn.jsdelivr.net/gh/Edexaal/scripts@18e8de8f54ed4045d4b6e000b4b43a4f136b7612/_lib/utility.js
+// @require      https://cdn.jsdelivr.net/gh/Edexaal/scripts@e58676502be023f40293ccaf720a1a83d2865e6f/_lib/utility.js
 // ==/UserScript==
 (() => {
   'use strict';
