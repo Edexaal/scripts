@@ -4,7 +4,7 @@
 // @match       *://f95zone.to/forums/game-requests.3/post-thread*
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @grant       none
-// @version     1.4
+// @version     1.5
 // @author      Edexal
 // @license     Unlicense
 // @description Adds more action buttons to the toolbar when making a game request on f95.
@@ -14,11 +14,11 @@
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@18e8de8f54ed4045d4b6e000b4b43a4f136b7612/_lib/game-request-templates.js
 // ==/UserScript==
 (() => {
-  let styleCSS = `
+  Edexal.addCSS(`
     .edexal-btn{
         color:yellow !important;
     }
-    `;
+    `);
   const NEW_STANDARD_TEMPLATE = getNewStandardTempl();
   const NEW_VNDB_TEMPLATE = getNewVNDBTempl();
   const REQ_TEMPLATE = getRequestTempl();
@@ -55,7 +55,7 @@
   function refreshTextArea() {
     let textAreaEl = document.querySelector(".fr-element") //Text Area Element
     textAreaEl.replaceChildren();//Text Area Element
-    let preEl = document.createElement("pre");
+    let preEl = Edexal.newEl({element:"pre"});
     textAreaEl.append(preEl); //Text Area Element
   }
 
@@ -81,7 +81,6 @@
   }
 
   function run() {
-    edexal.applyCSS(styleCSS);
     addButton();
     displayPrefixPlaceholder();
 

@@ -2,7 +2,7 @@
 // @name         F95 Random Bookmark Picker
 // @namespace    1330126-edexal
 // @license      Unlicense
-// @version      1.2.3
+// @version      1.3
 // @description  Randomly picks a bookmark from your f95-like bookmark page. Just press the 'Random' button.
 // @author       Edexal
 // @match        *://f95zone.to/account/bookmarks*
@@ -17,7 +17,7 @@
   const BOOKMARK_QUERY = 'bmpos';
 
   //CSS styles
-  let stylesCSS = (`
+  Edexal.addCSS(`
 		#randbtn{
 			color:yellow;
 			border: 1px solid #343638;
@@ -50,7 +50,7 @@
       return;
     }
     let newURL = location.href.substring(0,
-      location.search.includes('&' + BOOKMARK_QUERY) !== -1 ? location.href.indexOf('&' + BOOKMARK_QUERY) : location.href.indexOf(BOOKMARK_QUERY));// removes '&bmpos'  or 'bmpos' from URL
+      location.search.includes('&' + BOOKMARK_QUERY) ? location.href.indexOf('&' + BOOKMARK_QUERY) : location.href.indexOf(BOOKMARK_QUERY));// removes '&bmpos'  or 'bmpos' from URL
     history.replaceState({}, "", newURL); //Change the URL to one w/o 'bmpos' query param
 
     let bookmarkListEl = document.querySelector("ol.listPlain");
@@ -63,17 +63,14 @@
 
   highlightBookmarkChoice();
 
-  let randBtn = document.createElement('button');
-  //Prepare button attributes
-  randBtn.setAttribute("name", "random");
-  randBtn.setAttribute("type", "button");
-  randBtn.id = "randbtn";
-  //F95zone style classes
-  randBtn.classList.add("pageNav-jump", "pageNav-jump--next");
-
-  //Prepare button text
-  let randTxt = document.createTextNode('Random');
-  randBtn.appendChild(randTxt);
+  let randBtn = Edexal.newEl({
+    element: 'button',
+    name: "random",
+    type: "button",
+    id: "randbtn",
+    class: ["pageNav-jump", "pageNav-jump--next"],
+    text: 'Random'
+  });
 
   //Pick bookmark from a selection of all pages
   function pickRandomBookmark() {
@@ -84,7 +81,7 @@
     curURL.searchParams.set("page", randPageChoiceNum);//Customize URL to point to the randomly chosen page number
 
     //Customize URL to add bookmark query parameter
-    curURL.searchParams.set("bmpos", 1);
+    curURL.searchParams.set("bmpos", '1');
 
     //Go To randomly chosen bookmark page
     location.replace(curURL.toString());
@@ -93,10 +90,10 @@
   //Pick bookmark on the first page (if 1 page is only available)
   function pickRandBookmarkOne() {
     let curURL = new URL(location.href);//Get the current URL
-    curURL.searchParams.set("page", 1);//Customize URL to point to the randomly chosen page number
+    curURL.searchParams.set("page", '1');//Customize URL to point to the randomly chosen page number
 
     //Customize URL to add bookmark query parameter
-    curURL.searchParams.set("bmpos", 1);
+    curURL.searchParams.set("bmpos", '1');
 
     //Go To randomly chosen bookmark page
     location.replace(curURL.toString());
@@ -110,8 +107,7 @@
     let isPageNavVisible = window.getComputedStyle(document.querySelector(".pageNavWrapper--mixed .pageNav")).getPropertyValue("display") === "none";
     if (isPageNavVisible) {
       //Mobile Pagination (w/ arrows)
-      let randContainerEl = document.createElement("div");
-      randContainerEl.id = "randContainer";
+      let randContainerEl = Edexal.newEl({element: "div", id: "randContainer"});
       randContainerEl.appendChild(randBtn);
       let pageArrowsEl = document.querySelector(".block-outer--after");
       pageArrowsEl.appendChild(randContainerEl);
@@ -119,13 +115,13 @@
       //Desktop Pagination
       entirePaginationEl.appendChild(randBtn);
     }
-    randBtn.addEventListener("click", pickRandomBookmark);
+    Edexal.onEv(randBtn,"click",pickRandomBookmark);
 
   } else {
     // == 1
     document.querySelector("div > div.breadcrumb.p-breadcrumb--bottom").prepend(randBtn);
-    randBtn.addEventListener("click", pickRandBookmarkOne);
-    stylesCSS = stylesCSS + `
+    Edexal.onEv(randBtn,"click",pickRandBookmarkOne);
+    Edexal.addCSS(`
 		#randbtn {
 			position:relative;
 			left: 50%;
@@ -136,8 +132,7 @@
 			box-shadow: 0 1px 5px #988787;
 			border-radius: 50px;
 		}
-		`;
+		`);
   }
-  edexal.applyCSS(stylesCSS);
 
 })();

@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.2
+// @version     1.3
 // @author      Edexal
 // @description Improves mobile experience
 // @homepageURL https://sleazyfork.org/en/scripts/546346-f95-mobile-upgrade
@@ -14,7 +14,7 @@
 // ==/UserScript==
 (async () => {
   /*NOTE: F95 uses FontAwesome v5.15.4*/
-  const STYLE_CSS = `
+  Edexal.addCSS(`
 @media (width < 480px) {
   /*Fixes 'Your account' navigation menu*/ 
   #js-SideNavOcm .uix_sidebar--scroller {
@@ -97,7 +97,7 @@
   .has-reaction .reaction-text {
     margin-left: 0;
   }
-}`;
+}`);
   const SELECTOR = {
     likeBtns: 'a.reaction.actionBar-action',
     reactionBtns: 'button.reaction.actionBar-action',
@@ -114,7 +114,7 @@
     const scrollBtn = document.querySelector(selector);
     if (!scrollBtn) return;
     scrollBtn.removeAttribute('data-xf-click');
-    scrollBtn.addEventListener('click', (e) => {
+    Edexal.onEv(scrollBtn,'click', (e) => {
       e.preventDefault();
       const target = document.querySelector(targetSelector) ?? document.querySelector(altTargetSelector);
       target.scrollIntoView({
@@ -163,25 +163,28 @@
   }
 
   function createReaction(idNum, altName) {
-    const a = document.createElement('a');
-    a.href = `/posts/10864040/react?reaction_id=${idNum}`;
-    a.classList.add('reaction', `reaction--${idNum}`);
-    a.dataset.reactionId = idNum;
-    const img = document.createElement('img');
-    img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-    img.classList.add('reaction-sprite', 'js-reaction');
-    img.alt = altName;
-    img.title = altName;
-    img.dataset.extraClass = "tooltip--basic tooltip--noninteractive";
-    img.dataset.delayIn = 50;
-    img.dataset.delayOut = 50;
+    const a = Edexal.newEl({
+      element: 'a',
+      href: `/posts/10864040/react?reaction_id=${idNum}`,
+      class: ['reaction', `reaction--${idNum}`],
+      'data-reaction-id': idNum
+    });
+    const img = Edexal.newEl({
+      element: 'img',
+      src: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+      class: ['reaction-sprite', 'js-reaction'],
+      alt: altName,
+      title: altName,
+      'data-extra-class': "tooltip--basic tooltip--noninteractive",
+      'data-delay-in': 50,
+      'data-delay-out': 50
+    });
     a.append(img);
     return a;
   }
 
   function createReactionBar() {
-    const divBar = document.createElement('div');
-    divBar.classList.add('reactTooltip');
+    const divBar = Edexal.newEl({element: 'div', class: ['reactTooltip']});
     let reactions = [
       createReaction(1, 'Like'),
       createReaction(14, 'Heart'),
@@ -203,12 +206,13 @@
     for (const likeBtn of likeBtns) {
       let reactBtn;
       if (!likeBtn.classList.contains('has-reaction')) {
-        reactBtn = document.createElement('button');
-        likeBtn.classList.remove('reaction--small')
-        reactBtn.dataset.postId = likeBtn.getAttribute('data-th-react-plus-content-id');
+        reactBtn = Edexal.newEl({
+          element: 'button',
+          'data-post-id': likeBtn.getAttribute('data-th-react-plus-content-id')
+        });
+        likeBtn.classList.remove('reaction--small');
       } else {
-        reactBtn = document.createElement('a');
-        reactBtn.href = likeBtn.href;
+        reactBtn = Edexal.newEl({element: 'a', href: likeBtn.href});
       }
       reactBtn.classList.add(...likeBtn.classList);
       reactBtn.append(...likeBtn.childNodes);
@@ -236,7 +240,7 @@
   function addReactionBtnEvents() {
     const reactionBtns = document.querySelectorAll(SELECTOR.reactionBtns);
     for (const reactBtn of reactionBtns) {
-      reactBtn.addEventListener('click', addReactionBarEvent);
+      Edexal.onEv(reactBtn,'click',addReactionBarEvent);
     }
   }
 
@@ -246,7 +250,7 @@
 
   function initReaction() {
     const likeBtns = document.querySelectorAll(SELECTOR.likeBtns);
-    if(!likeBtns || !likeBtns.length) return;
+    if (!likeBtns || !likeBtns.length) return;
     createReactionBar();
     initReactionBtns(likeBtns);
     addReactionBtnEvents();
@@ -256,7 +260,6 @@
   function run() {
     //Run only on mobile
     if (window.innerWidth >= 480) return;
-    edexal.applyCSS(STYLE_CSS);
     initTabItems();
     initScrollBtns();
     initReaction();

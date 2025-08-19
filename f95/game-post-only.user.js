@@ -7,7 +7,7 @@
 // @grant       GM.deleteValue
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     3.3
+// @version     3.4
 // @author      Edexal
 // @description Display only the 1st post of a game thread. This completely removes all replies (and more) from the thread.
 // @homepageURL https://sleazyfork.org/en/scripts/522360-f95-game-post-only
@@ -25,7 +25,7 @@
     close: 'close'
   };
   //Apply custom styles in a style tag
-  const styleCSS = `
+  Edexal.addCSS(`
     header.message-attribution {
       position: relative; 
     }
@@ -122,12 +122,11 @@
     .p-footer {
       z-index: auto;
     }
-  `;
+  `);
 
   function createList(name, metaName, classNames) {
-    const li = document.createElement("li");
-    const label = document.createElement("label");
-    label.setAttribute("for", metaName);
+    const li = Edexal.newEl({element: "li"});
+    const label = Edexal.newEl({element: "label", for: metaName});
     if (!!classNames) {
       label.classList.add(...classNames);
     }
@@ -137,30 +136,21 @@
     }
 
 
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.name = metaName;
-    checkbox.id = metaName;
+    const checkbox = Edexal.newEl({element: "input", type: "checkbox", name: metaName, id: metaName});
     li.append(label, checkbox);
     return li;
   }
 
   function createTooltip() {
-    const vmGPO = document.createElement("div");
-    vmGPO.id = "vm-gpo";
-    vmGPO.classList.add("tooltip", "tooltip--vmgpo");
+    const vmGPO = Edexal.newEl({element: "div", id: "vm-gpo", class: ["tooltip", "tooltip--vmgpo"]});
 
-    const vmGPOContent = document.createElement("div");
-    vmGPOContent.classList.add("tooltip-content");
+    const vmGPOContent = Edexal.newEl({element: "div", class: ["tooltip-content"]});
 
-    const vmGPOInner = document.createElement("div");
-    vmGPOInner.classList.add("tooltip-content-inner");
+    const vmGPOInner = Edexal.newEl({element: "div", class: ["tooltip-content-inner"]});
 
-    const h2 = document.createElement("h2");
-    const h2TxtNode = document.createTextNode("Game Post Settings");
-    h2.append(h2TxtNode);
+    const h2 = Edexal.newEl({element: "h2", text: "Game Post Settings"});
 
-    const ul = document.createElement("ul");
+    const ul = Edexal.newEl({element: "ul"});
     const breadcrumbLI = createList("Breadcrumbs", labels.breadcrumbs);
     const footerLI = createList("Footer", labels.footer);
     const recommendLI = createList("Recommendations", labels.recommend);
@@ -180,11 +170,13 @@
   }
 
   function createIcon() {
-    const li = document.createElement('li');
-    const span = document.createElement('span');
-    span.classList.add("fas", "fa-cog");
-    span.id = "vmgpo-icon";
-    span.title = "Game post settings";
+    const li = Edexal.newEl({element: 'li'});
+    const span = Edexal.newEl({
+      element: 'span',
+      class: ["fas", "fa-cog"],
+      id: "vmgpo-icon",
+      title: "Game post settings"
+    });
     li.append(span);
     document.querySelector('.message-attribution-opposite--list').prepend(li);
   }
@@ -197,14 +189,14 @@
     setClickEvent(`label[for="${labelName}"]`, callback);
   }
 
-  function toggleSettingsEvent(e) {
+  function toggleSettingsEvent() {
     const menu = document.querySelector('#vm-gpo');
     menu.style.display = menu.style.display === 'initial' ? 'none' : 'initial';
   }
 
   function deleteEls(el) {
     if (el instanceof NodeList) {
-      el.forEach((curVal, curIndex) => {
+      el.forEach((curVal) => {
         curVal.remove();
       });
     } else if (el instanceof Element) {
@@ -358,7 +350,7 @@
     let breadcrumbID = document.querySelectorAll("ul.p-breadcrumbs li:nth-of-type(3) a span[itemprop=name]");
     let isGame = false;
     if (!!breadcrumbID.length) {
-      breadcrumbID.forEach((curVal, curIndex) => {
+      breadcrumbID.forEach((curVal) => {
         if (curVal.textContent.toLowerCase() === "Games".toLowerCase()) {
           isGame = true;
         }
@@ -370,7 +362,6 @@
 
   /*Checks if thread is a GAME type*/
   if (isGameThread()) {
-    edexal.applyCSS(styleCSS);
     createIcon();
     createTooltip();
     initSettings();

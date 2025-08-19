@@ -4,7 +4,7 @@
 // @match       *://f95zone.to/sam/latest_alpha/*
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @grant       none
-// @version     1.1.3
+// @version     1.2
 // @author      Edexal
 // @license     Unlicense
 // @description Randomly selects a resource(e.g. game,asset,animation) from the 'Latest Update' page. Just press the '?' button in the filter drawer.
@@ -14,7 +14,7 @@
 // ==/UserScript==
 (() => {
   const LATEST_PAGE_QUERY = 'lppos';
-  let stylesCSS = `
+  Edexal.addCSS(`
   .fa-question {
     color: yellow;
     background:#641c1c;
@@ -62,7 +62,7 @@
       color: #ecac31;
     }
 
-  `;
+  `);
 
   //Random number
   function getRandIntInc(min, max) {
@@ -94,7 +94,7 @@
     let chosenNum = getRandIntInc(1, +maxPageNum);
     let curURL = new URL(location.href);//Get the current URL
     //Customize URL to add latest page query parameter
-    curURL.searchParams.set(LATEST_PAGE_QUERY, 1);
+    curURL.searchParams.set(LATEST_PAGE_QUERY, '1');
     //Change page to random one
     let newURL = !curURL.toString().includes("page=") ? `${curURL.toString()}#/cat=games/page=${chosenNum}` :
       curURL.toString().replace(/page=\d+/i, `page=${chosenNum}`);
@@ -104,21 +104,17 @@
 
   //Creates the random button
   function makeRandbtn() {
-    let randLinkEl = document.createElement("a");
-    randLinkEl.classList.add("button-icon");
-    randLinkEl.id = "filter-random";
+    let randLinkEl = Edexal.newEl({element: "a", class: ["button-icon"], id: "filter-random"});
 
-    let randIconEl = document.createElement("i");
-    randIconEl.classList.add("fas", "fa-question");
+    let randIconEl = Edexal.newEl({element: "i", class: ["fas", "fa-question"]});
 
     let parentEl = document.querySelector("#filter-controls");
-    randLinkEl.addEventListener("click", goToAPage);
+    Edexal.onEv(randLinkEl, "click", goToAPage);
     randLinkEl.append(randIconEl);
     parentEl.insertAdjacentElement('afterbegin', randLinkEl);
   }
 
   function run() {
-    edexal.applyCSS(stylesCSS);
     makeRandbtn();
     setTimeout(selectAnItem, 2500); // [VALUE] Wait for elements to load before executing
   }
