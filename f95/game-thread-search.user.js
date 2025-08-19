@@ -10,7 +10,7 @@
 // @description On the Latest Update page, search for a game thread by 'TITLE' using the website's search query instead of through the filter drawer.
 // @homepageURL https://sleazyfork.org/en/scripts/543545-f95-game-thread-search
 // @supportURL  https://github.com/Edexaal/scripts/issues
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@18e8de8f54ed4045d4b6e000b4b43a4f136b7612/_lib/utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@e58676502be023f40293ccaf720a1a83d2865e6f/_lib/utility.js
 // ==/UserScript==
 (() => {
   const btn = {
@@ -24,7 +24,7 @@
     titleInput: null
   };
 
-  Edexal.addCSS(`
+  const styleCSS = `
 #${btn.id} {
     display: block;
     background: linear-gradient(to top left, rgb(0 0 0 / 0.2), rgb(0 0 0 / 0.2) 30%, rgb(0 0 0 / 0)) #ba4545;
@@ -46,7 +46,7 @@
     &:active {
         opacity: 0.6;
     }
-}`);
+}`;
 
   function initElements() {
     el.creator = document.querySelector("#filter-search_type .filter-search_type-creator");
@@ -55,7 +55,10 @@
   }
 
   function addButton() {
-    btn.el = Edexal.newEl({element: 'button', id: btn.id, text: btn.content});
+    btn.el = document.createElement('button');
+    btn.el.id = btn.id;
+    const txtNode = document.createTextNode(btn.content);
+    btn.el.append(txtNode);
     const containerEl = document.querySelector('#filter-block_search');
     containerEl.append(btn.el);
   }
@@ -81,7 +84,7 @@
   }
 
   function setSearchTypeObserver() {
-    const observer = new MutationObserver((records) => {
+    const observer = new MutationObserver((records, observeObj) => {
       for (const record of records) {
         if (record.type === "attributes" && isGameCategory()) {
           toggleBtnVisibility(record.target);
@@ -93,7 +96,7 @@
   }
 
   function setCategoryObserver() {
-    const observer = new MutationObserver((records) => {
+    const observer = new MutationObserver((records, observerObj) => {
       for (const record of records) {
         if (record.type === "attributes" && isGameCategory()) {
           toggleBtnVisibility(el.creator);
@@ -106,9 +109,10 @@
   }
 
   function run() {
+    edexal.applyCSS(styleCSS);
     initElements();
     addButton();
-    Edexal.onEv(btn.el,'click',searchEvent,{capture: true});
+    btn.el.addEventListener('click', searchEvent, {capture: true});
     setSearchTypeObserver();
     setCategoryObserver();
   }

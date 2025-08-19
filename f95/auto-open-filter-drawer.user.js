@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.3.3
+// @version     1.3.4
 // @author      Edexal
 // @description Automatically open the filter drawer when visiting the Latest Update page.
 // @homepageURL https://sleazyfork.org/en/scripts/541896-f95-auto-open-filter-drawer

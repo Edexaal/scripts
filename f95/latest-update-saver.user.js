@@ -13,7 +13,7 @@
 // @description Save your filters from the Latest Update Page & load them when you need it!
 // @homepageURL https://sleazyfork.org/en/scripts/523141-f95-latest-update-saver
 // @supportURL  https://github.com/Edexaal/scripts/issues
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@18e8de8f54ed4045d4b6e000b4b43a4f136b7612/_lib/utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@e58676502be023f40293ccaf720a1a83d2865e6f/_lib/utility.js
 // ==/UserScript==
 (async function () {
   /*NOTE: F95 uses FontAwesome v5.15.4*/
@@ -26,128 +26,146 @@
     CanAutoLoad: "CanAutoLoad"
   };
 
-  Edexal.addCSS(`
-      @keyframes notice {
-        0% {opacity:0;}
-        30% {opacity:1;}
-        60% {opacity:1;}
-        100% {opacity:0;};
-      }
-        #save-notice {
-          position: fixed;
-          z-index: 8;
-          top: 33%;
-          left: 40vw;
-          background-color:#2d2d2d;
-          color: yellow;
-          border-radius: 10px;
-          border: 2pt outset #6ce65b;
-          box-shadow: -1px 0px 5px #cece92;
-          width: 120px;
-          padding-top:15px;
-          padding-bottom:15px;
-          font-size: 18px;
-          font-weight:bold;
-          text-align:center;
-          opacity: 0;
+  function getStyles() {
+    return `
+        @keyframes notice {
+          0% {opacity:0;}
+          30% {opacity:1;}
+          60% {opacity:1;}
+          100% {opacity:0;};
         }
-        .save-anim {
-          animation: 3s notice ease-in-out;
-        }
-        .save-bg {
-          opacity: 0.6;
-        }
-        #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotA a::before,
-        #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotB a::before,
-        #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotC a::before,
-        #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotD a::before
-        {
-          color: orange !important;
-        }
+          #save-notice {
+            position: fixed;
+            z-index: 8;
+            top: 33%;
+            left: 40vw;
+            background-color:#2d2d2d;
+            color: yellow;
+            border-radius: 10px;
+            border: 2pt outset #6ce65b;
+            box-shadow: -1px 0px 5px #cece92;
+            width: 120px;
+            padding-top:15px;
+            padding-bottom:15px;
+            font-size: 18px;
+            font-weight:bold;
+            text-align:center;
+            opacity: 0;
+          }
+          .save-anim {
+            animation: 3s notice ease-in-out;
+          }
+          .save-bg {
+            opacity: 0.6;
+          }
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotA a::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotB a::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotC a::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotD a::before
+          {
+            color: orange !important;
+          }
 
-        #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotA a.filter-selected::before,
-        #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotB a.filter-selected::before,
-        #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotC a.filter-selected::before,
-        #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotD a.filter-selected::before,
-        #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_Load a::before,
-        #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_Save a::before,
-        #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_Delete a::before,
-        #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_Auto-Load a::before{
-          color: yellow !important;
-        }
-        
-        #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotA a.has-save::before,
-        #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotB a.has-save::before,
-        #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotC a.has-save::before,
-        #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotD a.has-save::before {
-          color: #8cf048 !important;
-        }
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotA a.filter-selected::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotB a.filter-selected::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotC a.filter-selected::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotD a.filter-selected::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_Load a::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_Save a::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_Delete a::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_Auto-Load a::before{
+            color: yellow !important;
+          }
+          
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotA a.has-save::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotB a.has-save::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotC a.has-save::before,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_SlotD a.has-save::before {
+            color: #8cf048 !important;
+          }
 
 
-        #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver a.filter-selected::before,
-        #btn-saver_Delete a:active,
-        #btn-saver_Load a:active,
-        #btn-saver_Save a:active,
-        #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver a.auto-selected::before
-        {
-          background-color: #641c1c !important;
-        }
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver a.filter-selected::before,
+          #btn-saver_Delete a:active,
+          #btn-saver_Load a:active,
+          #btn-saver_Save a:active,
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver a.auto-selected::before
+          {
+            background-color: #641c1c !important;
+          }
 
-        #btn-saver_Delete a:active,
-        #btn-saver_Load a:active,
-        #btn-saver_Save a:active {
-          opacity: 0.6;
-        }
+          #btn-saver_Delete a:active,
+          #btn-saver_Load a:active,
+          #btn-saver_Save a:active {
+            opacity: 0.6;
+          }
 
-        #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_Save a {
-          border-right: 2px solid #ffe722;
-        }
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_Save a {
+            border-right: 2px solid #ffe722;
+          }
 
-        #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_Auto-Load a {
-          border-left: 2px solid #ffe722;
-        }
+          #latest-page_filter-wrap #latest-page_filter-wrap_inner #filter-block_saver #btn-saver_Auto-Load a {
+            border-left: 2px solid #ffe722;
+          }
 
-        div#filter-block_saver h4 {
-          color: #fc9b46 !important;
-        }
-      `);
+          div#filter-block_saver h4 {
+            color: #fc9b46 !important;
+          }
+
+        `;
+  }
 
   function addSaveNotice() {
-    let notice = Edexal.newEl({element: 'div', id: 'save-notice', text: 'Saved!'});
+    let notice = document.createElement('div');
+    notice.id = 'save-notice';
+    let txtNode = document.createTextNode('Saved!');
+    notice.append(txtNode);
     document.body.append(notice);
+
+    edexal.applyCSS(getStyles());
   }
 
   function createSection() {
-    return Edexal.newEl({element: 'div', id: 'filter-block_saver', class: ['filter-block']});
+    let section = document.createElement('div');
+    section.id = 'filter-block_saver';
+    section.classList.add('filter-block');
+    return section;
   }
 
   function createHeader() {
-    return Edexal.newEl({element: 'h4', class: ['filter-block_title'], text: 'Saver'});
+    let h = document.createElement('h4');
+    h.classList.add('filter-block_title');
+    let txtNode = document.createTextNode('Saver');
+    h.append(txtNode);
+    return h;
   }
 
   function createSectWrap() {
-    return Edexal.newEl({element: 'div', class: ['filter-block_content', 'filter-block_h']});
+    let outerContainer = document.createElement('div');
+    outerContainer.classList.add('filter-block_content', 'filter-block_h');
+    return outerContainer;
   }
 
   //Utility function for creating buttons
   function createBtn(name, eventFunc, classNames) {
-    let innerContainer = Edexal.newEl({
-      element: 'div',
-      id: `btn-saver_${name.replace(/ /, "")}`,
-      class: ['filter-block_button-wrap']
-    });
+    let innerContainer = document.createElement('div');
+    innerContainer.id = `btn-saver_${name.replace(/ /, "")}`;
+    innerContainer.classList.add('filter-block_button-wrap');
 
-    let a = Edexal.newEl({element: 'a', href: "#", 'data-saver': name, class: ['filter-block_button']});
+    let a = document.createElement('a');
+    a.href = "#";
+    a.setAttribute('data-saver', name);
+    a.classList.add('filter-block_button');
     if (!!classNames) {
       a.classList.add(...classNames);
     }
-    Edexal.onEv(a,'click',eventFunc);
+    a.addEventListener('click', eventFunc);
 
-    let label = Edexal.newEl({
-      element: 'div',
-      class: ['filter-block_button-label'],
-      text: `${name[0].toUpperCase()}${name.substring(1)}`
-    });
+    let label = document.createElement('div');
+    label.classList.add('filter-block_button-label');
+    let labelTxtNode = document.createTextNode(`${name[0].toUpperCase()}${name.substring(1)}`);
+    label.append(labelTxtNode);
+
 
     innerContainer.append(a, label);
     return innerContainer;
@@ -216,12 +234,12 @@
 
   function slotSelectEvent(e) {
     e.preventDefault();
-    const classAttribute = 'filter-selected';
+    const classAtrribute = 'filter-selected';
     const currentSlot = getSelectedSlot();
     if (!!currentSlot && currentSlot.dataset.saver !== e.target.dataset.saver) {
-      currentSlot.classList.remove(classAttribute);
+      currentSlot.classList.remove(classAtrribute);
     }
-    e.target.classList.add(classAttribute);
+    e.target.classList.add(classAtrribute);
     GM.setValue(storageKeys.LastSlot, e.target.dataset.saver);
   }
 
@@ -302,8 +320,8 @@
   }
 
   addSaverSect();
-  await initHasSave();
-  await initAutoLoad();
+  initHasSave();
+  initAutoLoad();
 
 })().catch(err => console.error(err));
 
