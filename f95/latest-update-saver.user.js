@@ -8,7 +8,7 @@
 // @grant       GM.listValues
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     2.2
+// @version     2.2.1
 // @author      Edexal
 // @description Save your filters from the Latest Update Page & load them when you need it!
 // @homepageURL https://sleazyfork.org/en/scripts/523141-f95-latest-update-saver
@@ -26,8 +26,7 @@
     CanAutoLoad: "CanAutoLoad"
   };
 
-  function getStyles() {
-    return `
+  Edexal.addCSS(`
         @keyframes notice {
           0% {opacity:0;}
           30% {opacity:1;}
@@ -111,61 +110,43 @@
           div#filter-block_saver h4 {
             color: #fc9b46 !important;
           }
-
-        `;
-  }
+        `);
 
   function addSaveNotice() {
-    let notice = document.createElement('div');
-    notice.id = 'save-notice';
-    let txtNode = document.createTextNode('Saved!');
-    notice.append(txtNode);
+    let notice = Edexal.newEl({element: 'div', id: 'save-notice', text: 'Saved!'});
     document.body.append(notice);
-
-    edexal.applyCSS(getStyles());
   }
 
   function createSection() {
-    let section = document.createElement('div');
-    section.id = 'filter-block_saver';
-    section.classList.add('filter-block');
-    return section;
+    return Edexal.newEl({element: 'div', id: 'filter-block_saver', class: ['filter-block']});
   }
 
   function createHeader() {
-    let h = document.createElement('h4');
-    h.classList.add('filter-block_title');
-    let txtNode = document.createTextNode('Saver');
-    h.append(txtNode);
-    return h;
+    return Edexal.newEl({element: 'h4', class: ['filter-block_title'], text: 'Saver'});
   }
 
   function createSectWrap() {
-    let outerContainer = document.createElement('div');
-    outerContainer.classList.add('filter-block_content', 'filter-block_h');
-    return outerContainer;
+    return Edexal.newEl({element: 'div', class: ['filter-block_content', 'filter-block_h']});
   }
 
   //Utility function for creating buttons
   function createBtn(name, eventFunc, classNames) {
-    let innerContainer = document.createElement('div');
-    innerContainer.id = `btn-saver_${name.replace(/ /, "")}`;
-    innerContainer.classList.add('filter-block_button-wrap');
-
-    let a = document.createElement('a');
-    a.href = "#";
-    a.setAttribute('data-saver', name);
-    a.classList.add('filter-block_button');
+    let innerContainer = Edexal.newEl({
+      element: 'div',
+      id: `btn-saver_${name.replace(/ /, "")}`,
+      class: ['filter-block_button-wrap']
+    });
+    let a = Edexal.newEl({element: 'a', href: "#", 'data-saver': name, class: ['filter-block_button']});
     if (!!classNames) {
       a.classList.add(...classNames);
     }
-    a.addEventListener('click', eventFunc);
+    Edexal.onEv(a, 'click', eventFunc);
 
-    let label = document.createElement('div');
-    label.classList.add('filter-block_button-label');
-    let labelTxtNode = document.createTextNode(`${name[0].toUpperCase()}${name.substring(1)}`);
-    label.append(labelTxtNode);
-
+    let label = Edexal.newEl({
+      element: 'div',
+      class: ['filter-block_button-label'],
+      text: `${name[0].toUpperCase()}${name.substring(1)}`
+    });
 
     innerContainer.append(a, label);
     return innerContainer;
@@ -320,8 +301,8 @@
   }
 
   addSaverSect();
-  initHasSave();
-  initAutoLoad();
+  await initHasSave();
+  await initAutoLoad();
 
 })().catch(err => console.error(err));
 
