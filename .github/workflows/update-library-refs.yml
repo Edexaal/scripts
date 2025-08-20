@@ -31,12 +31,12 @@ jobs:
           git fetch origin main
           git worktree add ../main origin/main
           cd ../main
-         
-          echo "Files to patch SHA:"
-          find ./f95 ./lc -type f 
-          find ./f95 ./lc -type f -exec sed -i -E "s/[a-f0-9]{40}/$COMMIT_HASH/g" {} +
           
-          TARGET_DIRS=(./f95 ./lc)
+          echo "Files to patch SHA:"
+          find ./f95 -type f 
+          find ./f95 -type f -exec sed -i -E "s/[a-f0-9]{40}/$COMMIT_HASH/g" {} +
+          
+          TARGET_DIRS=(./f95)
           
           for DIR in "${TARGET_DIRS[@]}"; do
             find "$DIR" -type f -name "*.user.js" | while read -r FILE; do
