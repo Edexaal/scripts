@@ -1,11 +1,11 @@
 import {getTemplate} from "#lib/template.mjs";
-import {writeToFile} from "#lib/fileWriter.mjs";
-import {loadScriptEnv} from "#lib/cli.mjs";
+import {createScript} from "#lib/fileWriter.mjs";
+import {getMetadata} from '#lib/asker.mjs'
 
 try {
-  const scriptType = await loadScriptEnv();
-  const template = getTemplate();
-  await writeToFile(template, scriptType);
+  const metadata = await getMetadata();
+  const template = getTemplate(metadata);
+  await createScript(template, metadata);
 } catch (e) {
   console.error("Error: " + e.message);
 }

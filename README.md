@@ -6,8 +6,10 @@ My collection of userscripts.
 
 ### Create a new script
 
-To create a new script, make sure you setup your `.env`, `.env.f95`, `.env.lc` files with the appropriate environmental
-variables.
+To create a new script, simply:
+```commandline
+npm run new
+```
 
 ## License
 
