@@ -7,9 +7,9 @@
 // @grant       GM.deleteValue
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     3.4
+// @version     3.5
 // @author      Edexal
-// @description Display only the 1st post of a game thread. This completely removes all replies (and more) from the thread.
+// @description Display only the 1st post of a game thread. Also, remove other content from the thread.
 // @homepageURL https://sleazyfork.org/en/scripts/522360-f95-game-post-only
 // @supportURL  https://github.com/Edexaal/scripts/issues
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@e58676502be023f40293ccaf720a1a83d2865e6f/_lib/utility.js
@@ -22,7 +22,8 @@
     recommend: 'recommend',
     account: 'account',
     navbar: 'navbar',
-    close: 'close'
+    close: 'close',
+    first_post: 'first_post'
   };
   //Apply custom styles in a style tag
   Edexal.addCSS(`
@@ -157,12 +158,13 @@
     const replyLI = createList("Reply", labels.reply);
     const accountLI = createList("Account Items", labels.account);
     const navbarLI = createList("Navigation Bar", labels.navbar);
+    const firstPostLI = createList("First Post Only", labels.first_post);
     const closeLI = createList("", labels.close, ['fas', 'fa-times-circle']);
     closeLI.style.pointerEvents = "none";
     closeLI.style.visibility = "hidden";
     closeLI.style.position = "absolute";
 
-    ul.append(closeLI, breadcrumbLI, footerLI, recommendLI, replyLI, accountLI, navbarLI);
+    ul.append(closeLI, firstPostLI, breadcrumbLI, footerLI, recommendLI, replyLI, accountLI, navbarLI);
     vmGPOInner.append(h2, ul);
     vmGPOContent.append(vmGPOInner);
     vmGPO.append(vmGPOContent);
@@ -210,7 +212,8 @@
     const isActive = el.classList.toggle("vmgpo-active");
     if (isActive) {
       GM.setValue(el.getAttribute('for'), true);
-      callback();
+      if (callback)
+        callback();
     } else {
       GM.deleteValue(el.getAttribute('for'));
     }
@@ -314,6 +317,13 @@
     let opContainer = document.querySelector("article.message-threadStarterPost").parentNode;
     opContainer.replaceChildren(opContainer.children.item(0));
     removePagination();
+  }
+
+  function showFirstPostEvent(e) {
+    toggleEvent(e.target, () => showFirstPostOnly());
+  }
+
+  function removeDefaults() {
     removeScrollbarBtns();
     removeThreadWarning();
   }
@@ -322,8 +332,13 @@
     const keys = await GM.listValues();
     for (const labelName of keys) {
       const labelEl = document.querySelector(`label[for="${labelName}"]`);
-      labelEl.classList.add('vmgpo-active');
+      if (labelEl){
+        labelEl.classList.add('vmgpo-active');
+      }
       switch (labelName) {
+        case labels.first_post:
+          showFirstPostOnly();
+          break;
         case labels.breadcrumbs:
           removeBreadcrumbs();
           break;
@@ -342,6 +357,9 @@
         case labels.navbar:
           removeNavbar();
           break;
+        default:
+         GM.deleteValue(labelName);
+         break;
       }
     }
   }
@@ -364,9 +382,10 @@
   if (isGameThread()) {
     createIcon();
     createTooltip();
-    initSettings();
-    showFirstPostOnly();
+    await initSettings();
+    removeDefaults();
     setClickEvent('#vmgpo-icon', toggleSettingsEvent);
+    setLabelEvent(labels.first_post, showFirstPostEvent);
     setLabelEvent(labels.breadcrumbs, removeBreadcrumbsEvent);
     setLabelEvent(labels.footer, removeFooterEvent);
     setLabelEvent(labels.recommend, removeRecomendationsEvent);
