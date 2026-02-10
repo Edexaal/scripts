@@ -8,7 +8,7 @@
 // @grant       GM.listValues
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     2.2.1
+// @version     2.2.2
 // @author      Edexal
 // @description Save your filters from the Latest Update Page & load them when you need it!
 // @homepageURL https://sleazyfork.org/en/scripts/523141-f95-latest-update-saver
@@ -284,7 +284,7 @@
     let contentWrap = createSectWrap();
     let btnList = [createBtn('Load', loadAsyncEvent, ['fas', 'fa-upload']),
       createBtn('Save', saveEvent, ['fas', 'fa-save'])];
-    btnList.push(...createBtns([storageKeys.A, storageKeys.B, storageKeys.C, storageKeys.D], slotSelectEvent, ['fas', 'fa-hdd']));
+    btnList.push(...createBtns([storageKeys.A, storageKeys.B, storageKeys.C, storageKeys.D], slotSelectEvent, ['fas', 'fa-compact-disc']));
     btnList.push(createBtn('Auto-Load', autoLoadEvent, ['fas', 'fa-magic']));
     btnList.push(createBtn('Delete', deleteEvent, ['fas', 'fa-trash-alt']));
     contentWrap.append(...btnList);
