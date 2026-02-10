@@ -4,9 +4,9 @@ My collection of userscripts.
 
 ## Development
 
-### Create a new script
+### New Script
 
-To create a new script, simply:
+To create a new userscript, simply type:
 ```commandline
 npm run new
 ```
