@@ -2,7 +2,7 @@
 // @name         F95 Random Bookmark Picker
 // @namespace    1330126-edexal
 // @license      Unlicense
-// @version      1.3
+// @version      1.3.1
 // @description  Randomly picks a bookmark from your f95-like bookmark page. Just press the 'Random' button.
 // @author       Edexal
 // @match        *://f95zone.to/account/bookmarks*
@@ -21,7 +21,6 @@
 		#randbtn{
 			color:yellow;
 			border: 1px solid #343638;
-
 		}
 		#randbtn:hover{
 			cursor: pointer;
@@ -37,6 +36,14 @@
 		}
     #randContainer{
       margin-top:20px;
+      text-align: center;
+      height: 50px;
+      #randbtn {
+        width: 50%;
+        height: 100%;
+        font-size: 1.25em;
+        border-radius: 4px;
+      }
     }
 	`);
 
