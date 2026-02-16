@@ -3,17 +3,19 @@
 // @namespace   1330126-edexal
 // @match       *://f95zone.to/threads/*
 // @match       *://f95zone.to/forums/*/post-thread
+// @match       *://f95zone.to/conversations/*
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     0.1.0
+// @version     1.0.0
 // @author      Edexal
-// @description Create posts and threads using markdown.
+// @description Use markdown syntax in threads, posts, and conversations.
 // @homepageURL -
 // @supportURL  https://github.com/Edexaal/scripts/issues
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@e58676502be023f40293ccaf720a1a83d2865e6f/_lib/utility.js
 // ==/UserScript==
 (async () => {
+  let formats = {};
   function initHeader(tags, regex) {
     return {tags, regex};
   }
@@ -42,31 +44,26 @@
     return {tags, regex, colorRegex};
   }
 
-  const formats = {
-    bold: initFormat(["strong"], /(?<!\\)\*\*/),
-    italic: initFormat(["em"], /(?<!\\)(?<!_)_(?!_)/),
-    underline: initFormat(["U"], /(?<!\\)(?<!_)_{2}(?!_)/),
-    strikethrough: initFormat(["s"], /(?<!\\)~~/),
-    inlineCode: initFormat(["ICODE"], /(?<![\\`])`(?!``)/),
-    link: initSubFormat(/\[(.+?)]\((.+?)\)/g, '<a href="$2">$1</a>'),
-    blockQuote: initQuoteFormat(["QUOTE"], /^(?:\s|&nbsp;)*(?:>|&gt;)(?:\s|&nbsp;)*/, /^(?:\s|&nbsp;)*(?:>|&gt;){2,}(?:\s|&nbsp;)*(.+)/, /^(?:\s|&nbsp;)*(?:>|&gt;)(?:\s|&nbsp;)*(?!.+)/, "&nbsp;"),
-    code: initCodeFormat(["CODE"], /^(?:\s|&nbsp;)*```/, /^(?:\s|&nbsp;)*```(.+)/),
-    header1: initHeader(["SIZE=7", "SIZE"], /^(?:\s|&nbsp;)*(?<!\\)#(?!#)(?:\s|&nbsp;)*/),
-    header2: initHeader(["SIZE=6", "SIZE"], /^(?:\s|&nbsp;)*(?<!\\)##(?!#)(?:\s|&nbsp;)*/),
-    header3: initHeader(["SIZE=5", "SIZE"], /^(?:\s|&nbsp;)*(?<!\\)###(?:\s|&nbsp;)*/),
-    list: initListFormat(["LIST", "LIST=1", "*"], /^(?:\s|&nbsp;)*-(?:\s|&nbsp;)*/, /^(?:\s|&nbsp;)*\d+\.(?:\s|&nbsp;)*/),
-    spoiler: initCodeFormat(["SPOILER"], /^(?:\s|&nbsp;)*:{3}(?:\s|&nbsp;)*(?:spoiler)?/, /^(?:\s|&nbsp;)*:{3}(?:\s|&nbsp;)*spoiler=(.+)/),
-    inlineSpoiler: initFormat(["ISPOILER"], /(?<!\\)\|\|/),
-    alignment: initCodeFormat(["RIGHT", "LEFT"], /^(?:\s|&nbsp;)*(?:&lt;){3}(?:\s|&nbsp;)*(?:right|center)?/, /^(?:\s|&nbsp;)*(?:&lt;){3}(?:\s|&nbsp;)*(right|center)/),
-    color: initColorFormat(["COLOR"], /(?<!\\)%(#[a-fA-F0-9]{6})?%/, /.*%(#[a-fA-F0-9]{6})%.*/),
-  };
-  // Posts button: div.formButtonGroup-primary > button:first-child
-  // Threads button: div.formSubmitRow-controls > button:first-child
-  function submitEvent() {
-    const submitBtn = document.querySelector("div.formSubmitRow-controls > button:first-child")
-      || document.querySelector("div.formButtonGroup-primary > button:first-child");
+  function defaultFormats(){
+   return {
+     bold: initFormat(["strong"], /(?<!\\)\*\*/),
+     italic: initFormat(["em"], /(?<!\\)(?<!_)_(?!_)/),
+     underline: initFormat(["U"], /(?<!\\)(?<!_)_{2}(?!_)/),
+     strikethrough: initFormat(["s"], /(?<!\\)~~/),
+     inlineCode: initFormat(["ICODE"], /(?<![\\`])`(?!``)/),
+     link: initSubFormat(/\[(.+?)]\((.+?)\)/g, '<a href="$2">$1</a>'),
+     blockQuote: initQuoteFormat(["QUOTE"], /^(?:\s|&nbsp;)*(?:>|&gt;)(?:\s|&nbsp;)*/, /^(?:\s|&nbsp;)*(?:>|&gt;){2,}(?:\s|&nbsp;)*(.+)/, /^(?:\s|&nbsp;)*(?:>|&gt;)(?:\s|&nbsp;)*(?!.+)/, "&nbsp;"),
+     code: initCodeFormat(["CODE"], /^(?:\s|&nbsp;)*```/, /^(?:\s|&nbsp;)*```(.+)/),
+     header1: initHeader(["SIZE=7", "SIZE"], /^(?:\s|&nbsp;)*(?<!\\)#(?!#)(?:\s|&nbsp;)*/),
+     header2: initHeader(["SIZE=6", "SIZE"], /^(?:\s|&nbsp;)*(?<!\\)##(?!#)(?:\s|&nbsp;)*/),
+     header3: initHeader(["SIZE=5", "SIZE"], /^(?:\s|&nbsp;)*(?<!\\)###(?:\s|&nbsp;)*/),
+     list: initListFormat(["LIST", "LIST=1", "*"], /^(?:\s|&nbsp;)*-(?:\s|&nbsp;)*/, /^(?:\s|&nbsp;)*\d+\.(?:\s|&nbsp;)*/),
+     spoiler: initCodeFormat(["SPOILER"], /^(?:\s|&nbsp;)*:{3}(?:\s|&nbsp;)*(?:spoiler)?/, /^(?:\s|&nbsp;)*:{3}(?:\s|&nbsp;)*spoiler=(.+)/),
+     inlineSpoiler: initFormat(["ISPOILER"], /(?<!\\)\|\|/),
+     alignment: initCodeFormat(["RIGHT", "LEFT"], /^(?:\s|&nbsp;)*(?:&lt;){3}(?:\s|&nbsp;)*(?:right|center)?/, /^(?:\s|&nbsp;)*(?:&lt;){3}(?:\s|&nbsp;)*(right|center)/),
+     color: initColorFormat(["COLOR"], /(?<!\\)%(#[a-fA-F0-9]{6})?%/, /.*%(#[a-fA-F0-9]{6})%.*/),
+   };
   }
-
   // Substitute matches on a single line
   function lineSubParse(lineTxt, format) {
     if (lineTxt.search(format.regex) === -1) return lineTxt;
@@ -301,6 +298,7 @@
 
   function parseMarkdown() {
     const textBoxEl = document.querySelector("div.bbWrapper div[spellcheck][class*=fr-element]");
+    formats = defaultFormats();
     for (let i = 0; i < textBoxEl.children.length; i++) {
       const lineEl = textBoxEl.children[i];
       if (lineEl.innerHTML === "<br>") {
