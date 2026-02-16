@@ -8,7 +8,7 @@
 // @license     Unlicense
 // @version     0.1.0
 // @author      Edexal
-// @description Create posts and threads using markdown syntax.
+// @description Create posts and threads using markdown.
 // @homepageURL -
 // @supportURL  https://github.com/Edexaal/scripts/issues
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@e58676502be023f40293ccaf720a1a83d2865e6f/_lib/utility.js
@@ -301,15 +301,12 @@
 
   function parseMarkdown() {
     const textBoxEl = document.querySelector("div.bbWrapper div[spellcheck][class*=fr-element]");
-    console.clear();
     for (let i = 0; i < textBoxEl.children.length; i++) {
       const lineEl = textBoxEl.children[i];
       if (lineEl.innerHTML === "<br>") {
         continue;
       }
       lineEl.outerHTML = "<p>" + parse(lineEl.innerHTML, i) + "</p>";
-      // DEBUG: Writes results to dev console
-      // console.log("<p>" + parseLine(lineEl.innerHTML) + "</p>");
     }
     quoteParse();
     codeParse(formats["code"]);
@@ -320,29 +317,12 @@
   function createButton() {
     const btnLayer = document.querySelector("div.formButtonGroup-primary,div.formSubmitRow-controls");
     if (!btnLayer) return;
-    const btn = Edexal.newEl({element: 'button', text: 'TEST', type: 'button'});
+    const btn = Edexal.newEl({element: 'button', type: 'button', class:['button']});
+    const spanText = Edexal.newEl({element: 'span', class:['button-text'], text: "PARSE MD", style: "color: yellow;"});
+    btn.append(spanText);
     Edexal.onEv(btn, 'click', parseMarkdown);
     btnLayer.prepend(btn);
   }
 
   createButton();
-
-  /*TODO: For Submit button
-     1. Hide original submit and replace with custom button
-     2. If clicked, transform markdown back into HTML format
-     3. Swap buttons back
-     4. Click submit on original button
-  * */
-  /*TODO: For Preview button
-      1. Hide original preview and replace with custom button
-      2. If clicked, transform markdown back into HTML format
-      3. Swap buttons back
-      4. Click preview of original button
-      5. Repeat step 1 */
-  // Textbox: div.bbWrapper div[spellcheck][class*=fr-element]
-  /*TODO: Parsing
-     - Get text using textBoxEl.innerHTML
-  *  - Loop through each markdown syntax type
-     - Apply markdown attributes. Make sure add closing tag for each line if it expands that far.
-  */
 })()
