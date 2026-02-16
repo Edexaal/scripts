@@ -10,7 +10,7 @@
 // @version     1.0.0
 // @author      Edexal
 // @description Use markdown syntax in threads, posts, and conversations.
-// @homepageURL -
+// @homepageURL https://sleazyfork.org/en/scripts/566411-f95-markdown
 // @supportURL  https://github.com/Edexaal/scripts/issues
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@e58676502be023f40293ccaf720a1a83d2865e6f/_lib/utility.js
 // ==/UserScript==
