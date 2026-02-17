@@ -7,7 +7,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0.0
+// @version     1.1.0
 // @author      Edexal
 // @description Use markdown syntax in threads, posts, and conversations.
 // @homepageURL https://sleazyfork.org/en/scripts/566411-f95-markdown
@@ -296,8 +296,7 @@
     return lineTxt;
   }
 
-  function parseMarkdown() {
-    const textBoxEl = document.querySelector("div.bbWrapper div[spellcheck][class*=fr-element]");
+  function parseMarkdown(textBoxEl) {
     formats = defaultFormats();
     for (let i = 0; i < textBoxEl.children.length; i++) {
       const lineEl = textBoxEl.children[i];
@@ -312,15 +311,38 @@
     alignParse(formats["alignment"]);
   }
 
-  function createButton() {
-    const btnLayer = document.querySelector("div.formButtonGroup-primary,div.formSubmitRow-controls");
-    if (!btnLayer) return;
+  function createButton(btnLayer,textboxEl) {
     const btn = Edexal.newEl({element: 'button', type: 'button', class:['button']});
     const spanText = Edexal.newEl({element: 'span', class:['button-text'], text: "PARSE MD", style: "color: yellow;"});
     btn.append(spanText);
-    Edexal.onEv(btn, 'click', parseMarkdown);
+    Edexal.onEv(btn, 'click', () => parseMarkdown(textboxEl));
     btnLayer.prepend(btn);
   }
 
-  createButton();
+  function applyButton(records,observer,shouldDisconnect){
+    for (const record of records) {
+      for (const addedNode of record.addedNodes) {
+        if (addedNode.nodeType !== Node.ELEMENT_NODE) continue;
+        const buttonLayer = addedNode.querySelector("div.formButtonGroup-primary,div.formSubmitRow-controls");
+        const textBoxEl = addedNode.querySelector("div.bbWrapper div[spellcheck][class*=fr-element]");
+        if (!buttonLayer || !textBoxEl) continue;
+        createButton(buttonLayer,textBoxEl);
+        if (shouldDisconnect){
+          observer.disconnect();
+        }
+      }
+    }
+  }
+  function buttonObserver(elToObserve,shouldDisconnect){
+    const obs = new MutationObserver((records, observer)=> applyButton(records,observer,shouldDisconnect));
+    obs.observe(document.querySelector(elToObserve), {subtree: true, childList: true});
+  }
+
+  // The first textbox element found
+  setTimeout(() => {
+    createButton(document.querySelector("div.formButtonGroup-primary,div.formSubmitRow-controls"),document.querySelector("div.bbWrapper div[spellcheck][class*=fr-element]"));
+  }, 1000);
+  // Edit Posts
+  buttonObserver("div.block-container[data-lb-id]");
+
 })()
