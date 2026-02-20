@@ -7,7 +7,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.1.0
+// @version     1.1.1
 // @author      Edexal
 // @description Use markdown syntax in threads, posts, and conversations.
 // @homepageURL https://sleazyfork.org/en/scripts/566411-f95-markdown
@@ -25,7 +25,7 @@
   }
 
   function initListFormat(tags, uRegex, oRegex) {
-    return {indentLevel: 0, oRegex, uRegex, tags};
+    return {tagIndex: 0, indentLevel: 0, prevType: null, oRegex, uRegex, tags};
   }
 
   function initSubFormat(regex, subRegex) {
@@ -77,6 +77,15 @@
       type = textBoxEl.children[format.indexes[i]].innerHTML.replace(format.typeRegex, "$1");
     }
     return type;
+  }
+
+  function getIndentNum(lineTxt,curIndexLVL) {
+    let total = 0;
+    while (lineTxt.search(/^(?<!-)(?:&nbsp;|\s){2}/g) !== -1 && total < curIndexLVL + 1) {
+      lineTxt = lineTxt.replace(/^(?<!-)(?:&nbsp;|\s){2}/,"");
+      total += 1;
+    }
+    return total;
   }
 
   function alignParse(format) {
@@ -194,7 +203,7 @@
       }
       return lineTxt;
     }
-    const lineIndent = lineTxt.match(/&nbsp;/g)?.length ?? 0;
+    const lineIndent = getIndentNum(lineTxt,format.indentLevel);
     const list = lineTxt.search(format.uRegex) !== -1 ? {
       tag: format.tags[0],
       regex: format.uRegex
@@ -218,11 +227,27 @@
           lineTxt = `${endings}[${format.tags[2]}]${lineTxt}`;
         }
       } else {
-        lineTxt = lineTxt.replace(list.regex, `[${format.tags[2]}]`);
+        if (list.tag === format.prevType || !format.prevType) {
+          lineTxt = lineTxt.replace(list.regex, `[${format.tags[2]}]`);
+        } else {
+          lineTxt = lineTxt.replace(list.regex, `[/${format.tags[0]}][${list.tag}][${format.tags[2]}]`);
+        }
       }
       format.indentLevel = lineIndent;
     }
+    format.prevType = list.tag;
     return lineTxt;
+  }
+
+  function endListParse(lineTxt,format) {
+    if (!format.tagIndex) return lineTxt;
+    let endings = `[/${format.tags[0]}]`;
+    while (format.indentLevel > 0) {
+      endings = `[/${format.tags[0]}]${endings}`;
+      format.indentLevel -= 1;
+    }
+    format.tagIndex = 0;
+    return `${lineTxt}${endings}`;
   }
 
   function colorParse(lineTxt, format) {
@@ -298,17 +323,21 @@
 
   function parseMarkdown(textBoxEl) {
     formats = defaultFormats();
+    let lastIndex = 0;
     for (let i = 0; i < textBoxEl.children.length; i++) {
       const lineEl = textBoxEl.children[i];
       if (lineEl.innerHTML === "<br>") {
         continue;
       }
       lineEl.outerHTML = "<p>" + parse(lineEl.innerHTML, i) + "</p>";
+      lastIndex = i;
     }
     quoteParse();
     codeParse(formats["code"]);
     codeParse(formats["spoiler"]);
     alignParse(formats["alignment"]);
+    textBoxEl.children[lastIndex].outerHTML = "<p>" + endListParse(textBoxEl.children[lastIndex].innerHTML, formats["list"]) + "</p>";
+    console.log(formats["list"].tagIndex);
   }
 
   function createButton(btnLayer,textboxEl) {
