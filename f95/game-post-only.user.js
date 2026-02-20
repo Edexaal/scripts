@@ -7,7 +7,7 @@
 // @grant       GM.deleteValue
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     3.5
+// @version     3.6
 // @author      Edexal
 // @description Display only the 1st post of a game thread. Also, remove other content from the thread.
 // @homepageURL https://sleazyfork.org/en/scripts/522360-f95-game-post-only
@@ -258,6 +258,8 @@
 
     let replyActions = document.querySelectorAll('a.actionBar-action--mq,  a.actionBar-action--reply');
     !!replyActions ? deleteEls(replyActions) : null;
+
+    removeThreadWarning();
   }
 
   function removeReplyItemsEvent(e) {
@@ -325,7 +327,6 @@
 
   function removeDefaults() {
     removeScrollbarBtns();
-    removeThreadWarning();
   }
 
   async function initSettings() {
