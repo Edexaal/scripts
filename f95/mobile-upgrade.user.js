@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.3
+// @version     1.4
 // @author      Edexal
 // @description Improves mobile experience
 // @homepageURL https://sleazyfork.org/en/scripts/546346-f95-mobile-upgrade
@@ -110,9 +110,50 @@
     return location.pathname.includes('sam/latest_alpha');
   }
 
+  function createCustomScrollBtns(topTargets,bottomTargets) {
+    const uixFabBar = Edexal.newEl({element:'div',class: ['uix_fabBar','uix_fabBar--active']});
+
+    const divScrollButtons = Edexal.newEl({element:'div',class:['u-scrollButtons','js-scrollButtons'],"data-trigger-type": "both"});
+
+    const aTopButton = Edexal.newEl({element:'a',href:"#top", class:['button--scroll','ripple-JsOnly','button']});
+    const spanTopText = Edexal.newEl({element:'span',class:['button-text']});
+    const iTop = Edexal.newEl({element:'i',class:['fa--xf','far','fa-arrow-up'], "aria-hidden":"true"});
+    const spanTopSR = Edexal.newEl({element:'span',class:['u-srOnly'],text:'Top'});
+
+    const aBottomButton = Edexal.newEl({element:'a',href:'#footer',class: ['button--scroll','ripple-JsOnly','button']});
+    const spanBottomText = Edexal.newEl({element:'span',class:['button-text']});
+    const iBottom = Edexal.newEl({element:'i',class:['fa--xf','far','fa-arrow-down'], "aria-hidden":"true"});
+    const spanBottomSR = Edexal.newEl({element:'span',class:['u-srOnly'],text:'Bottom'});
+
+    Edexal.onEv(aTopButton,'click', (e) => {
+      e.preventDefault();
+      const target = document.querySelector(topTargets[0]) ?? document.querySelector(topTargets[1]);
+      target.scrollIntoView({
+        block: 'start'
+      });
+    });
+    Edexal.onEv(aBottomButton,'click', (e) => {
+      e.preventDefault();
+      const target = document.querySelector(bottomTargets[0]) ?? document.querySelector(bottomTargets[1]);
+      target.scrollIntoView({
+        block: 'end'
+      });
+    });
+    spanTopText.append(iTop,spanTopSR);
+    aTopButton.append(spanTopText);
+    divScrollButtons.append(aTopButton);
+
+    spanBottomText.append(iBottom,spanBottomSR);
+    aBottomButton.append(spanBottomText);
+    divScrollButtons.append(aBottomButton);
+
+    uixFabBar.append(divScrollButtons);
+    return uixFabBar;
+  }
+
   function setScrollBtn(selector, targetSelector, scrollType, altTargetSelector) {
     const scrollBtn = document.querySelector(selector);
-    if (!scrollBtn) return;
+    if (!scrollBtn) return false;
     scrollBtn.removeAttribute('data-xf-click');
     Edexal.onEv(scrollBtn,'click', (e) => {
       e.preventDefault();
@@ -121,33 +162,47 @@
         block: scrollType
       });
     });
+    return true;
   }
 
   function initScrollBtns() {
-    setScrollBtn('.uix_fabBar .u-scrollButtons a:last-child',
-      'div.block-outer:nth-child(4) > div:nth-child(1) > nav:nth-child(1) > div:nth-child(2)',
+    const bottomTargets = ['div.block-outer:nth-child(4) > div:nth-child(1) > nav:nth-child(1) > div:nth-child(2)','#footer.p-footer'];
+    const topTargets = ['.block--messages','#top'];
+    const hasNewBtn = setScrollBtn('.uix_fabBar .u-scrollButtons a:last-child',
+      bottomTargets[0],
       'end',
-      '#footer');
-    setScrollBtn('.uix_fabBar .u-scrollButtons a:first-child',
-      '.block--messages',
-      'start',
-      '#top');
+      bottomTargets[1]);
+    if (hasNewBtn){
+      setScrollBtn('.uix_fabBar .u-scrollButtons a:first-child',
+        topTargets[0],
+        'start',
+        topTargets[1]);
+    } else {
+      const footer = document.querySelector("#footer.p-footer");
+      const scrollBtnDiv = createCustomScrollBtns(topTargets,bottomTargets);
+      footer.insertAdjacentElement('afterend',scrollBtnDiv);
+    }
   }
 
-  function assignTabItem(name, pathURL, oldFaIcons, newFaIcons, itemPos) {
+  function assignTabItem(name, pathURL, newFaIcons, itemPos) {
     const tabItem = document.querySelector(`.uix_tabBar .uix_tabList .uix_tabItem:nth-of-type(${itemPos})`);
     if (!tabItem) return;
     tabItem.href = pathURL;
     const icon = tabItem.querySelector('i');
-    icon.classList.remove(...oldFaIcons);
+    const classValues = icon.classList.values();
+    for (const classVal of classValues) {
+      if (classVal.startsWith('far') || classVal.startsWith('fa-')){
+        icon.classList.remove(classVal);
+      }
+    }
     icon.classList.add(...newFaIcons);
     const labelDiv = tabItem.querySelector('div');
     labelDiv.textContent = name;
   }
 
   function initTabItems() {
-    assignTabItem('Latest Updates', '/sam/latest_alpha/', ['far', 'fa-comment-alt-exclamation'], ['far', 'fa-gem'], 2);
-    assignTabItem('Bookmarks', '/account/bookmarks/', ['far', 'fa-user'], ['far', 'fa-bookmark'], 1);
+    assignTabItem('Latest Updates', '/sam/latest_alpha/', ['far', 'fa-gem'], 1);
+    assignTabItem('Bookmarks', '/account/bookmarks/', ['far', 'fa-bookmark'], 2);
   }
 
   /*Removes all effects from tiles on Latest Update Page
@@ -259,7 +314,7 @@
 
   function run() {
     //Run only on mobile
-    if (window.innerWidth >= 480) return;
+    if (window.innerWidth > 480) return;
     initTabItems();
     initScrollBtns();
     initReaction();
