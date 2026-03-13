@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.4
+// @version     1.4.1
 // @author      Edexal
 // @description Improves mobile experience
 // @homepageURL https://sleazyfork.org/en/scripts/546346-f95-mobile-upgrade
@@ -14,8 +14,9 @@
 // ==/UserScript==
 (async () => {
   /*NOTE: F95 uses FontAwesome v5.15.4*/
+  const MAX_SCREEN_WIDTH = 480;
   Edexal.addCSS(`
-@media (width < 480px) {
+@media (width <= ${MAX_SCREEN_WIDTH}px) {
   /*Fixes 'Your account' navigation menu*/ 
   #js-SideNavOcm .uix_sidebar--scroller {
     margin-top: 149px;
@@ -314,7 +315,7 @@
 
   function run() {
     //Run only on mobile
-    if (window.innerWidth > 480) return;
+    if (window.innerWidth > MAX_SCREEN_WIDTH) return;
     initTabItems();
     initScrollBtns();
     initReaction();
