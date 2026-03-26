@@ -8,7 +8,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.2.0
+// @version     1.2.1
 // @author      Edexal
 // @description Use markdown syntax in threads, posts, and conversations.
 // @homepageURL https://sleazyfork.org/en/scripts/566411-f95-markdown
@@ -79,12 +79,12 @@
     return {tags, regex, typeRegex, altRegex, altReplace, indexes: []};
   }
 
-  function initCodeFormat(tags, regex, typeRegex, replaceStr) {
-    return {tags, regex, typeRegex, indexes: [], tagIndex: 0, replaceStr};
+  function initSpoilerFormat(tags,regex,startRegex,typeRegex,endBlockStr) {
+    return {tags, regex,startRegex, typeRegex, endBlockStr,indexes: []};
   }
 
-  function initColorFormat(tags, regex, colorRegex) {
-    return {tags, regex, colorRegex};
+  function initColorFormat(tags, startRegex,endRegex, colorRegex) {
+    return {tags, startRegex, endRegex,colorRegex};
   }
 
   function defaultFormats() {
@@ -96,15 +96,15 @@
       inlineCode: initFormat(["ICODE"], /(?<![\\`])`(?!``)/),
       link: initSubFormat(/\[(.+?)]\((.+?)\)/g, '<a href="$2">$1</a>'),
       blockQuote: initQuoteFormat(["QUOTE"], /^(?:\s|&nbsp;)*(?:>|&gt;)(?:\s|&nbsp;)*/, /^(?:\s|&nbsp;)*(?:>|&gt;){2,}(?:\s|&nbsp;)*(.+)/, /^(?:\s|&nbsp;)*(?:>|&gt;)(?:\s|&nbsp;)*(?!.+)/, "&nbsp;"),
-      code: initCodeFormat(["CODE"], /^(?:\s|&nbsp;)*```/, /^(?:\s|&nbsp;)*```(.+)/),
+      code: initSpoilerFormat(["CODE"], /^(?:\s|&nbsp;)*```/,/^(?:\s|&nbsp;)*```/, /^(?:\s|&nbsp;)*```(.+)/, "```"),
       header1: initHeader(["SIZE=7", "SIZE"], /^(?:\s|&nbsp;)*(?<!\\)#(?!#)(?:\s|&nbsp;)*/),
       header2: initHeader(["SIZE=6", "SIZE"], /^(?:\s|&nbsp;)*(?<!\\)##(?!#)(?:\s|&nbsp;)*/),
       header3: initHeader(["SIZE=5", "SIZE"], /^(?:\s|&nbsp;)*(?<!\\)###(?:\s|&nbsp;)*/),
       list: initListFormat(["LIST", "LIST=1", "*"], /^(?:\s|&nbsp;)*-(?:\s|&nbsp;)*/, /^(?:\s|&nbsp;)*\d+\.(?:\s|&nbsp;)*/),
-      spoiler: initCodeFormat(["SPOILER"], /^(?:\s|&nbsp;)*:{3}(?:\s|&nbsp;)*(?:spoiler)?/, /^(?:\s|&nbsp;)*:{3}(?:\s|&nbsp;)*spoiler=(.+)/, ":::"),
+      spoiler: initSpoilerFormat(["SPOILER"], /^(?:\s|&nbsp;)*:{3}(?:\s|&nbsp;)*(?:spoiler)?/,/^(?:\s|&nbsp;)*:{3}(?:\s|&nbsp;)*spoiler/, /^(?:\s|&nbsp;)*:{3}(?:\s|&nbsp;)*spoiler=(.+)/,":::"),
       inlineSpoiler: initFormat(["ISPOILER"], /(?<!\\)\|\|/),
-      alignment: initCodeFormat(["RIGHT", "CENTER"], /^(?:\s|&nbsp;)*(?:&lt;){3}(?:\s|&nbsp;)*(?:right|center)?/, /^(?:\s|&nbsp;)*(?:&lt;){3}(?:\s|&nbsp;)*(right|center)/),
-      color: initColorFormat(["COLOR"], /(?<!\\)%(#[a-fA-F0-9]{6})?%/, /.*%(#[a-fA-F0-9]{6})%.*/),
+      alignment: initSpoilerFormat(["RIGHT", "CENTER"], /^(?:\s|&nbsp;)*(?:&lt;){3}(?:\s|&nbsp;)*(?:right|center)?/,/^(?:\s|&nbsp;)*(?:&lt;){3}(?:\s|&nbsp;)*(?:right|center)/, /^(?:\s|&nbsp;)*(?:&lt;){3}(?:\s|&nbsp;)*(right|center)/,"&lt;&lt;&lt;"),
+      color: initColorFormat(["COLOR"], /(?<!\\)%#[a-fA-F0-9]{6}%/, /(?<!\\)%{2}/,/%(#[a-fA-F0-9]{6})%/),
     };
   }
 
@@ -132,49 +132,39 @@
     return total;
   }
 
+  function blockParse(format) {
+    const textBoxEl = document.querySelector("div.bbWrapper div[spellcheck][class*=fr-element]");
+    for (let i = 0; i < format.indexes.length; i++) {
+      let type = getType(format, textBoxEl, i);
+      if (type || !!textBoxEl.children[format.indexes[i]].innerHTML.match(format.startRegex)) {
+        let tag = `[${format.tags[0]}${type ? `=${type}` : ""}]`;
+        textBoxEl.children[format.indexes[i]].outerHTML = `<p>${tag}</p>`;
+      }else {
+        let tag = `[/${format.tags[0]}]`;
+        let lineTxt = textBoxEl.children[format.indexes[i]].innerHTML;
+        lineTxt = lineTxt.replace(format.endBlockStr,"");
+        textBoxEl.children[format.indexes[i]].outerHTML = `<p>${lineTxt}${tag}</p>`;
+      }
+    }
+    format.indexes.length = 0;
+  }
   function alignParse(format) {
     const textBoxEl = document.querySelector("div.bbWrapper div[spellcheck][class*=fr-element]");
     for (let i = 0; i < format.indexes.length; i++) {
       format.type = getType(format, textBoxEl, i) ?? format.type;
       const alignTag = format.type === "right" ? format.tags[0] : format.tags[1];
-      textBoxEl.children[format.indexes[i]].outerHTML = "<p></p>";
-      if (!format.tagIndex) {
-        let lineTxt = textBoxEl.children[format.indexes[i] + 1].innerHTML;
-        lineTxt = `[${alignTag}]${lineTxt}`;
-        textBoxEl.children[format.indexes[i] + 1].outerHTML = `<p>${lineTxt}</p>`;
-        format.tagIndex = 1;
-      } else {
+      if (!!textBoxEl.children[format.indexes[i]].innerHTML.match(format.startRegex)) {
+        let tag = `[${alignTag}]`;
+        textBoxEl.children[format.indexes[i]].outerHTML = `<p>${tag}</p>`;
+      }else {
+        let tag = `[/${alignTag}]`;
         let lineTxt = textBoxEl.children[format.indexes[i]].innerHTML;
-        lineTxt = `${lineTxt}[/${alignTag}]`;
-        textBoxEl.children[format.indexes[i]].outerHTML = `<p>${lineTxt}</p>`;
-        format.tagIndex = 0;
+        lineTxt = lineTxt.replace(format.endBlockStr,"");
+        textBoxEl.children[format.indexes[i]].outerHTML = `<p>${lineTxt}${tag}</p>`;
       }
     }
     format.indexes.length = 0;
   }
-
-  function codeParse(format) {
-    const textBoxEl = document.querySelector("div.bbWrapper div[spellcheck][class*=fr-element]");
-    for (let i = 0; i < format.indexes.length; i++) {
-      let type = getType(format, textBoxEl, i);
-      // Removes ```
-      if (!format.tagIndex) {
-        textBoxEl.children[format.indexes[i]].outerHTML = "<p></p>";
-        let lineTxt = textBoxEl.children[format.indexes[i] + 1].innerHTML;
-        lineTxt = `[${format.tags[0]}${type ? `=${type}` : ""}]${lineTxt}`;
-        textBoxEl.children[format.indexes[i] + 1].outerHTML = `<p>${lineTxt}</p>`;
-        format.tagIndex = 1;
-      } else {
-        textBoxEl.children[format.indexes[i]].outerHTML = format.replaceStr ? textBoxEl.children[format.indexes[i]].outerHTML.replace(format.replaceStr, "") : "<p></p>";
-        let lineTxt = textBoxEl.children[format.indexes[i]].innerHTML;
-        lineTxt = `${lineTxt}[/${format.tags[0]}]`;
-        textBoxEl.children[format.indexes[i]].outerHTML = `<p>${lineTxt}</p>`;
-        format.tagIndex = 0;
-      }
-    }
-    format.indexes.length = 0;
-  }
-
   function quoteParse() {
     const textBoxEl = document.querySelector("div.bbWrapper div[spellcheck][class*=fr-element]");
     const format = formats["blockQuote"];
@@ -295,26 +285,11 @@
   }
 
   function colorParse(lineTxt, format) {
-    while (lineTxt.search(format.regex) !== -1) {
-      if (!format.tagIndex) {
-        format.type = lineTxt.replace(format.colorRegex, "$1");
-        lineTxt = lineTxt.replace(format.regex, `[${format.tags[0]}=${format.type}]`);
-        format.tagIndex = 1;
-      } else {
-        lineTxt = lineTxt.replace(format.regex, `[/${format.tags[0]}]`);
-        format.tagIndex = 0;
-      }
-    }
-    if (!format.type) {
-      return lineTxt;
-    }
-    // Make sure there's an equal number of open to closed tag ratio.
-    let openTagsAmount = lineTxt.replaceAll(`[${format.tags[0]}=${format.type}]`, '@A@').match(/@A@/g)?.length ?? 0;
-    let closedTagsAmount = lineTxt.replaceAll(`[/${format.tags[0]}]`, '@B@').match(/@B@/g)?.length ?? 0;
-    if (openTagsAmount > closedTagsAmount) {
-      lineTxt = `${lineTxt}[/${format.tags[0]}]`;
-    } else if (closedTagsAmount > openTagsAmount) {
-      lineTxt = `[${format.tags[0]}=${format.type}]${lineTxt}`;
+    while (!!lineTxt.match(format.startRegex) || !!lineTxt.match(format.endRegex))
+    if (!!lineTxt.match(format.startRegex)) {
+      lineTxt = lineTxt.replace(format.colorRegex,`[COLOR=$1]`);
+    } else if (!!lineTxt.match(format.endRegex)){
+      lineTxt = lineTxt.replace(format.endRegex,"[/COLOR]");
     }
     return lineTxt;
   }
@@ -388,8 +363,8 @@
       lastIndex = i;
     }
     quoteParse();
-    codeParse(formats["code"]);
-    codeParse(formats["spoiler"]);
+    blockParse(formats["code"]);
+    blockParse(formats["spoiler"]);
     alignParse(formats["alignment"]);
     textBoxEl.children[lastIndex].outerHTML = "<p>" + endListParse(textBoxEl.children[lastIndex].innerHTML, formats["list"]) + "</p>";
   }
@@ -497,8 +472,8 @@
 <pre><code>// Syntax: **&lt;text&gt;**
 This is **a dummy** text.
 
-// Can be escaped using \`\` to prevent parsing.
-This is \**a dummy\** text
+// Can be escaped using \`\\\` to prevent parsing.
+This is \\**a dummy\\** text
 </code></pre>
 <hr>
 <h3 id="md-italics">Italic</h3>
@@ -508,8 +483,8 @@ This is \**a dummy\** text
 <pre><code>// Syntax: _&lt;text&gt;_
 This is _a dummy_ text.
 
-// Can be escaped using \`\` to prevent parsing.
-This is \_a dummy\_ text.
+// Can be escaped using \`\\\` to prevent parsing.
+This is \\_a dummy\\_ text.
 </code></pre>
 <hr>
 <h3 id="md-strikethrough">Strikethrough</h3>
@@ -519,8 +494,8 @@ This is \_a dummy\_ text.
 <pre><code>// Syntax: ~~&lt;text&gt;~~
 This is ~~a dummy~~ text.
 
-// Can be escaped using \`\` to prevent parsing.
-This is \~~a dummy\~~ text.
+// Can be escaped using \`\\\` to prevent parsing.
+This is \\~~a dummy\\~~ text.
 </code></pre>
 <hr>
 <h3 id="md-inline-code">Inline Code</h3>
@@ -530,8 +505,8 @@ This is \~~a dummy\~~ text.
 <pre><code>// Syntax: \`&lt;text&gt;\`
 This is \`a dummy\` text.
 
-// Can be escaped using \`\` to prevent parsing.
-This is \`a dummy\` text.
+// Can be escaped using \`\\\` to prevent parsing.
+This is \\\`a dummy\\\` text.
 </code></pre>
 <hr>
 <h3 id="md-headings">Headings</h3>
@@ -627,8 +602,8 @@ def func(x,y):
 <pre><code>// Syntax: __&lt;text&gt;__
 This is __a dummy__ text.
 
-// Can be escaped using \`\` to prevent parsing.
-This is \__a dummy\__ text.
+// Can be escaped using \`\\\` to prevent parsing.
+This is \\__a dummy\\__ text.
 </code></pre>
 <hr>
 <h3 id="md-named-quotes">Named Quotes</h3>
@@ -651,8 +626,8 @@ This is \__a dummy\__ text.
 <pre><code>// Syntax: ||&lt;text&gt;||
 This is ||a dummy|| text.
 
-// Can be escaped using \`\` to prevent parsing.
-This is \||a dummy\|| text.
+// Can be escaped using \`\\\` to prevent parsing.
+This is \\||a dummy\\|| text.
 </code></pre>
 <hr>
 <h3 id="md-spoiler">Spoiler</h3>
@@ -706,6 +681,10 @@ This is a dummy text.
 // %&lt;#six-digit hexidecimal color code&gt;% &lt;text&gt; %%
 
 This is %#ff03ff%a dummy%% text. 
+
+// Escape using '\\%' on the end and start tags.
+
+This is \\%#ff03ff%a dummy\\%% text. 
 </code></pre>
     `;
   }
