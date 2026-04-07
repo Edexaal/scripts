@@ -7,7 +7,7 @@
 // @grant       GM.getValues
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0.0
+// @version     1.0.1
 // @author      Edexal
 // @description Visit bookmark page with the last tag filter selected.
 // @homepageURL https://sleazyfork.org/en/scripts/571484-resume-bookmark
@@ -38,6 +38,9 @@
         return;
       }
       await GM.setValue("was_bookmark", true);
+      if (location.search.includes("label=")){
+          return;
+      }
       if (storage.label) {
         location.replace(location.search === "" ? `${location.href}?label=${storage.label}` : `${location.href}&label=${storage.label}`);
       }
