@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.4.1
+// @version     1.4.2
 // @author      Edexal
 // @description Improves mobile experience
 // @homepageURL https://sleazyfork.org/en/scripts/546346-f95-mobile-upgrade
@@ -41,7 +41,8 @@
     & .u-scrollButtons {
       position: inherit;
       gap:10px;
-      bottom: 55px;
+      bottom: 60px;
+      left: 45vw;
       &.is-active {
         opacity: 0.6;
       }
@@ -97,6 +98,13 @@
   }
   .has-reaction .reaction-text {
     margin-left: 0;
+  }
+  /*Fixes: Some game threads sticky header bar is messed up. Ex: Jujutsu Trainer*/
+  div.uix_headerContainer div.p-navSticky {
+      width: 100vw !important;
+      &.is-sticky {
+          right: auto !important;
+      }
   }
 }`);
   const SELECTOR = {
@@ -315,7 +323,7 @@
 
   function run() {
     //Run only on mobile
-    if (window.innerWidth > MAX_SCREEN_WIDTH) return;
+    if (document.querySelector("html").clientWidth > MAX_SCREEN_WIDTH) return;
     initTabItems();
     initScrollBtns();
     initReaction();
