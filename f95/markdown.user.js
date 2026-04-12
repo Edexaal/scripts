@@ -5,10 +5,11 @@
 // @match       *://f95zone.to/forums/*/post-thread
 // @match       *://f95zone.to/conversations/*
 // @match       *://f95zone.to/markdown
+// @match       *://f95zone.to/account/signature
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.2.1
+// @version     1.2.2
 // @author      Edexal
 // @description Use markdown syntax in threads, posts, and conversations.
 // @homepageURL https://sleazyfork.org/en/scripts/566411-f95-markdown
