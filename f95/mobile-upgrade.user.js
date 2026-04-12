@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.4.2
+// @version     1.5.0
 // @author      Edexal
 // @description Improves mobile experience
 // @homepageURL https://sleazyfork.org/en/scripts/546346-f95-mobile-upgrade
@@ -321,12 +321,29 @@
     setRemoval();
   }
 
+  function removeBookmarkFilter() {
+      setTimeout(() => {
+          const filterMenuActive = document.querySelector("div.menu[id].is-active");
+          if (!filterMenuActive)return;
+          const filterBtnClose =  document.querySelector(".select2-selection__choice__remove");
+          if (!filterBtnClose) return;
+          filterBtnClose.click();
+      },200);
+  }
+  
+  function initBookmarkLabel() {
+      if (!location.href.includes("account/bookmarks")) return;
+      const filtersLink = document.querySelector(".filterBar-menuTrigger");
+      filtersLink.addEventListener("click",removeBookmarkFilter);
+  }
+
   function run() {
     //Run only on mobile
     if (document.querySelector("html").clientWidth > MAX_SCREEN_WIDTH) return;
     initTabItems();
     initScrollBtns();
     initReaction();
+    initBookmarkLabel();
     setTimeout(removeTileHoverEffects, 2000);
   }
 
