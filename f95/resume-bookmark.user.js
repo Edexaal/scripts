@@ -7,7 +7,7 @@
 // @grant       GM.getValues
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0.1
+// @version     1.1.0
 // @author      Edexal
 // @description Visit bookmark page with the last tag filter selected.
 // @homepageURL https://sleazyfork.org/en/scripts/571484-resume-bookmark
@@ -28,9 +28,24 @@
       await GM.setValue("label", null);
     });
   }
+  function removeBookmarkFilter() {
+    setTimeout(() => {
+      const filterMenuActive = document.querySelector("div.menu[id].is-active");
+      if (!filterMenuActive)return;
+      const filterBtnClose =  document.querySelector(".select2-selection__choice__remove");
+      if (!filterBtnClose) return;
+      filterBtnClose.click();
+    },200);
+  }
+
+  function initBookmarkLabel() {
+    const filtersLink = document.querySelector(".filterBar-menuTrigger");
+    filtersLink.addEventListener("click",removeBookmarkFilter);
+  }
 
   async function run() {
     if (location.href.includes("account/bookmarks")) {
+      initBookmarkLabel();
       addBtnEvent();
       addTagRemoveBtnEvent("div.filterBar ul.filterBar-filters a.filterBar-filterToggle");
       const storage = await GM.getValues({was_bookmark: false, label: null});
