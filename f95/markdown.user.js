@@ -9,7 +9,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.2.3
+// @version     1.2.4
 // @author      Edexal
 // @description Use markdown syntax in threads, posts, and conversations.
 // @homepageURL https://sleazyfork.org/en/scripts/566411-f95-markdown
@@ -461,6 +461,8 @@
     document.querySelector("div.uix_headerContainer").remove();
     // Removes footer
     document.querySelector("footer").remove();
+    // Removes arrow scroll buttons
+    document.querySelector(".uix_fabBar").remove();
     // Change site title
     document.querySelector("head title").textContent = "F95 Markdown Syntax";
     const titleEl = document.querySelector("h1.p-title-value");
