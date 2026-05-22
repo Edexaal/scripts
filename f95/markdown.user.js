@@ -9,7 +9,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.2.2
+// @version     1.2.3
 // @author      Edexal
 // @description Use markdown syntax in threads, posts, and conversations.
 // @homepageURL https://sleazyfork.org/en/scripts/566411-f95-markdown
@@ -80,12 +80,12 @@
     return {tags, regex, typeRegex, altRegex, altReplace, indexes: []};
   }
 
-  function initSpoilerFormat(tags,regex,startRegex,typeRegex,endBlockStr) {
-    return {tags, regex,startRegex, typeRegex, endBlockStr,indexes: []};
+  function initSpoilerFormat(tags, regex, startRegex, typeRegex, endBlockStr) {
+    return {tags, regex, startRegex, typeRegex, endBlockStr, indexes: []};
   }
 
-  function initColorFormat(tags, startRegex,endRegex, colorRegex) {
-    return {tags, startRegex, endRegex,colorRegex};
+  function initColorFormat(tags, startRegex, endRegex, colorRegex) {
+    return {tags, startRegex, endRegex, colorRegex};
   }
 
   function defaultFormats() {
@@ -97,15 +97,15 @@
       inlineCode: initFormat(["ICODE"], /(?<![\\`])`(?!``)/),
       link: initSubFormat(/\[(.+?)]\((.+?)\)/g, '<a href="$2">$1</a>'),
       blockQuote: initQuoteFormat(["QUOTE"], /^(?:\s|&nbsp;)*(?:>|&gt;)(?:\s|&nbsp;)*/, /^(?:\s|&nbsp;)*(?:>|&gt;){2,}(?:\s|&nbsp;)*(.+)/, /^(?:\s|&nbsp;)*(?:>|&gt;)(?:\s|&nbsp;)*(?!.+)/, "&nbsp;"),
-      code: initSpoilerFormat(["CODE"], /^(?:\s|&nbsp;)*```/,/^(?:\s|&nbsp;)*```/, /^(?:\s|&nbsp;)*```(.+)/, "```"),
+      code: initSpoilerFormat(["CODE"], /^(?:\s|&nbsp;)*```/, /^(?:\s|&nbsp;)*```/, /^(?:\s|&nbsp;)*```(.+)/, "```"),
       header1: initHeader(["SIZE=7", "SIZE"], /^(?:\s|&nbsp;)*(?<!\\)#(?!#)(?:\s|&nbsp;)*/),
       header2: initHeader(["SIZE=6", "SIZE"], /^(?:\s|&nbsp;)*(?<!\\)##(?!#)(?:\s|&nbsp;)*/),
       header3: initHeader(["SIZE=5", "SIZE"], /^(?:\s|&nbsp;)*(?<!\\)###(?:\s|&nbsp;)*/),
       list: initListFormat(["LIST", "LIST=1", "*"], /^(?:\s|&nbsp;)*-(?:\s|&nbsp;)*/, /^(?:\s|&nbsp;)*\d+\.(?:\s|&nbsp;)*/),
-      spoiler: initSpoilerFormat(["SPOILER"], /^(?:\s|&nbsp;)*:{3}(?:\s|&nbsp;)*(?:spoiler)?/,/^(?:\s|&nbsp;)*:{3}(?:\s|&nbsp;)*spoiler/, /^(?:\s|&nbsp;)*:{3}(?:\s|&nbsp;)*spoiler=(.+)/,":::"),
+      spoiler: initSpoilerFormat(["SPOILER"], /^(?:\s|&nbsp;)*:{3}(?:\s|&nbsp;)*(?:spoiler)?/, /^(?:\s|&nbsp;)*:{3}(?:\s|&nbsp;)*spoiler/, /^(?:\s|&nbsp;)*:{3}(?:\s|&nbsp;)*spoiler=(.+)/, ":::"),
       inlineSpoiler: initFormat(["ISPOILER"], /(?<!\\)\|\|/),
-      alignment: initSpoilerFormat(["RIGHT", "CENTER"], /^(?:\s|&nbsp;)*(?:&lt;){3}(?:\s|&nbsp;)*(?:right|center)?/,/^(?:\s|&nbsp;)*(?:&lt;){3}(?:\s|&nbsp;)*(?:right|center)/, /^(?:\s|&nbsp;)*(?:&lt;){3}(?:\s|&nbsp;)*(right|center)/,"&lt;&lt;&lt;"),
-      color: initColorFormat(["COLOR"], /(?<!\\)%#[a-fA-F0-9]{6}%/, /(?<!\\)%{2}/,/%(#[a-fA-F0-9]{6})%/),
+      alignment: initSpoilerFormat(["RIGHT", "CENTER"], /^(?:\s|&nbsp;)*(?:&lt;){3}(?:\s|&nbsp;)*(?:right|center)?/, /^(?:\s|&nbsp;)*(?:&lt;){3}(?:\s|&nbsp;)*(?:right|center)/, /^(?:\s|&nbsp;)*(?:&lt;){3}(?:\s|&nbsp;)*(right|center)/, "&lt;&lt;&lt;"),
+      color: initColorFormat(["COLOR"], /(?<!\\)%#[a-fA-F0-9]{6}%/, /(?<!\\)%{2}/, /%(#[a-fA-F0-9]{6})%/),
     };
   }
 
@@ -140,15 +140,16 @@
       if (type || !!textBoxEl.children[format.indexes[i]].innerHTML.match(format.startRegex)) {
         let tag = `[${format.tags[0]}${type ? `=${type}` : ""}]`;
         textBoxEl.children[format.indexes[i]].outerHTML = `<p>${tag}</p>`;
-      }else {
+      } else {
         let tag = `[/${format.tags[0]}]`;
         let lineTxt = textBoxEl.children[format.indexes[i]].innerHTML;
-        lineTxt = lineTxt.replace(format.endBlockStr,"");
+        lineTxt = lineTxt.replace(format.endBlockStr, "");
         textBoxEl.children[format.indexes[i]].outerHTML = `<p>${lineTxt}${tag}</p>`;
       }
     }
     format.indexes.length = 0;
   }
+
   function alignParse(format) {
     const textBoxEl = document.querySelector("div.bbWrapper div[spellcheck][class*=fr-element]");
     for (let i = 0; i < format.indexes.length; i++) {
@@ -157,15 +158,16 @@
       if (!!textBoxEl.children[format.indexes[i]].innerHTML.match(format.startRegex)) {
         let tag = `[${alignTag}]`;
         textBoxEl.children[format.indexes[i]].outerHTML = `<p>${tag}</p>`;
-      }else {
+      } else {
         let tag = `[/${alignTag}]`;
         let lineTxt = textBoxEl.children[format.indexes[i]].innerHTML;
-        lineTxt = lineTxt.replace(format.endBlockStr,"");
+        lineTxt = lineTxt.replace(format.endBlockStr, "");
         textBoxEl.children[format.indexes[i]].outerHTML = `<p>${lineTxt}${tag}</p>`;
       }
     }
     format.indexes.length = 0;
   }
+
   function quoteParse() {
     const textBoxEl = document.querySelector("div.bbWrapper div[spellcheck][class*=fr-element]");
     const format = formats["blockQuote"];
@@ -287,11 +289,11 @@
 
   function colorParse(lineTxt, format) {
     while (!!lineTxt.match(format.startRegex) || !!lineTxt.match(format.endRegex))
-    if (!!lineTxt.match(format.startRegex)) {
-      lineTxt = lineTxt.replace(format.colorRegex,`[COLOR=$1]`);
-    } else if (!!lineTxt.match(format.endRegex)){
-      lineTxt = lineTxt.replace(format.endRegex,"[/COLOR]");
-    }
+      if (!!lineTxt.match(format.startRegex)) {
+        lineTxt = lineTxt.replace(format.colorRegex, `[COLOR=$1]`);
+      } else if (!!lineTxt.match(format.endRegex)) {
+        lineTxt = lineTxt.replace(format.endRegex, "[/COLOR]");
+      }
     return lineTxt;
   }
 
@@ -344,6 +346,30 @@
     return lineTxt;
   }
 
+  function getOpenCloseTags(lineEl) {
+    let openingTag = '<p>';
+    let closeTag = '</p>';
+    if (lineEl.outerHTML.includes("text-align: center")) {
+      openingTag = '<p style="text-align: center;">';
+      closeTag = '</p>';
+    } else if (lineEl.outerHTML.includes("text-align: right")) {
+      openingTag = '<p style="text-align: right;">';
+      closeTag = '</p>';
+    } else if (lineEl.nodeName === "UL"){
+      openingTag = '<ul>';
+      closeTag = '</ul>';
+    } else if(lineEl.nodeName === "OL"){
+      openingTag = '<ol>';
+      closeTag = '</ol>';
+    }else if (lineEl.nodeName === "LI") {
+      let listType = lineEl.getAttribute("data-xf-list-type");
+      openingTag = `<li data-xf-list-type=${listType}`;
+      closeTag = '</li>';
+    }
+    return [openingTag, closeTag];
+
+  }
+
   function parseMarkdown(textBoxEl) {
     formats = defaultFormats();
     let lastIndex = 0;
@@ -352,14 +378,7 @@
       if (lineEl.innerHTML === "<br>") {
         continue;
       }
-      let openingTag = "<p>";
-      let closingTag = "</p>";
-      if (lineEl.outerHTML.includes("text-align: center")) {
-        openingTag = '<p style="text-align: center;">';
-      } else if (lineEl.outerHTML.includes("text-align: right")) {
-        openingTag = '<p style="text-align: right;">';
-      }
-
+      const [openingTag, closingTag] = getOpenCloseTags(lineEl);
       lineEl.outerHTML = openingTag + parse(lineEl.innerHTML, i) + closingTag;
       lastIndex = i;
     }
@@ -423,14 +442,15 @@
     button.addEventListener("click", helpBtnClickEvent);
     return button;
   }
+
   function createToolbarSeparator() {
-    return Edexal.newEl({element:"div",role:"separator","aria-orientation":"vertical"});
+    return Edexal.newEl({element: "div", role: "separator", "aria-orientation": "vertical"});
   }
 
   function applyhelpBtn(toolbarEl) {
     const helpBtn = createhelpToolbarBtn();
     const separatorEl = createToolbarSeparator();
-    toolbarEl.append(separatorEl,helpBtn);
+    toolbarEl.append(separatorEl, helpBtn);
   }
 
   function markdownPage() {
@@ -700,7 +720,7 @@ This is \\%#ff03ff%a dummy\\%% text.
     }, 1000);
     // Edit Posts
     buttonObserver("div.block-container[data-lb-id]");
-  }else {
+  } else {
     Edexal.addCSS(CSS_MARKDOWN_PAGE);
     markdownPage();
   }
