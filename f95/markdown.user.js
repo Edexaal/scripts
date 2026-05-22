@@ -9,7 +9,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.2.4
+// @version     1.2.5
 // @author      Edexal
 // @description Use markdown syntax in threads, posts, and conversations.
 // @homepageURL https://sleazyfork.org/en/scripts/566411-f95-markdown
@@ -355,13 +355,13 @@
     } else if (lineEl.outerHTML.includes("text-align: right")) {
       openingTag = '<p style="text-align: right;">';
       closeTag = '</p>';
-    } else if (lineEl.nodeName === "UL"){
+    } else if (lineEl.nodeName === "UL") {
       openingTag = '<ul>';
       closeTag = '</ul>';
-    } else if(lineEl.nodeName === "OL"){
+    } else if (lineEl.nodeName === "OL") {
       openingTag = '<ol>';
       closeTag = '</ol>';
-    }else if (lineEl.nodeName === "LI") {
+    } else if (lineEl.nodeName === "LI") {
       let listType = lineEl.getAttribute("data-xf-list-type");
       openingTag = `<li data-xf-list-type=${listType}`;
       closeTag = '</li>';
@@ -370,12 +370,17 @@
 
   }
 
+  function canSkip(lineEl) {
+    const innerHTML = lineEl.innerHTML;
+    return innerHTML === "<br>" || innerHTML.startsWith("<img");
+  }
+
   function parseMarkdown(textBoxEl) {
     formats = defaultFormats();
     let lastIndex = 0;
     for (let i = 0; i < textBoxEl.children.length; i++) {
       const lineEl = textBoxEl.children[i];
-      if (lineEl.innerHTML === "<br>") {
+      if (canSkip(lineEl)) {
         continue;
       }
       const [openingTag, closingTag] = getOpenCloseTags(lineEl);
