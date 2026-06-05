@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.5.0
+// @version     1.6.0
 // @author      Edexal
 // @description Improves mobile experience
 // @homepageURL https://sleazyfork.org/en/scripts/546346-f95-mobile-upgrade
@@ -106,6 +106,9 @@
           right: auto !important;
       }
   }
+  body {
+    padding-top: inherit !important;
+  }
 }`);
   const SELECTOR = {
     likeBtns: 'a.reaction.actionBar-action',
@@ -119,40 +122,48 @@
     return location.pathname.includes('sam/latest_alpha');
   }
 
-  function createCustomScrollBtns(topTargets,bottomTargets) {
-    const uixFabBar = Edexal.newEl({element:'div',class: ['uix_fabBar','uix_fabBar--active']});
+  function createCustomScrollBtns(topTargets, bottomTargets) {
+    const uixFabBar = Edexal.newEl({element: 'div', class: ['uix_fabBar', 'uix_fabBar--active']});
 
-    const divScrollButtons = Edexal.newEl({element:'div',class:['u-scrollButtons','js-scrollButtons'],"data-trigger-type": "both"});
+    const divScrollButtons = Edexal.newEl({
+      element: 'div',
+      class: ['u-scrollButtons', 'js-scrollButtons'],
+      "data-trigger-type": "both"
+    });
 
-    const aTopButton = Edexal.newEl({element:'a',href:"#top", class:['button--scroll','ripple-JsOnly','button']});
-    const spanTopText = Edexal.newEl({element:'span',class:['button-text']});
-    const iTop = Edexal.newEl({element:'i',class:['fa--xf','far','fa-arrow-up'], "aria-hidden":"true"});
-    const spanTopSR = Edexal.newEl({element:'span',class:['u-srOnly'],text:'Top'});
+    const aTopButton = Edexal.newEl({element: 'a', href: "#top", class: ['button--scroll', 'ripple-JsOnly', 'button']});
+    const spanTopText = Edexal.newEl({element: 'span', class: ['button-text']});
+    const iTop = Edexal.newEl({element: 'i', class: ['fa--xf', 'far', 'fa-arrow-up'], "aria-hidden": "true"});
+    const spanTopSR = Edexal.newEl({element: 'span', class: ['u-srOnly'], text: 'Top'});
 
-    const aBottomButton = Edexal.newEl({element:'a',href:'#footer',class: ['button--scroll','ripple-JsOnly','button']});
-    const spanBottomText = Edexal.newEl({element:'span',class:['button-text']});
-    const iBottom = Edexal.newEl({element:'i',class:['fa--xf','far','fa-arrow-down'], "aria-hidden":"true"});
-    const spanBottomSR = Edexal.newEl({element:'span',class:['u-srOnly'],text:'Bottom'});
+    const aBottomButton = Edexal.newEl({
+      element: 'a',
+      href: '#footer',
+      class: ['button--scroll', 'ripple-JsOnly', 'button']
+    });
+    const spanBottomText = Edexal.newEl({element: 'span', class: ['button-text']});
+    const iBottom = Edexal.newEl({element: 'i', class: ['fa--xf', 'far', 'fa-arrow-down'], "aria-hidden": "true"});
+    const spanBottomSR = Edexal.newEl({element: 'span', class: ['u-srOnly'], text: 'Bottom'});
 
-    Edexal.onEv(aTopButton,'click', (e) => {
+    Edexal.onEv(aTopButton, 'click', (e) => {
       e.preventDefault();
       const target = document.querySelector(topTargets[0]) ?? document.querySelector(topTargets[1]);
       target.scrollIntoView({
         block: 'start'
       });
     });
-    Edexal.onEv(aBottomButton,'click', (e) => {
+    Edexal.onEv(aBottomButton, 'click', (e) => {
       e.preventDefault();
       const target = document.querySelector(bottomTargets[0]) ?? document.querySelector(bottomTargets[1]);
       target.scrollIntoView({
         block: 'end'
       });
     });
-    spanTopText.append(iTop,spanTopSR);
+    spanTopText.append(iTop, spanTopSR);
     aTopButton.append(spanTopText);
     divScrollButtons.append(aTopButton);
 
-    spanBottomText.append(iBottom,spanBottomSR);
+    spanBottomText.append(iBottom, spanBottomSR);
     aBottomButton.append(spanBottomText);
     divScrollButtons.append(aBottomButton);
 
@@ -164,7 +175,7 @@
     const scrollBtn = document.querySelector(selector);
     if (!scrollBtn) return false;
     scrollBtn.removeAttribute('data-xf-click');
-    Edexal.onEv(scrollBtn,'click', (e) => {
+    Edexal.onEv(scrollBtn, 'click', (e) => {
       e.preventDefault();
       const target = document.querySelector(targetSelector) ?? document.querySelector(altTargetSelector);
       target.scrollIntoView({
@@ -175,21 +186,21 @@
   }
 
   function initScrollBtns() {
-    const bottomTargets = ['div.block-outer:nth-child(4) > div:nth-child(1) > nav:nth-child(1) > div:nth-child(2)','#footer.p-footer'];
-    const topTargets = ['.block--messages','#top'];
+    const bottomTargets = ['div.block-outer:nth-child(4) > div:nth-child(1) > nav:nth-child(1) > div:nth-child(2)', '#footer.p-footer'];
+    const topTargets = ['.block--messages', '#top'];
     const hasNewBtn = setScrollBtn('.uix_fabBar .u-scrollButtons a:last-child',
       bottomTargets[0],
       'end',
       bottomTargets[1]);
-    if (hasNewBtn){
+    if (hasNewBtn) {
       setScrollBtn('.uix_fabBar .u-scrollButtons a:first-child',
         topTargets[0],
         'start',
         topTargets[1]);
     } else {
       const footer = document.querySelector("#footer.p-footer");
-      const scrollBtnDiv = createCustomScrollBtns(topTargets,bottomTargets);
-      footer.insertAdjacentElement('afterend',scrollBtnDiv);
+      const scrollBtnDiv = createCustomScrollBtns(topTargets, bottomTargets);
+      footer.insertAdjacentElement('afterend', scrollBtnDiv);
     }
   }
 
@@ -200,7 +211,7 @@
     const icon = tabItem.querySelector('i');
     const classValues = icon.classList.values();
     for (const classVal of classValues) {
-      if (classVal.startsWith('far') || classVal.startsWith('fa-')){
+      if (classVal.startsWith('far') || classVal.startsWith('fa-')) {
         icon.classList.remove(classVal);
       }
     }
@@ -304,7 +315,7 @@
   function addReactionBtnEvents() {
     const reactionBtns = document.querySelectorAll(SELECTOR.reactionBtns);
     for (const reactBtn of reactionBtns) {
-      Edexal.onEv(reactBtn,'click',addReactionBarEvent);
+      Edexal.onEv(reactBtn, 'click', addReactionBarEvent);
     }
   }
 
@@ -322,19 +333,24 @@
   }
 
   function removeBookmarkFilter() {
-      setTimeout(() => {
-          const filterMenuActive = document.querySelector("div.menu[id].is-active");
-          if (!filterMenuActive)return;
-          const filterBtnClose =  document.querySelector(".select2-selection__choice__remove");
-          if (!filterBtnClose) return;
-          filterBtnClose.click();
-      },200);
+    setTimeout(() => {
+      const filterMenuActive = document.querySelector("div.menu[id].is-active");
+      if (!filterMenuActive) return;
+      const filterBtnClose = document.querySelector(".select2-selection__choice__remove");
+      if (!filterBtnClose) return;
+      filterBtnClose.click();
+    }, 200);
   }
-  
+
   function initBookmarkLabel() {
-      if (!location.href.includes("account/bookmarks")) return;
-      const filtersLink = document.querySelector(".filterBar-menuTrigger");
-      filtersLink.addEventListener("click",removeBookmarkFilter);
+    if (!location.href.includes("account/bookmarks")) return;
+    const filtersLink = document.querySelector(".filterBar-menuTrigger");
+    filtersLink.addEventListener("click", removeBookmarkFilter);
+  }
+
+  function removeAdBanner() {
+    const banner = document.querySelector('#tn7k9m2x');
+    banner.remove();
   }
 
   function run() {
@@ -345,6 +361,7 @@
     initReaction();
     initBookmarkLabel();
     setTimeout(removeTileHoverEffects, 2000);
+    removeAdBanner();
   }
 
   run();
