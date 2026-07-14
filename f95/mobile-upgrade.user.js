@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.6.0
+// @version     1.7.0
 // @author      Edexal
 // @description Improves mobile experience
 // @homepageURL https://sleazyfork.org/en/scripts/546346-f95-mobile-upgrade
@@ -350,7 +350,74 @@
 
   function removeAdBanner() {
     const banner = document.querySelector('#tn7k9m2x');
-    banner.remove();
+    if (banner) {
+      banner.remove();
+    }
+  }
+
+
+  const SWIPE_DOWN_CONFIG = {
+    isValidSwipeDuration: false,
+    lastDownYPos: 0,
+    //Time (ms)
+    galleryEventDelay: 200, // Amount of time to for gallery to load so pointer events can be applied.
+    validSwipeTime: 500, // How much time until swiping down is no longer a valid option
+    // User configuration:
+    maxSwipeDistance: 50,// Max swipe distance before its no longer considered a swipe
+
+  };
+  function initImageGallery() {
+    const galleryImages = document.querySelectorAll(".message-threadStarterPost .js-lbImage");
+    if (!galleryImages || !galleryImages.length){
+      return;
+    }
+    galleryImages.forEach(node => {
+      node.addEventListener("click", () => {
+        setTimeout(() => {
+          const gallery = document.querySelector("div.lg");
+          // In case 'close' button is pressed instead
+          gallery.querySelector(".lg-close").addEventListener("click",removeSwipeDownEvents);
+          gallery.addEventListener("pointerdown",swipeStartEvent);
+          gallery.addEventListener("pointerup",swipeEndEvent);
+        },SWIPE_DOWN_CONFIG.galleryEventDelay);
+      });
+    });
+  }
+  function swipeStartEvent(e) {
+    if (e.pointerType !== "touch") {
+      return;
+    }
+    SWIPE_DOWN_CONFIG.isValidSwipeDuration = true;
+    SWIPE_DOWN_CONFIG.lastDownYPos = e.clientY;
+    setTimeout(() => {
+      resetSwipeDownStats();
+    },SWIPE_DOWN_CONFIG.validSwipeTime);
+  }
+
+  function swipeEndEvent(e) {
+    if (e.pointerType !== "touch" || !SWIPE_DOWN_CONFIG.isValidSwipeDuration){
+      return;
+    }
+    if (SWIPE_DOWN_CONFIG.lastDownYPos + SWIPE_DOWN_CONFIG.maxSwipeDistance < e.clientY) {
+      resetSwipeDownStats();
+      const closeBtn = document.querySelector(".lg-close");
+      closeBtn.removeEventListener("click",removeSwipeDownEvents);
+      removeSwipeDownEvents();
+      closeBtn.click();
+    }
+  }
+  function removeSwipeDownEvents(e) {
+    const imageGallery = document.querySelector("div.lg");
+    imageGallery.removeEventListener("pointerdown",swipeStartEvent);
+    imageGallery.removeEventListener("pointerup",swipeEndEvent);
+    // If 'close' button was pressed instead.
+    if (e) {
+      e.target.removeEventListener("click", removeSwipeDownEvents);
+    }
+  }
+  function resetSwipeDownStats() {
+    SWIPE_DOWN_CONFIG.isValidSwipeDuration = false;
+    SWIPE_DOWN_CONFIG.lastDownYPos = 0;
   }
 
   function run() {
@@ -362,6 +429,7 @@
     initBookmarkLabel();
     setTimeout(removeTileHoverEffects, 2000);
     removeAdBanner();
+    initImageGallery();
   }
 
   run();
