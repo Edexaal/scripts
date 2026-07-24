@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.1.1
+// @version     1.1.2
 // @author      Edexal
 // @description On the Latest Update page, search for a game thread by 'TITLE' using the website's search query instead of through the filter drawer.
 // @homepageURL https://sleazyfork.org/en/scripts/543545-f95-game-thread-search
@@ -30,7 +30,7 @@
     background: linear-gradient(to top left, rgb(0 0 0 / 0.2), rgb(0 0 0 / 0.2) 30%, rgb(0 0 0 / 0)) #ba4545;
     color: yellow;
     width: 100%;
-    height: 40px;
+    height: 35px;
     margin: 10px auto 5px auto;
     font-size: 0.875em;
     font-weight: bold;
