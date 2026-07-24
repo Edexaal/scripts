@@ -3,7 +3,7 @@ import {join} from 'node:path';
 
 async function createScript(data, metadata) {
   await mkdir(metadata.SCRIPT_TYPE, {recursive: true});
-  let fileName = metadata.SCRIPT_NAME.replace(/ /, '-').toLowerCase();
+  let fileName = metadata.SCRIPT_NAME.replaceAll(" ", '-').toLowerCase();
   if (fileName.startsWith(metadata.SCRIPT_TYPE)){
     fileName = fileName.slice(metadata.SCRIPT_TYPE.length + 1);
   }
