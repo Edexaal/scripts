@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.7.1
+// @version     1.8.0
 // @author      Edexal
 // @description Improves mobile experience
 // @homepageURL https://sleazyfork.org/en/scripts/546346-f95-mobile-upgrade
@@ -118,12 +118,28 @@
   body {
     padding-top: inherit !important;
   }
+  /*Fixes: Broken sticky bottom navbar on some game threads. Ex: JuJutsu Trainer*/
+  div.uix_tabList {
+    width: 100vw;
+  }
+  /*latest update header*/
+  .headList {
+    margin-top: 5px;
+    font-size: 1.6rem !important;
+  }
+  /*Filter navbar in latest update*/
+  #latest-page_sub-nav {
+    position: sticky;
+    z-index: 220;
+    top: 60px;
+  }
 }`);
   const SELECTOR = {
     likeBtns: 'a.reaction.actionBar-action',
     reactionBtns: 'button.reaction.actionBar-action',
     thread: '.p-body-main',
-    latestUpdate: '#latest-page_main-wrap'
+    latestUpdate: '#latest-page_main-wrap',
+    latestFilterDrawer: '#latest-page_filter-wrap'
   };
   let REACTION_BAR;
 
@@ -370,7 +386,7 @@
       return;
     }
     galleryImages.forEach(node => {
-      node.addEventListener("click", () => {
+      Edexal.onEv(node, "click", () => {
         setTimeout(() => {
           const gallery = document.querySelector("div.lg");
           // In case 'close' button is pressed instead
@@ -427,6 +443,30 @@
     SWIPE_DOWN_CONFIG.lastDownYPos = 0;
   }
 
+  function stickyNavBar() {
+    const headerNav = document.querySelector("ul.p-nav-list");
+    if (!headerNav){
+      return;
+    }
+    for (let i = 0; i < 2; i++) {
+      headerNav.children.item(0).remove();// removes 'DOWNLOADS' & 'FORUMS'
+    }
+    headerNav.children[0].firstElementChild.classList.add("headList");
+    preventScrollAfterClose();
+  }
+
+  function preventScrollAfterClose() {
+    const closeBtn = document.querySelector("#filter-close");
+    Edexal.onEv(closeBtn, "click", (e) => {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      const filterDrawer = document.querySelector(SELECTOR.latestFilterDrawer);
+      filterDrawer.classList.add("filter-hidden");
+      setTimeout(() => filterDrawer.style.display = "none", 250);
+      document.body.style.overflow = "hidden scroll";
+    });
+  }
+
   function run() {
     //Run only on mobile
     if (document.querySelector("html").clientWidth > MAX_SCREEN_WIDTH) return;
@@ -437,6 +477,7 @@
     setTimeout(removeTileHoverEffects, 2000);
     removeAdBanner();
     initImageGallery();
+    stickyNavBar();
   }
 
   run();
