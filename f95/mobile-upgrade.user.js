@@ -143,21 +143,6 @@
   }
 }`);
 
-  /*Safety calls*/
-  function runOn(includesPath, callback) {
-    if (location.pathname.includes(includesPath)) {
-      callback();
-    }
-  }
-
-  function runOnLatestUpdatePage(callback) {
-    runOn('sam/latest_alpha', callback);
-  }
-
-  function runOnBookmarkPage(callback) {
-    runOn('account/bookmarks', callback);
-  }
-
   function createCustomScrollBtns(topTargets, bottomTargets) {
     const uixFabBar = Edexal.newEl({element: 'div', class: ['uix_fabBar', 'uix_fabBar--active']});
 
@@ -181,16 +166,16 @@
     const iBottom = Edexal.newEl({element: 'i', class: ['fa--xf', 'far', 'fa-arrow-down'], "aria-hidden": "true"});
     const spanBottomSR = Edexal.newEl({element: 'span', class: ['u-srOnly'], text: 'Bottom'});
 
-    Edexal.onEv(aTopButton, 'click', (e) => {
+    Edexal.on(aTopButton, 'click', (e) => {
       e.preventDefault();
-      const target = document.querySelector(topTargets[0]) ?? document.querySelector(topTargets[1]);
+      const target = Edexal.$(topTargets[0]) ?? Edexal.$(topTargets[1]);
       target.scrollIntoView({
         block: 'start'
       });
     });
-    Edexal.onEv(aBottomButton, 'click', (e) => {
+    Edexal.on(aBottomButton, 'click', (e) => {
       e.preventDefault();
-      const target = document.querySelector(bottomTargets[0]) ?? document.querySelector(bottomTargets[1]);
+      const target = Edexal.$(bottomTargets[0]) ?? Edexal.$(bottomTargets[1]);
       target.scrollIntoView({
         block: 'end'
       });
@@ -208,12 +193,12 @@
   }
 
   function setScrollBtn(selector, targetSelector, scrollType, altTargetSelector) {
-    const scrollBtn = document.querySelector(selector);
+    const scrollBtn = Edexal.$(selector);
     if (!scrollBtn) return false;
     scrollBtn.removeAttribute('data-xf-click');
-    Edexal.onEv(scrollBtn, 'click', (e) => {
+    Edexal.on(scrollBtn, 'click', (e) => {
       e.preventDefault();
-      const target = document.querySelector(targetSelector) ?? document.querySelector(altTargetSelector);
+      const target = Edexal.$(targetSelector) ?? Edexal.$(altTargetSelector);
       target.scrollIntoView({
         block: scrollType
       });
@@ -234,14 +219,14 @@
         'start',
         topTargets[1]);
     } else {
-      const footer = document.querySelector("#footer.p-footer");
+      const footer = Edexal.$("#footer.p-footer");
       const scrollBtnDiv = createCustomScrollBtns(topTargets, bottomTargets);
       footer.insertAdjacentElement('afterend', scrollBtnDiv);
     }
   }
 
   function assignTabItem(name, pathURL, newFaIcons, itemPos) {
-    const tabItem = document.querySelector(`.uix_tabBar .uix_tabList .uix_tabItem:nth-of-type(${itemPos})`);
+    const tabItem = Edexal.$(`.uix_tabBar .uix_tabList .uix_tabItem:nth-of-type(${itemPos})`);
     if (!tabItem) return;
     tabItem.href = pathURL;
     const icon = tabItem.querySelector('i');
@@ -264,8 +249,8 @@
   /*Removes all effects from tiles on Latest Update Page
    by removing all event listeners from tiles*/
   function removeTileHoverEffects() {
-    runOnLatestUpdatePage(() => {
-      const tilesWrapper = document.querySelector(SELECTOR.latestUpdate);
+    Edexal.runOnLatestUpdatePage(() => {
+      const tilesWrapper = Edexal.$(SELECTOR.latestUpdate);
       const tilesWrapperClone = tilesWrapper.cloneNode();
       tilesWrapperClone.append(...tilesWrapper.childNodes);
       const fragment = document.createDocumentFragment();
@@ -350,18 +335,19 @@
   }
 
   function addReactionBtnEvents() {
-    const reactionBtns = document.querySelectorAll(SELECTOR.reactionBtns);
+    const reactionBtns = Edexal.$$(SELECTOR.reactionBtns);
     for (const reactBtn of reactionBtns) {
-      Edexal.onEv(reactBtn, 'click', addReactionBarEvent);
+      Edexal.on(reactBtn, 'click', addReactionBarEvent);
     }
   }
 
   function setRemoval() {
-    document.querySelector(SELECTOR.thread).addEventListener('click', removeReactionBarEvent);
+    const thread = Edexal.$(SELECTOR.thread);
+    Edexal.on(thread, 'click', removeReactionBarEvent);
   }
 
   function initReaction() {
-    const likeBtns = document.querySelectorAll(SELECTOR.likeBtns);
+    const likeBtns = Edexal.$$(SELECTOR.likeBtns);
     if (!likeBtns || !likeBtns.length) return;
     createReactionBar();
     initReactionBtns(likeBtns);
@@ -371,41 +357,42 @@
 
   function removeBookmarkFilter() {
     setTimeout(() => {
-      const filterMenuActive = document.querySelector("div.menu[id].is-active");
+      const filterMenuActive = Edexal.$("div.menu[id].is-active");
       if (!filterMenuActive) return;
-      const filterBtnClose = document.querySelector(".select2-selection__choice__remove");
+      const filterBtnClose = Edexal.$(".select2-selection__choice__remove");
       if (!filterBtnClose) return;
       filterBtnClose.click();
     }, 200);
   }
 
   function initBookmarkLabel() {
-    runOnBookmarkPage(() => {
-      const filtersLink = document.querySelector(".filterBar-menuTrigger");
-      Edexal.onEv(filtersLink, "click", removeBookmarkFilter);
+    Edexal.runOnBookmarkPage(() => {
+      const filtersLink = Edexal.$(".filterBar-menuTrigger");
+      Edexal.on(filtersLink, "click", removeBookmarkFilter);
     });
   }
 
   function removeAdBanner() {
-    const banner = document.querySelector('#tn7k9m2x');
+    const banner = Edexal.$('#tn7k9m2x');
     if (banner) {
       banner.remove();
     }
   }
 
   function initImageGallery() {
-    const galleryImages = document.querySelectorAll('.message-threadStarterPost .js-lbImage');
+    const galleryImages = Edexal.$$('.message-threadStarterPost .js-lbImage');
     if (!galleryImages || !galleryImages.length) {
       return;
     }
     galleryImages.forEach(node => {
-      Edexal.onEv(node, "click", () => {
+      Edexal.on(node, "click", () => {
         setTimeout(() => {
-          const gallery = document.querySelector("div.lg");
+          const gallery = Edexal.$("div.lg");
           // In case 'close' button is pressed instead
-          gallery.querySelector(".lg-close").addEventListener("click", removeSwipeDownEvents);
-          gallery.addEventListener("pointerdown", swipeStartEvent);
-          gallery.addEventListener("pointerup", swipeEndEvent);
+          const closeBtn = gallery.querySelector(".lg-close");
+          Edexal.on(closeBtn, "click", removeSwipeDownEvents);
+          Edexal.on(gallery, "pointerdown", swipeStartEvent);
+          Edexal.on(gallery, "pointerup", swipeEndEvent);
         }, SWIPE_DOWN_CONFIG.galleryEventDelay);
       });
     });
@@ -430,24 +417,24 @@
     }
     if (SWIPE_DOWN_CONFIG.lastDownYPos + SWIPE_DOWN_CONFIG.minSwipeDistance < e.clientY) {
       resetSwipeDownStats();
-      const closeBtn = document.querySelector(".lg-close");
-      closeBtn.removeEventListener("click", removeSwipeDownEvents);
+      const closeBtn = Edexal.$(".lg-close");
+      Edexal.off(closeBtn, "click", removeSwipeDownEvents);
       removeSwipeDownEvents();
       closeBtn.click();
     }
   }
 
   function isZoomState() {
-    return document.querySelector('.lg-outer').classList.contains("lg-zoomed");
+    return Edexal.$('.lg-outer').classList.contains("lg-zoomed");
   }
 
   function removeSwipeDownEvents(e) {
-    const imageGallery = document.querySelector("div.lg");
-    imageGallery.removeEventListener("pointerdown", swipeStartEvent);
-    imageGallery.removeEventListener("pointerup", swipeEndEvent);
+    const imageGallery = Edexal.$("div.lg");
+    Edexal.off(imageGallery, "pointerdown", swipeStartEvent);
+    Edexal.off(imageGallery, "pointerup", swipeEndEvent);
     // If 'close' button was pressed instead.
     if (e) {
-      e.target.removeEventListener("click", removeSwipeDownEvents);
+      Edexal.off(e.target, "click", removeSwipeDownEvents);
     }
   }
 
@@ -457,7 +444,7 @@
   }
 
   function stickyNavBar() {
-    runOnLatestUpdatePage(() => {
+    Edexal.runOnLatestUpdatePage(() => {
       modifyHeaderLinks();
       preventScrollAfterClose();
       scrollToOptionsPanel();
@@ -465,7 +452,7 @@
   }
 
   function modifyHeaderLinks() {
-    const headerNav = document.querySelector("ul.p-nav-list");
+    const headerNav = Edexal.$("ul.p-nav-list");
     for (let i = 0; i < 2; i++) {
       headerNav.children.item(0).remove();// removes 'DOWNLOADS' & 'FORUMS'
     }
@@ -473,26 +460,27 @@
   }
 
   function preventScrollAfterClose() {
-    const closeBtn = document.querySelector("#filter-close");
-    Edexal.onEv(closeBtn, "click", (e) => {
+    const closeBtn = Edexal.$("#filter-close");
+    Edexal.on(closeBtn, "click", (e) => {
       e.preventDefault();
       e.stopImmediatePropagation();
-      const filterDrawer = document.querySelector(SELECTOR.latestFilterDrawer);
+      const filterDrawer = Edexal.$(SELECTOR.latestFilterDrawer);
       filterDrawer.classList.add("filter-hidden");
       setTimeout(() => filterDrawer.style.display = "none", 250);
       document.body.style.overflow = "hidden scroll";
     });
   }
+
   function scrollToOptionsPanel() {
-    const optionsBtn = document.querySelector("#controls_toggle-options-panel");
-    Edexal.onEv(optionsBtn,'click',(e) => {
-      window.scroll(0,200);
+    const optionsBtn = Edexal.$("#controls_toggle-options-panel");
+    Edexal.on(optionsBtn, 'click', () => {
+      window.scroll(0, 200);
     });
   }
 
   function run() {
     //Run only on mobile
-    if (document.querySelector("html").clientWidth > MAX_SCREEN_WIDTH) return;
+    if (Edexal.$("html").clientWidth > MAX_SCREEN_WIDTH) return;
     initTabItems();
     initScrollBtns();
     initReaction();

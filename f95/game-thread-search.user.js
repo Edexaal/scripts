@@ -49,14 +49,14 @@
 }`);
 
   function initElements() {
-    el.creator = document.querySelector("#filter-search_type .filter-search_type-creator");
-    el.gameCatBtn = document.querySelector("#btn-cat_games .filter-block_button");
-    el.titleInput = document.querySelector('#input-title_search');
+    el.creator = Edexal.$("#filter-search_type .filter-search_type-creator");
+    el.gameCatBtn = Edexal.$("#btn-cat_games .filter-block_button");
+    el.titleInput = Edexal.$('#input-title_search');
   }
 
   function addButton() {
     btn.el = Edexal.newEl({element: 'button', id: btn.id, text: btn.content});
-    const containerEl = document.querySelector('#filter-block_search');
+    const containerEl = Edexal.$('#filter-block_search');
     containerEl.append(btn.el);
   }
 
@@ -108,7 +108,7 @@
   function run() {
     initElements();
     addButton();
-    Edexal.onEv(btn.el, 'click', searchEvent, {capture: true});
+    Edexal.on(btn.el, 'click', searchEvent, {capture: true});
     setSearchTypeObserver();
     setCategoryObserver();
   }

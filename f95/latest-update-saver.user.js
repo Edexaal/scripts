@@ -140,7 +140,7 @@
     if (!!classNames) {
       a.classList.add(...classNames);
     }
-    Edexal.onEv(a, 'click', eventFunc);
+    Edexal.on(a, 'click', eventFunc);
 
     let label = Edexal.newEl({
       element: 'div',
@@ -153,11 +153,11 @@
   }
 
   function getSelectedSlot() {
-    return document.querySelector("#filter-block_saver a.filter-selected");
+    return Edexal.$("#filter-block_saver a.filter-selected");
   }
 
   function getSlotByName(name) {
-    return document.querySelector(`[data-saver="${name}"]`);
+    return Edexal.$(`[data-saver="${name}"]`);
   }
 
   function addHasSaveStyle(slot) {
@@ -165,7 +165,7 @@
   }
 
   function addAutoLoadStyle() {
-    const autoBtn = document.querySelector('#btn-saver_Auto-Load a');
+    const autoBtn = Edexal.$('#btn-saver_Auto-Load a');
     autoBtn.classList.add('auto-selected');
   }
 
@@ -174,7 +174,7 @@
   }
 
   function removeAutoLoadStyle() {
-    const autoBtn = document.querySelector('#btn-saver_Auto-Load a');
+    const autoBtn = Edexal.$('#btn-saver_Auto-Load a');
     autoBtn.classList.remove('auto-selected');
   }
 
@@ -186,8 +186,8 @@
     }
     GM.setValue(chosenSlot.dataset.saver, location.href);
     addHasSaveStyle(chosenSlot);
-    let saveNotice = document.querySelector('#save-notice');
-    let saveNoticeBG = document.querySelector('#top');
+    let saveNotice = Edexal.$('#save-notice');
+    let saveNoticeBG = Edexal.$('#top');
     if (!!!saveNotice.classList.contains('save-anim')) {
       saveNotice.classList.add('save-anim');
       saveNoticeBG.classList.add('save-bg');
@@ -236,7 +236,7 @@
   async function autoLoadEvent(e) {
     e.preventDefault();
     const canAutoLoad = await GM.getValue(storageKeys.CanAutoLoad);
-    GM.setValue(storageKeys.CanAutoLoad, !!!canAutoLoad);
+    await GM.setValue(storageKeys.CanAutoLoad, !!!canAutoLoad);
     if (canAutoLoad) {
       removeAutoLoadStyle();
     } else {
@@ -271,7 +271,7 @@
     if (!!lastSlotName) {
       const slot = getSlotByName(lastSlotName);
       slot.click();
-      const loadBtn = document.querySelector('#btn-saver_Load a');
+      const loadBtn = Edexal.$('#btn-saver_Load a');
       loadBtn.click();
     }
     addAutoLoadStyle();
@@ -294,7 +294,7 @@
   }
 
   function addSaverSect() {
-    let titleEl = document.querySelector('.content-block_filter-title');
+    let titleEl = Edexal.$('.content-block_filter-title');
     titleEl.after(getSaverSect());
 
     addSaveNotice();

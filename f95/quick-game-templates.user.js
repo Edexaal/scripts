@@ -14,6 +14,7 @@
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@20abbf4a49807e7d11a081eb3a8573d0cab83c1f/_lib/game-request-templates.js
 // ==/UserScript==
 (() => {
+  const TAG_PAGE = "https://f95zone.to/threads/tags-rules-and-list-updated-2024-01-29.10394";
   Edexal.addCSS(`
     .edexal-btn{
         color:yellow !important;
@@ -25,7 +26,7 @@
   const UPDATE_TEMPLATE = getUpdateTempl();
 
   function addButton() {
-    let toolbarEl = document.querySelector('.fr-toolbar');
+    let toolbarEl = Edexal.$('.fr-toolbar');
     toolbarEl.insertAdjacentHTML('beforeend', `<div class="fr-separator fr-vs" role="separator" aria-orientation="vertical"></div>
       <button aria-controls="dropdown-menu-xfTemp-1" aria-expanded="false" aria-haspopup="false" class="fr-command fr-btn fr-dropdown fr-btn-font_awesome edexal-btn" data-cmd="xfTemp"
               id="xfTemp-1" role="button" tabindex="-1"
@@ -53,7 +54,7 @@
   }
 
   function refreshTextArea() {
-    let textAreaEl = document.querySelector(".fr-element") //Text Area Element
+    let textAreaEl = Edexal.$(".fr-element") //Text Area Element
     textAreaEl.replaceChildren();//Text Area Element
     let preEl = Edexal.newEl({element:"pre"});
     textAreaEl.append(preEl); //Text Area Element
@@ -62,21 +63,22 @@
   function displayTextClick(e, template) {
     refreshTextArea();
     let txt = document.createTextNode(template.body);
-    document.querySelector(".fr-element").firstElementChild.append(txt); //Text Area Element
-    document.querySelector('#xfTemp-1').classList.remove('fr-active', 'fr-selected');
+    Edexal.$(".fr-element").firstElementChild.append(txt); //Text Area Element
+    Edexal.$('#xfTemp-1').classList.remove('fr-active', 'fr-selected');
     e.target.classList.remove('fr-selected');
-    document.querySelector('[placeholder~=title]').value = template.title; //Thread title Element
+    Edexal.$('[placeholder~=title]').value = template.title; //Thread title Element
   }
   function setBtnEvent(templateObj) {
-    document.querySelector(`[title="${templateObj.label}"]`).addEventListener('click', (e) => displayTextClick(e, templateObj));
+    const el = Edexal.$(`[title="${templateObj.label}"]`);
+    Edexal.on(el,'click',(e) => displayTextClick(e, templateObj));
   }
 
-  function goToTagListClick(e) {
-    window.open("https://f95zone.to/threads/tags-rules-and-list-updated-2024-01-29.10394");
+  function goToTagListClick() {
+    window.open(TAG_PAGE);
   }
 
   function displayPrefixPlaceholder() {
-    const prefixField = document.querySelector('.select2-search__field');
+    const prefixField = Edexal.$('.select2-search__field');
     prefixField.placeholder = "*DON'T FORGET TO SELECT THE PREFIX TAG HERE!!!";
   }
 
@@ -88,12 +90,13 @@
     setBtnEvent(NEW_VNDB_TEMPLATE);
     setBtnEvent(REQ_TEMPLATE);
     setBtnEvent(UPDATE_TEMPLATE);
-    document.querySelector('#xfTagList-1').addEventListener('click', (e) => goToTagListClick(e));
+    const tagIcon = Edexal.$('#xfTagList-1');
+    Edexal.on(tagIcon,'click',(e) => goToTagListClick(e));
   }
 
   function startOnTime() {
     const observer = new MutationObserver(() => {
-      const toolbar = document.querySelector('.fr-toolbar');
+      const toolbar = Edexal.$('.fr-toolbar');
       if (toolbar) {
         run();
         observer.disconnect();

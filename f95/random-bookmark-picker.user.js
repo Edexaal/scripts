@@ -60,7 +60,7 @@
       location.search.includes('&' + BOOKMARK_QUERY) ? location.href.indexOf('&' + BOOKMARK_QUERY) : location.href.indexOf(BOOKMARK_QUERY));// removes '&bmpos'  or 'bmpos' from URL
     history.replaceState({}, "", newURL); //Change the URL to one w/o 'bmpos' query param
 
-    let bookmarkListEl = document.querySelector("ol.listPlain");
+    let bookmarkListEl = Edexal.$("ol.listPlain");
 
     let randBookmarkPos = getRandIntInc(0, bookmarkListEl.children.length - 1);// Pick a random bookmark position (usually 0-19, total 20)
     let chosenBookmarkEl = bookmarkListEl.children[randBookmarkPos];
@@ -81,7 +81,7 @@
 
   //Pick bookmark from a selection of all pages
   function pickRandomBookmark() {
-    let pagination = document.querySelector("ul.pageNav-main");//Select pagination
+    let pagination = Edexal.$("ul.pageNav-main");//Select pagination
     let lastPageNum = pagination.children[pagination.children.length - 1].children[0].textContent;//Get the last page number of the pagination
     let randPageChoiceNum = getRandIntInc(1, Number(lastPageNum));//Pick a random page number
     let curURL = new URL(location.href);//Get the current URL
@@ -107,27 +107,27 @@
   }
 
   //Add button to F95
-  let entirePaginationEl = document.querySelector("nav > div.pageNav");
+  let entirePaginationEl = Edexal.$("nav > div.pageNav");
   //Checks if there is only a single page of bookmarks or more
   if (!!entirePaginationEl) {
     // > 1
-    let isPageNavVisible = window.getComputedStyle(document.querySelector(".pageNavWrapper--mixed .pageNav")).getPropertyValue("display") === "none";
+    let isPageNavVisible = window.getComputedStyle(Edexal.$(".pageNavWrapper--mixed .pageNav")).getPropertyValue("display") === "none";
     if (isPageNavVisible) {
       //Mobile Pagination (w/ arrows)
       let randContainerEl = Edexal.newEl({element: "div", id: "randContainer"});
       randContainerEl.appendChild(randBtn);
-      let pageArrowsEl = document.querySelector(".block-outer--after");
+      let pageArrowsEl = Edexal.$(".block-outer--after");
       pageArrowsEl.appendChild(randContainerEl);
     } else {
       //Desktop Pagination
       entirePaginationEl.appendChild(randBtn);
     }
-    Edexal.onEv(randBtn,"click",pickRandomBookmark);
+    Edexal.on(randBtn,"click",pickRandomBookmark);
 
   } else {
     // == 1
-    document.querySelector("div > div.breadcrumb.p-breadcrumb--bottom").prepend(randBtn);
-    Edexal.onEv(randBtn,"click",pickRandBookmarkOne);
+    Edexal.$("div > div.breadcrumb.p-breadcrumb--bottom").prepend(randBtn);
+    Edexal.on(randBtn,"click",pickRandBookmarkOne);
     Edexal.addCSS(`
 		#randbtn {
 			position:relative;

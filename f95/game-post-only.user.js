@@ -168,7 +168,7 @@
     vmGPOInner.append(h2, ul);
     vmGPOContent.append(vmGPOInner);
     vmGPO.append(vmGPOContent);
-    document.querySelector(".message-attribution").append(vmGPO);
+    Edexal.$(".message-attribution").append(vmGPO);
   }
 
   function createIcon() {
@@ -180,11 +180,11 @@
       title: "Game post settings"
     });
     li.append(span);
-    document.querySelector('.message-attribution-opposite--list').prepend(li);
+    Edexal.$('.message-attribution-opposite--list').prepend(li);
   }
 
   function setClickEvent(selector, callback) {
-    document.querySelector(selector).addEventListener('click', callback);
+    Edexal.$(selector).addEventListener('click', callback);
   }
 
   function setLabelEvent(labelName, callback) {
@@ -192,7 +192,7 @@
   }
 
   function toggleSettingsEvent() {
-    const menu = document.querySelector('#vm-gpo');
+    const menu = Edexal.$('#vm-gpo');
     menu.style.display = menu.style.display === 'initial' ? 'none' : 'initial';
   }
 
@@ -220,7 +220,7 @@
   }
 
   function removeFooter() {
-    let footer = document.querySelector("#footer.p-footer");
+    let footer = Edexal.$("#footer.p-footer");
     deleteEls(footer);
   }
 
@@ -231,7 +231,7 @@
   }
 
   function removeBreadcrumbs() {
-    let breadcrumb = document.querySelectorAll(".breadcrumb");
+    let breadcrumb = Edexal.$$(".breadcrumb");
     deleteEls(breadcrumb);
   }
 
@@ -242,7 +242,7 @@
   }
 
   function removeAccountItems() {
-    let accIcon = document.querySelector("a.p-navgroup-link--user, .offCanvasMenu");
+    let accIcon = Edexal.$("a.p-navgroup-link--user, .offCanvasMenu");
     deleteEls(accIcon);
   }
 
@@ -253,10 +253,10 @@
   }
 
   function removeReplyItems() {
-    let replyForm = document.querySelector('form.js-quickReply');
+    let replyForm = Edexal.$('form.js-quickReply');
     !!replyForm ? deleteEls(replyForm) : null;
 
-    let replyActions = document.querySelectorAll('a.actionBar-action--mq,  a.actionBar-action--reply');
+    let replyActions = Edexal.$$('a.actionBar-action--mq,  a.actionBar-action--reply');
     !!replyActions ? deleteEls(replyActions) : null;
 
     removeThreadWarning();
@@ -269,7 +269,7 @@
   }
 
   function removeRecomendations() {
-    let recomendationSection = document.querySelector('div.block--similarContents');
+    let recomendationSection = Edexal.$('div.block--similarContents');
     !!recomendationSection ? deleteEls(recomendationSection) : null;
   }
 
@@ -280,7 +280,7 @@
   }
 
   function removePagination() {
-    let paginations = document.querySelectorAll('.pageNavWrapper--mixed');
+    let paginations = Edexal.$$('.pageNavWrapper--mixed');
     if (!!!paginations.length) return;
     //top pagination
     let topPageContainer = paginations[0].parentNode.parentNode;
@@ -292,12 +292,12 @@
   }
 
   function removeScrollbarBtns() {
-    let scrollbarContainer = document.querySelector('div.u-scrollButtons').parentNode;
+    let scrollbarContainer = Edexal.$('div.u-scrollButtons').parentNode;
     !!scrollbarContainer ? deleteEls(scrollbarContainer) : null;
   }
 
   function removeNavbar() {
-    let navbar = document.querySelector('div#top > div:first-child');
+    let navbar = Edexal.$('div#top > div:first-child');
     deleteEls(navbar);
   }
 
@@ -308,7 +308,7 @@
   }
 
   function removeThreadWarning() {
-    let warningBlock = document.querySelector('div.blockMessage.blockMessage--warning');
+    let warningBlock = Edexal.$('div.blockMessage.blockMessage--warning');
     if (warningBlock) {
       deleteEls(warningBlock);
     }
@@ -316,7 +316,7 @@
 
   function showFirstPostOnly() {
     //Thread Post Container Ref
-    let opContainer = document.querySelector("article.message-threadStarterPost").parentNode;
+    let opContainer = Edexal.$("article.message-threadStarterPost").parentNode;
     opContainer.replaceChildren(opContainer.children.item(0));
     removePagination();
   }
@@ -332,7 +332,7 @@
   async function initSettings() {
     const keys = await GM.listValues();
     for (const labelName of keys) {
-      const labelEl = document.querySelector(`label[for="${labelName}"]`);
+      const labelEl = Edexal.$(`label[for="${labelName}"]`);
       if (labelEl){
         labelEl.classList.add('vmgpo-active');
       }
@@ -359,14 +359,14 @@
           removeNavbar();
           break;
         default:
-         GM.deleteValue(labelName);
+         await GM.deleteValue(labelName);
          break;
       }
     }
   }
 
   function isGameThread() {
-    let breadcrumbID = document.querySelectorAll("ul.p-breadcrumbs li:nth-of-type(3) a span[itemprop=name]");
+    let breadcrumbID = Edexal.$$("ul.p-breadcrumbs li:nth-of-type(3) a span[itemprop=name]");
     let isGame = false;
     if (!!breadcrumbID.length) {
       breadcrumbID.forEach((curVal) => {

@@ -81,7 +81,7 @@
     history.replaceState({}, "", curURL.toString());
 
     //Selects a random item on the page
-    let allItemsEls = document.querySelectorAll(".resource-tile"); // Gets all resource tiles
+    let allItemsEls = Edexal.$$(".resource-tile"); // Gets all resource tiles
     let randNumChoice = getRandIntInc(1, allItemsEls.length);
     let chosenEl = allItemsEls[randNumChoice - 1];
     chosenEl.id = "chosen";
@@ -90,7 +90,7 @@
 
   //Chooses a random page and goes to it
   function goToAPage() {
-    let maxPageNum = document.querySelector(".sub-nav_info-paging_nums .nav_num:last-child").dataset.page;
+    let maxPageNum = Edexal.$(".sub-nav_info-paging_nums .nav_num:last-child").dataset.page;
     let chosenNum = getRandIntInc(1, +maxPageNum);
     let curURL = new URL(location.href);//Get the current URL
     //Customize URL to add latest page query parameter
@@ -108,8 +108,8 @@
 
     let randIconEl = Edexal.newEl({element: "i", class: ["fas", "fa-question"]});
 
-    let parentEl = document.querySelector("#filter-controls");
-    Edexal.onEv(randLinkEl, "click", goToAPage);
+    let parentEl = Edexal.$("#filter-controls");
+    Edexal.on(randLinkEl, "click", goToAPage);
     randLinkEl.append(randIconEl);
     parentEl.insertAdjacentElement('afterbegin', randLinkEl);
   }

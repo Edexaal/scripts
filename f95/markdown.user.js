@@ -11,7 +11,7 @@
 // @license     Unlicense
 // @version     1.2.7
 // @author      Edexal
-// @description Use markdown syntax in threads, posts, and conversations.
+// @description Use Markdown syntax in threads, posts, and conversations.
 // @homepageURL https://sleazyfork.org/en/scripts/566411-f95-markdown
 // @supportURL  https://github.com/Edexaal/scripts/issues
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@20abbf4a49807e7d11a081eb3a8573d0cab83c1f/_lib/utility.js
@@ -134,7 +134,7 @@
   }
 
   function blockParse(format) {
-    const textBoxEl = document.querySelector("div.bbWrapper div[spellcheck][class*=fr-element]");
+    const textBoxEl = Edexal.$("div.bbWrapper div[spellcheck][class*=fr-element]");
     for (let i = 0; i < format.indexes.length; i++) {
       let type = getType(format, textBoxEl, i);
       if (type || !!textBoxEl.children[format.indexes[i]].innerHTML.match(format.startRegex)) {
@@ -151,7 +151,7 @@
   }
 
   function alignParse(format) {
-    const textBoxEl = document.querySelector("div.bbWrapper div[spellcheck][class*=fr-element]");
+    const textBoxEl = Edexal.$("div.bbWrapper div[spellcheck][class*=fr-element]");
     for (let i = 0; i < format.indexes.length; i++) {
       format.type = getType(format, textBoxEl, i) ?? format.type;
       const alignTag = format.type === "right" ? format.tags[0] : format.tags[1];
@@ -169,7 +169,7 @@
   }
 
   function quoteParse() {
-    const textBoxEl = document.querySelector("div.bbWrapper div[spellcheck][class*=fr-element]");
+    const textBoxEl = Edexal.$("div.bbWrapper div[spellcheck][class*=fr-element]");
     const format = formats["blockQuote"];
     let count = 0;
     let type = undefined;
@@ -398,7 +398,7 @@
     const btn = Edexal.newEl({element: 'button', type: 'button', class: ['button']});
     const spanText = Edexal.newEl({element: 'span', class: ['button-text'], text: "PARSE MD", style: "color: yellow;"});
     btn.append(spanText);
-    Edexal.onEv(btn, 'click', () => parseMarkdown(textboxEl));
+    Edexal.on(btn, 'click', () => parseMarkdown(textboxEl));
     btnLayer.prepend(btn);
   }
 
@@ -422,7 +422,7 @@
 
   function buttonObserver(elToObserve, shouldDisconnect) {
     const obs = new MutationObserver((records, observer) => applyButton(records, observer, shouldDisconnect));
-    obs.observe(document.querySelector(elToObserve), {subtree: true, childList: true});
+    obs.observe(Edexal.$(elToObserve), {subtree: true, childList: true});
   }
 
   function helpBtnClickEvent() {
@@ -444,7 +444,7 @@
     const i = Edexal.newEl({element: "i", class: ["fab", "fa-markdown"], "aria-hidden": "true"});
     const span = Edexal.newEl({element: "span", class: ["fr-sr-only"], text: "Markdown syntax"})
     button.append(i, span)
-    button.addEventListener("click", helpBtnClickEvent);
+    Edexal.on(button,"click",helpBtnClickEvent);
     return button;
   }
 
@@ -459,18 +459,18 @@
   }
 
   function markdownPage() {
-    const mainBodyEl = document.querySelector("div.p-body-content");
+    const mainBodyEl = Edexal.$("div.p-body-content");
     // Removes all child elements
     mainBodyEl.querySelector("div.blockMessage").remove();
     //Removes Header
-    document.querySelector("div.uix_headerContainer").remove();
+    Edexal.$("div.uix_headerContainer").remove();
     // Removes footer
-    document.querySelector("footer").remove();
+    Edexal.$("footer").remove();
     // Removes arrow scroll buttons
-    document.querySelector(".uix_fabBar").remove();
+    Edexal.$(".uix_fabBar").remove();
     // Change site title
-    document.querySelector("head title").textContent = "F95 Markdown Syntax";
-    const titleEl = document.querySelector("h1.p-title-value");
+    Edexal.$("head title").textContent = "F95 Markdown Syntax";
+    const titleEl = Edexal.$("h1.p-title-value");
     titleEl.textContent = "F95 Markdown Syntax";
     mainBodyEl.innerHTML = `
 <div id="md-toc">
@@ -660,7 +660,7 @@ This is \\||a dummy\\|| text.
 <hr>
 <h3 id="md-spoiler">Spoiler</h3>
 
-<p>Hide a block of text behind a a.</p>
+<p>Hide a block of text behind a spoiler button.</p>
 
 <pre><code>// Syntax:
 // ::: spoiler
@@ -722,8 +722,8 @@ This is \\%#ff03ff%a dummy\\%% text.
     Edexal.addCSS(CSS_TOOLBAR);
     // The first textbox element found
     setTimeout(() => {
-      createButton(document.querySelector("div.formButtonGroup-primary,div.formSubmitRow-controls"), document.querySelector("div.bbWrapper div[spellcheck][class*=fr-element]"));
-      applyhelpBtn(document.querySelector("div.fr-toolbar"));
+      createButton(Edexal.$("div.formButtonGroup-primary,div.formSubmitRow-controls"), Edexal.$("div.bbWrapper div[spellcheck][class*=fr-element]"));
+      applyhelpBtn(Edexal.$("div.fr-toolbar"));
     }, 1000);
     // Edit Posts
     buttonObserver("div.block-container[data-lb-id]");

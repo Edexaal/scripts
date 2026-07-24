@@ -1,7 +1,6 @@
 // ==UserScript==
 // @name        Resume Bookmark
 // @namespace   1330126-edexal
-// @match       *://f95zone.to/account/bookmarks*
 // @match       *://f95zone.to/*
 // @grant       GM.setValue
 // @grant       GM.getValues
@@ -12,35 +11,38 @@
 // @description Visit bookmark page with the last tag filter selected.
 // @homepageURL https://sleazyfork.org/en/scripts/571484-resume-bookmark
 // @supportURL  https://github.com/Edexaal/scripts/issues
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@d8aa28efb9ecde38c2f32778d1df07eb554bc41f/_lib/utility.js
 // ==/UserScript==
 (async () => {
   function addBtnEvent() {
-    const button = document.querySelector('form[action*=bookmarks] span.menu-footer-controls button');
-    button.addEventListener('click', async () => {
-      const textBoxEl = document.querySelector("form[action*=bookmarks] li.select2-selection__choice");
+    const button = Edexal.$('form[action*=bookmarks] span.menu-footer-controls button');
+    Edexal.on(button, 'click', async () => {
+      const textBoxEl = Edexal.$("form[action*=bookmarks] li.select2-selection__choice");
       await GM.setValue("label", textBoxEl ? textBoxEl.title : null);
     });
   }
+
   function addTagRemoveBtnEvent(cssSelector) {
-    const button = document.querySelector(cssSelector);
+    const button = Edexal.$(cssSelector);
     if (!button) return;
-    button.addEventListener('click', async () => {
+    Edexal.on(button, 'click', async () => {
       await GM.setValue("label", null);
     });
   }
+
   function removeBookmarkFilter() {
     setTimeout(() => {
-      const filterMenuActive = document.querySelector("div.menu[id].is-active");
-      if (!filterMenuActive)return;
-      const filterBtnClose =  document.querySelector(".select2-selection__choice__remove");
+      const filterMenuActive = Edexal.$("div.menu[id].is-active");
+      if (!filterMenuActive) return;
+      const filterBtnClose = Edexal.$(".select2-selection__choice__remove");
       if (!filterBtnClose) return;
       filterBtnClose.click();
-    },200);
+    }, 200);
   }
 
   function initBookmarkLabel() {
-    const filtersLink = document.querySelector(".filterBar-menuTrigger");
-    filtersLink.addEventListener("click",removeBookmarkFilter);
+    const filtersLink = Edexal.$(".filterBar-menuTrigger");
+    Edexal.on(filtersLink,"click",removeBookmarkFilter);
   }
 
   async function run() {
@@ -53,8 +55,8 @@
         return;
       }
       await GM.setValue("was_bookmark", true);
-      if (location.search.includes("label=")){
-          return;
+      if (location.search.includes("label=")) {
+        return;
       }
       if (storage.label) {
         location.replace(location.search === "" ? `${location.href}?label=${storage.label}` : `${location.href}&label=${storage.label}`);
