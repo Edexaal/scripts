@@ -7,7 +7,7 @@
 // @grant       GM.getValues
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.1.0
+// @version     1.1.1
 // @author      Edexal
 // @description Visit bookmark page with the last tag filter selected.
 // @homepageURL https://sleazyfork.org/en/scripts/571484-resume-bookmark
