@@ -2,7 +2,7 @@
 // @name        Edexal's Utility Library
 // @namespace   1330126-edexal
 // @license     Unlicense
-// @version     2.0
+// @version     3.0
 // @author      Edexal
 // @description Utility library for common reusable tasks
 // ==/UserScript==
@@ -37,7 +37,19 @@ class Edexal {
     return el;
   }
 
-  static onEv(el, eventType, callback, options) {
+  static on(el, eventType, callback, options) {
     el.addEventListener(eventType, callback, options);
+  }
+
+  static off(el,eventType,callback,options) {
+    el.removeEventListener(eventType,callback,options);
+  }
+
+  static $(selectors) {
+    return document.querySelector(selectors);
+  }
+
+  static $$(selectors) {
+    return document.querySelectorAll(selectors);
   }
 }
