@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.8.0
+// @version     1.8.1
 // @author      Edexal
 // @description Improves mobile experience
 // @homepageURL https://sleazyfork.org/en/scripts/546346-f95-mobile-upgrade
@@ -14,6 +14,14 @@
 // ==/UserScript==
 (async () => {
   /*NOTE: F95 uses FontAwesome v5.15.4*/
+  const SELECTOR = {
+    likeBtns: 'a.reaction.actionBar-action',
+    reactionBtns: 'button.reaction.actionBar-action',
+    thread: '.p-body-main',
+    latestUpdate: '#latest-page_main-wrap',
+    latestFilterDrawer: '#latest-page_filter-wrap',
+  };
+  let REACTION_BAR;
   const MAX_SCREEN_WIDTH = 480;
   const SWIPE_DOWN_CONFIG = {
     isValidSwipeDuration: false,
@@ -134,17 +142,20 @@
     top: 60px;
   }
 }`);
-  const SELECTOR = {
-    likeBtns: 'a.reaction.actionBar-action',
-    reactionBtns: 'button.reaction.actionBar-action',
-    thread: '.p-body-main',
-    latestUpdate: '#latest-page_main-wrap',
-    latestFilterDrawer: '#latest-page_filter-wrap'
-  };
-  let REACTION_BAR;
 
-  function isLatestUpdatePage() {
-    return location.pathname.includes('sam/latest_alpha');
+  /*Safety calls*/
+  function runOn(includesPath, callback) {
+    if (location.pathname.includes(includesPath)) {
+      callback();
+    }
+  }
+
+  function runOnLatestUpdatePage(callback) {
+    runOn('sam/latest_alpha', callback);
+  }
+
+  function runOnBookmarkPage(callback) {
+    runOn('account/bookmarks', callback);
   }
 
   function createCustomScrollBtns(topTargets, bottomTargets) {
@@ -253,13 +264,14 @@
   /*Removes all effects from tiles on Latest Update Page
    by removing all event listeners from tiles*/
   function removeTileHoverEffects() {
-    if (!isLatestUpdatePage()) return;
-    const tilesWrapper = document.querySelector(SELECTOR.latestUpdate);
-    const tilesWrapperClone = tilesWrapper.cloneNode();
-    tilesWrapperClone.append(...tilesWrapper.childNodes);
-    const fragment = document.createDocumentFragment();
-    fragment.append(tilesWrapperClone);
-    tilesWrapper.replaceWith(fragment);
+    runOnLatestUpdatePage(() => {
+      const tilesWrapper = document.querySelector(SELECTOR.latestUpdate);
+      const tilesWrapperClone = tilesWrapper.cloneNode();
+      tilesWrapperClone.append(...tilesWrapper.childNodes);
+      const fragment = document.createDocumentFragment();
+      fragment.append(tilesWrapperClone);
+      tilesWrapper.replaceWith(fragment);
+    });
   }
 
   function createReaction(idNum, altName) {
@@ -368,9 +380,10 @@
   }
 
   function initBookmarkLabel() {
-    if (!location.href.includes("account/bookmarks")) return;
-    const filtersLink = document.querySelector(".filterBar-menuTrigger");
-    filtersLink.addEventListener("click", removeBookmarkFilter);
+    runOnBookmarkPage(() => {
+      const filtersLink = document.querySelector(".filterBar-menuTrigger");
+      Edexal.onEv(filtersLink, "click", removeBookmarkFilter);
+    });
   }
 
   function removeAdBanner() {
@@ -444,15 +457,19 @@
   }
 
   function stickyNavBar() {
+    runOnLatestUpdatePage(() => {
+      modifyHeaderLinks();
+      preventScrollAfterClose();
+      scrollToOptionsPanel();
+    });
+  }
+
+  function modifyHeaderLinks() {
     const headerNav = document.querySelector("ul.p-nav-list");
-    if (!headerNav){
-      return;
-    }
     for (let i = 0; i < 2; i++) {
       headerNav.children.item(0).remove();// removes 'DOWNLOADS' & 'FORUMS'
     }
-    headerNav.children[0].firstElementChild.classList.add("headList");
-    preventScrollAfterClose();
+    headerNav.children[0].firstElementChild.classList.add("headList");// style 'SEARCH'
   }
 
   function preventScrollAfterClose() {
@@ -464,6 +481,12 @@
       filterDrawer.classList.add("filter-hidden");
       setTimeout(() => filterDrawer.style.display = "none", 250);
       document.body.style.overflow = "hidden scroll";
+    });
+  }
+  function scrollToOptionsPanel() {
+    const optionsBtn = document.querySelector("#controls_toggle-options-panel");
+    Edexal.onEv(optionsBtn,'click',(e) => {
+      window.scroll(0,200);
     });
   }
 
