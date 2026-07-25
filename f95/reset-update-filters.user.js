@@ -5,10 +5,10 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0.0
+// @version     1.0.1
 // @author      Edexal
 // @description Reset individual filters in the filter drawer on the latest update page.
-// @homepageURL -
+// @homepageURL https://sleazyfork.org/en/scripts/588436-reset-update-filters
 // @supportURL  https://github.com/Edexaal/scripts/issues
 // @require      https://cdn.jsdelivr.net/gh/Edexaal/scripts@20abbf4a49807e7d11a081eb3a8573d0cab83c1f/_lib/utility.js
 // ==/UserScript==
