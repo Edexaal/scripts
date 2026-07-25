@@ -13,8 +13,8 @@
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@20abbf4a49807e7d11a081eb3a8573d0cab83c1f/_lib/utility.js
 // ==/UserScript==
 (() => {
-  const btn = {
-    id: 'thread_search_btn',
+const btn = {
+  id: 'thread_search_btn',
     content: 'Thread Search',
     el: null
   };
