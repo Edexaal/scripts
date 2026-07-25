@@ -4,7 +4,7 @@
 // @match       *://f95zone.to/sam/latest_alpha/*
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @grant       none
-// @version     1.2.1
+// @version     1.2.2
 // @author      Edexal
 // @license     Unlicense
 // @description Randomly selects a resource(e.g. game,asset,animation) from the 'Latest Update' page. Just press the '?' button in the filter drawer.
@@ -37,7 +37,7 @@
 
   /*Chosen item*/
   #chosen {
-	  box-shadow: #c00 1px 0 10px 8px !important;
+	  box-shadow: #d4c7c7 1px 0 10px 8px !important;
   }
     #chosen > a.resource-tile_link {
       color: yellow !important;
