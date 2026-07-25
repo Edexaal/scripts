@@ -8,7 +8,7 @@
 // @version     1.0.2
 // @author      Edexal
 // @description Reset individual filters in the filter drawer on the latest update page.
-// @homepageURL https://sleazyfork.org/en/scripts/588436-reset-update-filters
+// @homepageURL https://sleazyfork.org/en/scripts/588436-reset-filters
 // @supportURL  https://github.com/Edexaal/scripts/issues
 // @require      https://cdn.jsdelivr.net/gh/Edexaal/scripts@20abbf4a49807e7d11a081eb3a8573d0cab83c1f/_lib/utility.js
 // ==/UserScript==
