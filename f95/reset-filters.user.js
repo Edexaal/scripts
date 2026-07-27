@@ -1,11 +1,11 @@
 // ==UserScript==
-// @name        Reset Filters
+// @name        F95 Reset Filters
 // @namespace   1330126-edexal
 // @match       *://f95zone.to/sam/latest_alpha/*
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0.2
+// @version     1.0.3
 // @author      Edexal
 // @description Reset individual filters in the filter drawer on the latest update page.
 // @homepageURL https://sleazyfork.org/en/scripts/588436-reset-filters
