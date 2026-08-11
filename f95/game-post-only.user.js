@@ -7,7 +7,7 @@
 // @grant       GM.deleteValue
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     3.6.1
+// @version     3.7.0
 // @author      Edexal
 // @description Display only the 1st post of a game thread. Also, remove other content from the thread.
 // @homepageURL https://sleazyfork.org/en/scripts/522360-f95-game-post-only
@@ -23,17 +23,18 @@
     account: 'account',
     navbar: 'navbar',
     close: 'close',
-    first_post: 'first_post'
+    first_post: 'first_post',
+    refresh: 'refresh'
   };
   //Apply custom styles in a style tag
   Edexal.addCSS(`
     header.message-attribution {
-      position: relative; 
+      position: relative;
     }
-    
+
     #vm-gpo {
       z-index: 999999;
-      
+
       &.tooltip {
         top: 25px;
         right: 20px;
@@ -74,6 +75,10 @@
             &[for="close"] {
               color: #ffcb00;
             }
+            &[for="refresh"] {
+              color: #fda03d;
+              font-size: 1.35rem;
+            }
           }
         }
       }
@@ -85,6 +90,10 @@
         &:hover {
           cursor: pointer;
           background-color: #822626;
+        }
+        &[for="refresh"]:hover {
+          background-color: #5d3c1f;
+          color: #f6f6b2;
         }
         &[for="close"]:hover {
           background-color: #622;
@@ -159,12 +168,13 @@
     const accountLI = createList("Account Items", labels.account);
     const navbarLI = createList("Navigation Bar", labels.navbar);
     const firstPostLI = createList("First Post Only", labels.first_post);
+    const refreshLI = createList("(Refresh Page)",labels.refresh);
     const closeLI = createList("", labels.close, ['fas', 'fa-times-circle']);
     closeLI.style.pointerEvents = "none";
     closeLI.style.visibility = "hidden";
     closeLI.style.position = "absolute";
 
-    ul.append(closeLI, firstPostLI, breadcrumbLI, footerLI, recommendLI, replyLI, accountLI, navbarLI);
+    ul.append(closeLI, refreshLI,firstPostLI, breadcrumbLI, footerLI, recommendLI, replyLI, accountLI, navbarLI);
     vmGPOInner.append(h2, ul);
     vmGPOContent.append(vmGPOInner);
     vmGPO.append(vmGPOContent);
@@ -378,7 +388,6 @@
     return isGame;
   }
 
-
   /*Checks if thread is a GAME type*/
   if (isGameThread()) {
     createIcon();
@@ -393,6 +402,7 @@
     setLabelEvent(labels.reply, removeReplyItemsEvent);
     setLabelEvent(labels.account, removeAccountItemsEvent);
     setLabelEvent(labels.navbar, removeNavbarEvent);
+    setLabelEvent(labels.refresh, () => location.reload());
     setLabelEvent(labels.close, toggleSettingsEvent);
   }
 
