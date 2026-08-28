@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.8.5
+// @version     1.8.6
 // @author      Edexal
 // @description Improves mobile experience
 // @homepageURL https://sleazyfork.org/en/scripts/546346-f95-mobile-upgrade
@@ -34,7 +34,7 @@
   };
   Edexal.addCSS(`
 @media (width <= ${MAX_SCREEN_WIDTH}px) {
-  /*Fixes 'Your account' navigation menu*/ 
+  /*Fixes 'Your account' navigation menu*/
   #js-SideNavOcm .uix_sidebar--scroller {
     margin-top: 149px;
     & .block-header {
@@ -74,7 +74,7 @@
   .has-hiddenscroll .u-scrollButtons {
 	  right: 35vw;
   }
-  
+
   /*Fixes sidebar list of all online members & staff*/
   body .p-body-sidebar {
     margin-top: 64px;
@@ -103,7 +103,7 @@
    .actionBar .reaction.reaction--imageHidden.reaction--1 i {
       padding-right: 0;
       margin-right: 0;
-  } 
+  }
   .reaction.reaction--imageHidden img {
     display: unset;
   }
@@ -380,7 +380,7 @@
   }
 
   function initImageGallery() {
-    const galleryImages = Edexal.$$('.message-threadStarterPost .js-lbImage');
+    const galleryImages = Edexal.$$('[data-message-selector] .js-lbImage');
     if (!galleryImages || !galleryImages.length) {
       return;
     }
