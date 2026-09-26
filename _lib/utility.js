@@ -2,7 +2,7 @@
 // @name        Edexal's Utility Library
 // @namespace   1330126-edexal
 // @license     Unlicense
-// @version     3.1.0
+// @version     3.1.1
 // @author      Edexal
 // @description Utility library for common reusable tasks
 // ==/UserScript==
@@ -23,7 +23,9 @@ class Edexal {
     for (const [key, val] of Object.entries(otherObjs)) {
       switch (key) {
         case 'class':
-          el.classList.add(...val);
+          if(val) {
+            el.classList.add(...val);
+          }
           break;
         case 'text':
           const txt = document.createTextNode(val);
