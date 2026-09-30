@@ -16,13 +16,31 @@
   const SELECTOR = {
     INCLUDE_TAGS: "#filter-block_tags",
     EXCLUDE_TAGS: "#filter-block_tags_exclude",
-    PREFIXES: "#filter-block_prefixes div.filter-block div.filter-block_content"
-  }
-  const ENGINE_SET = new Set([
-    '1', '2', '3', '4', '5', '6', '7', '8', '12', '14', '17', '30', '31', '47', '116'
-  ]);
-  const OTHER_SET = new Set(['13', '19', '23']);
-  const STATUS_SET = new Set(['18', '20', '22']);
+    PREFIXES: "#filter-block_prefixes div.filter-block div.filter-block_content",
+    RESET_PREFIX_BTNS: "#filter-block_prefixes div.filter-block div.filter-block_content button"
+  };
+  const STATUS_PREFIX = {name: "ed-status_prefixes", codes: ['18', '20', '22']};
+  const COLLECTION_CODE = '19';
+  const GAME_PREFIXES = [{
+    name: "ed-engine_prefixes",
+    codes: ['1', '2', '3', '4', '5', '6', '7', '8', '12', '14', '17', '30', '31', '47', '116']},
+    {name: "ed-other_prefixes", codes: ['13', COLLECTION_CODE, '23']},
+    {name: STATUS_PREFIX.name, codes: STATUS_PREFIX.codes}
+  ];
+  const ANIM_PREFIXES = [
+    {name: "ed-animation_prefixes", codes: ['37','38','39','59']},
+    {name: "ed-other_prefixes", codes: [COLLECTION_CODE]}
+  ];
+  const ASSET_PREFIXES = [
+    {name: "ed-asets_prefixes", codes: ['33','35','36','40','41','42','45','71','110','114','115']},
+    {name: "ed-other_prefixes", codes: [COLLECTION_CODE]}
+  ];
+  const COMIC_PREFIXES = [
+    {name: "ed-other_prefixes", codes: ['16',COLLECTION_CODE,'23','43','44','49']},
+    {name: STATUS_PREFIX.name, codes: STATUS_PREFIX.codes}
+  ];
+  const CONFIG = {newPageDelay: 1500, newPageTimerID: null};
+  
   Edexal.addCSS(`
   .ed-filter_btn {
     display: block;
@@ -47,28 +65,52 @@
     }
 }`);
 
-
   function addButton(containerEl, newBtnId, btnEvent) {
     const newBtn = Edexal.newEl({element: "button", class: ["ed-filter_btn"], id: newBtnId, text: "Reset"});
     Edexal.on(newBtn, 'click', btnEvent);
     containerEl.append(newBtn);
   }
-
-  function initPrefixBtns() {
+  
+  function getCurCategory() {
+    let curCatLoc = location.href.match(/cat=(\w+)/);
+    return curCatLoc ? curCatLoc[1] : 'games';
+  }
+  
+  function addPrefixBtns(prefixDataArr) {
     const prefixContainers = Edexal.$$(SELECTOR.PREFIXES);
     prefixContainers.forEach((node, i) => {
-      switch (i) {
-        case 0:
-          addButton(node, "ed-engine_prefixes", () => prefixResetEvent(ENGINE_SET));
-          break;
-        case 1:
-          addButton(node, "ed-other_prefixes", () => prefixResetEvent(OTHER_SET));
-          break;
-        default:
-          addButton(node, "ed-status_prefixes", () => prefixResetEvent(STATUS_SET));
-          break;
-      }
+      addButton(node, prefixDataArr[i].name, () => prefixResetEvent(new Set(prefixDataArr[i].codes)));
     });
+  }
+  
+  function prefixBtnsExist(prefixArr) {
+    const resetBtns = Edexal.$$(SELECTOR.RESET_PREFIX_BTNS);
+    return resetBtns.length === prefixArr.length;
+  }
+  
+  function initPrefixBtns() {
+    let prefixArr;
+    const categoryPage = getCurCategory();
+    switch (categoryPage) {
+      case "games":
+        prefixArr = GAME_PREFIXES;
+        break;
+      case "comics":
+        prefixArr = COMIC_PREFIXES;
+        break;
+      case "animations":
+        prefixArr = ANIM_PREFIXES;
+        break;
+      case "assets":
+        prefixArr = ASSET_PREFIXES;
+        break;
+      default:
+        return;
+    }
+    if (prefixBtnsExist(prefixArr)) {
+      return;
+    }
+    addPrefixBtns(prefixArr);
   }
 
   function initButtons() {
@@ -109,7 +151,6 @@
     }
   }
 
-
   function tagResetEvent(regex) {
     const newURL = location.href.replace(regex, '');
     goToURL(newURL);
@@ -118,8 +159,24 @@
   function goToURL(url) {
     location.replace(url);
   }
+  
+  function observePageCB(records, obs) {
+    if (CONFIG.newPageTimerID) {
+      return;
+    }
+    CONFIG.newPageTimerID = setTimeout(() => {
+      initPrefixBtns();
+      CONFIG.newPageTimerID = null;
+    }, CONFIG.newPageDelay);
+  }
+  
+  function observePageChange() {
+    const observer = new MutationObserver((records, obs) => observePageCB(records, obs));
+    observer.observe(Edexal.$("#sub-nav_inner .sub-nav_paging"), {attributeFilter: ['class']});
+  }
 
   function run() {
+    observePageChange();
     initButtons();
   }
 
