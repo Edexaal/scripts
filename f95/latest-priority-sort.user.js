@@ -9,7 +9,7 @@
 // @version     0.1.0
 // @author      Edexal
 // @description Sorts resources on Latest Update page: top -> most-important; bottom -> least relevant.
-// @homepageURL https://sleazyfork.org/en/scripts/522360-f95-game-post-only
+// @homepageURL 
 // @supportURL  https://github.com/Edexaal/scripts/issues
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@20abbf4a49807e7d11a081eb3a8573d0cab83c1f/_lib/utility.js
 // ==/UserScript==
@@ -94,16 +94,20 @@
   .ed-show {
     display: block !important;
   }
-  .ed-select {
-    border: 2pt solid yellow !important;
-    font-weight: bold;
-  }
   `);
-  let CONFIG = {category: {}, priority: null, pList: [], swapItem1: null, saveTimerID:null, saveDelay: 2000, newPageTimerID:null, newPageDelay: 1500};
+  let CONFIG = {category: {}, priority: null, pList: [], saveTimerID:null, saveDelay: 2000, newPageTimerID:null, newPageDelay: 1500};
   const CSS_SELECT = {priorityList: "#priority-list div:last-child ul", priorityTags: "#priority-tags ul", latestWrapper: "#latest-page_items-wrap_inner",
-                      navPageBar:"#sub-nav_inner .sub-nav_paging", includeFilter: '#filter-block_tags .selectize-input',prioritySect: '#filter-block_priority'};
+                      navPageBar:"#sub-nav_inner .sub-nav_paging", includeFilter: '#filter-block_tags .selectize-input',prioritySect: '#filter-block_priority',
+                      latestResources:'div.resource-tile',lTileTags:'div.resource-tile .resource-tile_label-wrap_left',rTileTags:'div.resource-tile .resource-tile_label-wrap_right'};
   const SIMILAR_CATEGORY_TAGS = new Set(['games', 'comics', 'animations']);
   const INVALID_CATEGORY_TAGS = new Set(['mods']);
+  const EXTRA_TAGS = {watch: 'x1', collection: 'x2'};
+  const GAME_TAGS = {"ren'py": 'g7', "unreal engine": 'g31', rpgm: 'g2', unity: 'g3', flash: 'g8', godot: 'g116', html: 'g4', adrift: 'g12', java: 'g6',
+  others: 'g14', qsp: 'g1', rags: 'g5', tads: 'g17', webgl: 'g47', "wolf rpg": 'g30', completed: 'g18', abandoned: 'g22', onhold: 'g20'};
+  const COMIC_TAGS = {cg: 'c49',comics: 'c16',manga: 'c43',pinup: 'c44'};
+  const ANIM_TAGS = {app: 'an59', video: 'an39', gif: 'an38', flash:'an37'};
+  const ASSET_TAGS = {blender: 'as42',autodesk: 'as40',daz: 'as33',illusion: 'as36',other: 'as71',poser: 'as41',rpgm: 'as115',tutorial: 'as45',
+  unity: 'as114',unreal: 'as110',vam: 'as35'};
 
   function showPriorityListItem(tagCode,shouldHide) {
     const priorityListItem = Edexal.$(`${CSS_SELECT.priorityList} li[data-tag-code="${tagCode}"]`);
@@ -123,7 +127,7 @@
     CONFIG.pList.push(tagCode);
   }
 
-  async function saveUserPriorities() {
+  function saveUserPriorities() {
     if (CONFIG.saveTimerID) {
       clearTimeout(CONFIG.saveTimerID);
     }
@@ -135,15 +139,64 @@
   function priorityMatchCount(dataArr) {
     return dataArr.reduce((accumVal, currentVal) => CONFIG.priority.has(currentVal) ? accumVal + 1 : accumVal, 0);
   }
-
+  
+  function hasWatchIconCount(el) {
+    if (!CONFIG.priority.has(EXTRA_TAGS.watch)) {
+      return 0;
+    }
+    return el.querySelector('i.watch-icon') ? 1 : 0;
+  }
+  
+  function getExtraTags() {
+    let obj = {};
+    switch(CONFIG.cat_loc) {
+      case "comics":
+        obj = COMIC_TAGS;
+        break;
+      case "animations":
+        obj = ANIM_TAGS;
+        break;
+      case "assets":
+        obj = ASSET_TAGS;
+        break;
+      default:
+        obj = GAME_TAGS;
+        break;
+    }
+    return Object.assign(obj, EXTRA_TAGS);
+  }
+  
+  function countTiles(tileEls,extraTags) {
+    let count = 0;
+    for (const tileEl of tileEls) {
+      const tagName = tileEl.textContent.toLowerCase();
+      if (CONFIG.priority.has(extraTags[tagName])){
+        count += 1;
+      }
+    }
+    return count;
+  }
+  
+  // Collection, engines, types, statuses, medias
+  function TileCount(el) {
+    const extraTags = getExtraTags();
+    delete extraTags.watch; // watch is handled by 'hasWatchIconCount()'
+    const leftTiles = el.querySelector(CSS_SELECT.lTileTags).children;
+    const rightTiles = el.querySelector(CSS_SELECT.rTileTags).children;
+    return countTiles(leftTiles, extraTags) + countTiles(rightTiles, extraTags);
+  }
+  
+  function calculateTotalCount(el) {
+    const basicTagsArr = el.dataset.tags.split(',');
+    return priorityMatchCount(basicTagsArr) + hasWatchIconCount(el) + TileCount(el);
+  }
+  
   function organizeResources() {
     const latestWrapper = Edexal.$(CSS_SELECT.latestWrapper);
-    const latestUpdatesArr = Array.from(latestWrapper.querySelectorAll('div.resource-tile'));
+    const latestUpdatesArr = Array.from(latestWrapper.querySelectorAll(CSS_SELECT.latestResources));
     const sortedArr = latestUpdatesArr.toSorted((a,b) => {
-      const aTagsArr = a.dataset.tags.split(',');
-      const bTagsArr = b.dataset.tags.split(',');
-      const aPriorityCount = priorityMatchCount(aTagsArr);
-      const bPriorityCount = priorityMatchCount(bTagsArr);
+      const aPriorityCount = calculateTotalCount(a);
+      const bPriorityCount = calculateTotalCount(b);
       if (aPriorityCount > bPriorityCount) {
         return -1;
       } else if(aPriorityCount < bPriorityCount) {
@@ -155,38 +208,15 @@
     latestWrapper.append(...sortedArr);
   }
 
-  async function attachRemovePriorityEvent(btnEl) {
-    btnEl.addEventListener('click', async (e) => {
+  function attachRemovePriorityEvent(btnEl) {
+    Edexal.on(btnEl,'click', (e) => {
       const liTag = e.target.parentElement;
       const tagCode = liTag.dataset.tagCode;
       updatePriorityConfigList(tagCode);
       liTag.remove(liTag);
       showPriorityListItem(tagCode, false);
       organizeResources();
-      await saveUserPriorities();
-    });
-  }
-
-  function attachSwapEvent(pEl) {
-    pEl.addEventListener('click', (e) => {
-      const className = 'ed-select';
-      if (!CONFIG.swapItem1) {
-        CONFIG.swapItem1 = e.target;
-        CONFIG.swapItem1.parentElement.classList.add(className);
-      } else if (CONFIG.swapItem1 === e.target) {
-        CONFIG.swapItem1.parentElement.classList.remove(className);
-        CONFIG.swapItem1 = null;
-      } else {
-        const curTagName = e.target.textContent;
-        e.target.parentElement.dataset.tagCode = CONFIG.swapItem1.parentElement.dataset.tagCode;
-        e.target.textContent = CONFIG.swapItem1.textContent;
-
-        CONFIG.swapItem1.textContent = curTagName;
-        CONFIG.swapItem1.parentElement.dataset.tagCode = CONFIG.category[curTagName];
-
-        CONFIG.swapItem1.parentElement.classList.remove(className);
-        CONFIG.swapItem1 = null;
-      }
+      saveUserPriorities();
     });
   }
 
@@ -198,62 +228,74 @@
     }
   }
 
-  async function addChosenPriorityTag(listEl){
+  function addChosenPriorityTag(listEl){
     const priorityTagsEl = Edexal.$(CSS_SELECT.priorityTags);
     const li = Edexal.newEl({'element': 'LI', 'data-tag-code': listEl.dataset.tagCode});
     const p = Edexal.newEl({'element': 'P', 'text': listEl.textContent});
     const btn = Edexal.newEl({'element': 'BUTTON', 'text': 'x', 'type': 'button'});
-    attachSwapEvent(p);
-    await attachRemovePriorityEvent(btn);
+    attachRemovePriorityEvent(btn);
     li.append(p, btn);
     priorityTagsEl.append(li);
     updatePriorityConfigTags(listEl.dataset.tagCode);
     showPriorityListItem(listEl.dataset.tagCode, true);
   }
 
-  async function applyChoiceEvent(priorityListEl) {
-    priorityListEl.addEventListener('click', async (e) => {
+  function applyChoiceEvent(priorityListEl) {
+    Edexal.on(priorityListEl,'click', (e) => {
       if (e.target.classList.contains('ed-hide') || e.target.tagName.toLowerCase() !== 'li') {
         return;
       }
-      await addChosenPriorityTag(e.target);
+      addChosenPriorityTag(e.target);
       organizeResources();
-      await saveUserPriorities();
+      saveUserPriorities();
     });
   }
-
-  async function addTagsToSettings() {
-    const dropDownTags = Edexal.$$('#filter-block_tags .selectize-dropdown-content .option');
-    const priorityList = Edexal.$(CSS_SELECT.priorityList);
-    dropDownTags.forEach(async (el) => {
-      //Ex: '2d game' : 1112
-      const tagName = el.querySelector('span:first-child').textContent;
-      CONFIG.category[tagName] = el.dataset.value;
-      const isInPriority = CONFIG.priority.has(el.dataset.value);
+  
+  function addTagToSettings(tagName, tagCode, priorityListEl) {
+    const isInPriority = CONFIG.priority.has(tagCode);
       if (!isInPriority) {
-        CONFIG.pList.push(el.dataset.value);
+        CONFIG.pList.push(tagCode);
       }
       const li = Edexal.newEl({
           element: 'LI',
           text: tagName,
-          'data-tag-code': el.dataset.value
+          'data-tag-code': tagCode
       });
-      priorityList.append(li);
+      priorityListEl.append(li);
       if (isInPriority) {
-        await addChosenPriorityTag(li);
+        addChosenPriorityTag(li);
       }
+  }
+  
+  function addExtraTags(priorityListEl) {
+    const extraTags = getExtraTags();
+    for (const tagName in extraTags) {
+      const tagCode = extraTags[tagName];
+      CONFIG.category[tagName] = tagCode;
+      addTagToSettings(tagName, tagCode, priorityListEl);
+    }
+  }
+  
+  function addTagsToSettings() {
+    const dropDownTags = Edexal.$$('#filter-block_tags .selectize-dropdown-content .option');
+    const priorityList = Edexal.$(CSS_SELECT.priorityList);
+    addExtraTags(priorityList);
+    dropDownTags.forEach((el) => {
+      //Ex: '2d game' : 1112
+      const tagName = el.querySelector('span:first-child').textContent;
+      CONFIG.category[tagName] = el.dataset.value;
+      addTagToSettings(tagName, el.dataset.value, priorityList);
     });
-    await GM.setValue('category', CONFIG.category);
-    await applyChoiceEvent(priorityList);
+    applyChoiceEvent(priorityList);
     organizeResources();
   }
 
-  async function observeCallback2(records,obs) {
+  function observeCallback2(records,obs) {
     for (const record of records) {
       for (const node of record.addedNodes) {
         if (node.classList?.contains('option')) {
           obs.disconnect();
-          await addTagsToSettings();
+          addTagsToSettings();
           return;
         }
       }
@@ -285,7 +327,7 @@
 
   function addSettingEvent() {
     const settingSect = Edexal.$('#filter-block_priority');
-    settingSect.addEventListener('click', (e) => {
+    Edexal.on(settingSect, 'click', (e) => {
       if (e.target.matches('h4')) {
         settingSect.querySelector('div.accordion-content').classList.toggle('ed-show');
       }
@@ -293,7 +335,7 @@
   }
 
   function runOnTagReveal() {
-    const observer = new MutationObserver(async (records, obs) => await observeCallback2(records,obs));
+    const observer = new MutationObserver((records, obs) => observeCallback2(records,obs));
     observer.observe(Edexal.$('#filter-block_tags .selectize-dropdown-content'), {subtree: true, childList: true});
   }
 
@@ -307,35 +349,6 @@
     runOnTagReveal();
   }
 
-  async function addSavedTagsToSettings() {
-    const priorityList = Edexal.$(CSS_SELECT.priorityList);
-    for (const [tagName, tagCode] of Object.entries(CONFIG.category)) {
-      const isInPriority = CONFIG.priority.has(tagCode);
-      if (!isInPriority) {
-        CONFIG.pList.push(tagCode);
-      }
-      const li = Edexal.newEl({
-          element: 'LI',
-          text: tagName,
-          'data-tag-code': tagCode,
-      });
-      priorityList.append(li);
-      if (isInPriority) {
-        await addChosenPriorityTag(li);
-      }
-    }
-    await applyChoiceEvent(priorityList);
-    organizeResources();
-  }
-
-  async function supplyTagChoices() {
-    if (Object.keys(CONFIG.category).length > 0) {
-      await addSavedTagsToSettings();
-    }else {
-      initTagChoices();
-    }
-  }
-
   function clearPriorityLists() {
     const listEl = Edexal.$(CSS_SELECT.priorityList);
     listEl.replaceChildren();
@@ -343,12 +356,7 @@
     tagListEl.replaceChildren();
   }
 
-  async function nextCategoryPage(curCategory) {
-    if (SIMILAR_CATEGORY_TAGS.has(CONFIG.cat_loc) && SIMILAR_CATEGORY_TAGS.has(curCategory)) {
-      CONFIG.cat_loc = curCategory;
-      organizeResources();
-      return;
-    }
+  function nextCategoryPage(curCategory) {
     CONFIG.cat_loc = curCategory;
     CONFIG.category = {};
     CONFIG.pList = [];
@@ -358,66 +366,51 @@
 
   function categoryPageType() {
     let curCatLoc = location.href.match(/cat=(\w+)/);
-    return curCatLoc = curCatLoc ? curCatLoc[1] : 'games';
+    return curCatLoc ? curCatLoc[1] : 'games';
   }
 
-  async function observePageChange(records, obs) {
+  function observePageChange(records, obs) {
     const curCat = categoryPageType();
     if (CONFIG.newPageTimerID || INVALID_CATEGORY_TAGS.has(curCat)) {
       return;
     }
-    CONFIG.newPageTimerID = setTimeout(async () => {
+    CONFIG.newPageTimerID = setTimeout(() => {
       CONFIG.cat_loc === curCat ?
-        organizeResources() : await nextCategoryPage(curCat);
+        organizeResources() : nextCategoryPage(curCat);
       CONFIG.newPageTimerID = null;
     }, CONFIG.newPageDelay);
   }
 
   function organizeOnNewPages() {
-    const observer = new MutationObserver(async (records, obs) => await observePageChange(records, obs));
+    const observer = new MutationObserver((records, obs) => observePageChange(records, obs));
     observer.observe(Edexal.$(CSS_SELECT.navPageBar), {attributeFilter: ['class']});
   }
 
-  async function initSettings() {
+  function initSettings() {
     addSettingSection();
     addSettingEvent();
-    await supplyTagChoices();
+    initTagChoices();
     organizeOnNewPages();
   }
 
-  async function observeCallback(records, obs) {
+  function observeCallback(records, obs) {
     for (const record of records) {
       for (const node of record.addedNodes) {
         if (node.classList?.contains('resource-tile')) {
           obs.disconnect();
-          await initSettings();
+          initSettings();
           return;
         }
       }
     }
   }
 
-  function shouldRenewCategory(curCatLoc) {
-    let shouldRenew = true;
-    if (curCatLoc === CONFIG.cat_loc) {
-      shouldRenew = false;
-    } else if (Object.keys(CONFIG.category).length > 0) {
-      if (SIMILAR_CATEGORY_TAGS.has(CONFIG.cat_loc) && SIMILAR_CATEGORY_TAGS.has(curCatLoc)) {
-        shouldRenew = false;
-      }
-    }
-    return shouldRenew;
-  }
-
   async function loadDB(curCatLoc){
-    const dbObj = await GM.getValues({'category': {}, 'cat_loc': '', 'priority': []});
+    const dbObj = await GM.getValues({'cat_loc': '', 'priority': []});
     dbObj.priority = new Set(dbObj.priority);
     CONFIG = Object.assign(CONFIG, dbObj);
-    if (shouldRenewCategory(curCatLoc)) {
-      CONFIG.cat_loc = curCatLoc;
-      await GM.setValue('cat_loc', curCatLoc);
-      CONFIG.category = {};
-    }
+    CONFIG.cat_loc = curCatLoc;
+    await GM.setValue('cat_loc', curCatLoc);
   }
 
   async function initOnResourceLoad() {
@@ -427,7 +420,7 @@
     }
     await loadDB(curCatLoc);
     const latestUpdateWrapper = Edexal.$(CSS_SELECT.latestWrapper);
-    const observer = new MutationObserver(async (records,obs) => await observeCallback(records,obs));
+    const observer = new MutationObserver((records, obs) => observeCallback(records, obs));
     observer.observe(latestUpdateWrapper, {subtree: true, childList: true});
   }
   await initOnResourceLoad();
