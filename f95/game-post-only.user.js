@@ -22,10 +22,11 @@
     recommend: 'recommend',
     account: 'account',
     navbar: 'navbar',
+    rating: 'rating',
     close: 'close',
     first_post: 'first_post',
-    refresh: 'refresh'
   };
+  const CSS_HIDE = 'ed-hide';  // Hides/Shows DOM elements
   //Apply custom styles in a style tag
   Edexal.addCSS(`
     header.message-attribution {
@@ -75,25 +76,15 @@
             &[for="close"] {
               color: #ffcb00;
             }
-            &[for="refresh"] {
-              color: #fda03d;
-              font-size: 1.35rem;
-            }
           }
         }
       }
-
     }
-
     #vm-gpo {
       label{
         &:hover {
           cursor: pointer;
           background-color: #822626;
-        }
-        &[for="refresh"]:hover {
-          background-color: #5d3c1f;
-          color: #f6f6b2;
         }
         &[for="close"]:hover {
           background-color: #622;
@@ -132,6 +123,10 @@
     .p-footer {
       z-index: auto;
     }
+    
+    .ed-hide {
+      display: none !important;
+    }
   `);
 
   function createList(name, metaName, classNames) {
@@ -168,13 +163,13 @@
     const accountLI = createList("Account Items", labels.account);
     const navbarLI = createList("Navigation Bar", labels.navbar);
     const firstPostLI = createList("First Post Only", labels.first_post);
-    const refreshLI = createList("(Refresh Page)",labels.refresh);
+    const ratingLI = createList("Star Ratings", labels.rating);
     const closeLI = createList("", labels.close, ['fas', 'fa-times-circle']);
     closeLI.style.pointerEvents = "none";
     closeLI.style.visibility = "hidden";
     closeLI.style.position = "absolute";
 
-    ul.append(closeLI, refreshLI,firstPostLI, breadcrumbLI, footerLI, recommendLI, replyLI, accountLI, navbarLI);
+    ul.append(closeLI, firstPostLI, breadcrumbLI, footerLI, recommendLI, replyLI, accountLI, navbarLI, ratingLI);
     vmGPOInner.append(h2, ul);
     vmGPOContent.append(vmGPOInner);
     vmGPO.append(vmGPOContent);
@@ -205,138 +200,90 @@
     const menu = Edexal.$('#vm-gpo');
     menu.style.display = menu.style.display === 'initial' ? 'none' : 'initial';
   }
-
-  function deleteEls(el) {
+  
+  function toggleVisibility(el) {
     if (el instanceof NodeList) {
       el.forEach((curVal) => {
-        curVal.remove();
+        curVal.classList.toggle(CSS_HIDE);
       });
     } else if (el instanceof Element) {
-      el.remove();
+      el.classList.toggle(CSS_HIDE);
     } else {
-      console.error(`Unable to delete ${el}! Element is of type: ${typeof el}.`);
+      console.debug(`Unable to toggle visibility for ${el}! Element is of type: ${typeof el}.`);
     }
   }
-
+  
   function toggleEvent(el, callback) {
     const isActive = el.classList.toggle("vmgpo-active");
     if (isActive) {
       GM.setValue(el.getAttribute('for'), true);
-      if (callback)
-        callback();
     } else {
       GM.deleteValue(el.getAttribute('for'));
     }
+    callback();
+  }
+  
+  function showHideRating() {
+    toggleVisibility(Edexal.$(".p-body-header .pageContent .uix_headerInner--opposite"));
   }
 
-  function removeFooter() {
-    let footer = Edexal.$("#footer.p-footer");
-    deleteEls(footer);
+  function showHideFooter() {
+    toggleVisibility(Edexal.$("#footer.p-footer"));
   }
 
-  function removeFooterEvent(e) {
-    toggleEvent(e.target, () => {
-      removeFooter();
-    });
+  function showHideBreadcrumbs() {
+    toggleVisibility(Edexal.$$(".breadcrumb"));
   }
 
-  function removeBreadcrumbs() {
-    let breadcrumb = Edexal.$$(".breadcrumb");
-    deleteEls(breadcrumb);
+  function showHideAccountItems() {
+    toggleVisibility(Edexal.$("a.p-navgroup-link--user, .offCanvasMenu"));
   }
 
-  function removeBreadcrumbsEvent(e) {
-    toggleEvent(e.target, () => {
-      removeBreadcrumbs();
-    });
-  }
-
-  function removeAccountItems() {
-    let accIcon = Edexal.$("a.p-navgroup-link--user, .offCanvasMenu");
-    deleteEls(accIcon);
-  }
-
-  function removeAccountItemsEvent(e) {
-    toggleEvent(e.target, () => {
-      removeAccountItems();
-    });
-  }
-
-  function removeReplyItems() {
+  function showHideReplyItems() {
     let replyForm = Edexal.$('form.js-quickReply');
-    !!replyForm ? deleteEls(replyForm) : null;
+    toggleVisibility(replyForm);
 
     let replyActions = Edexal.$$('a.actionBar-action--mq,  a.actionBar-action--reply');
-    !!replyActions ? deleteEls(replyActions) : null;
-
-    removeThreadWarning();
+    toggleVisibility(replyActions);
+    showHideThreadWarning();
   }
 
-  function removeReplyItemsEvent(e) {
-    toggleEvent(e.target, () => {
-      removeReplyItems();
-    });
+  function showHideRecomendations() {
+    toggleVisibility(Edexal.$('div.block--similarContents'));
   }
 
-  function removeRecomendations() {
-    let recomendationSection = Edexal.$('div.block--similarContents');
-    !!recomendationSection ? deleteEls(recomendationSection) : null;
-  }
-
-  function removeRecomendationsEvent(e) {
-    toggleEvent(e.target, () => {
-      removeRecomendations();
-    });
-  }
-
-  function removePagination() {
+  function showHidePagination() {
     let paginations = Edexal.$$('.pageNavWrapper--mixed');
     if (!!!paginations.length) return;
-    //top pagination
-    let topPageContainer = paginations[0].parentNode.parentNode;
-    !!topPageContainer ? deleteEls(topPageContainer) : null;
-
-    //bottom pagination
-    let bottomPageContainer = paginations[1].parentNode.parentNode;
-    !!bottomPageContainer ? deleteEls(bottomPageContainer) : null;
-  }
-
-  function removeScrollbarBtns() {
-    let scrollbarContainer = Edexal.$('div.u-scrollButtons').parentNode;
-    !!scrollbarContainer ? deleteEls(scrollbarContainer) : null;
-  }
-
-  function removeNavbar() {
-    let navbar = Edexal.$('div#top > div:first-child');
-    deleteEls(navbar);
-  }
-
-  function removeNavbarEvent(e) {
-    toggleEvent(e.target, () => {
-      removeNavbar();
+    paginations.forEach((el) => {
+      const pageContainer = el.parentNode.parentNode;
+      toggleVisibility(pageContainer);
     });
   }
 
-  function removeThreadWarning() {
-    let warningBlock = Edexal.$('div.blockMessage.blockMessage--warning');
-    if (warningBlock) {
-      deleteEls(warningBlock);
-    }
+  function showHideScrollbarBtns() {
+    let scrollbarContainer = Edexal.$('div.u-scrollButtons').parentNode;
+    toggleVisibility(scrollbarContainer);
+  }
+
+  function showHideNavbar() {
+    toggleVisibility(Edexal.$('div#top > div:first-child'));
+  }
+
+  function showHideThreadWarning() {
+    toggleVisibility(Edexal.$('div.blockMessage.blockMessage--warning'));
   }
 
   function showFirstPostOnly() {
     //Thread Post Container Ref
-    let opContainer = Edexal.$("article.message-threadStarterPost").parentNode;
-    opContainer.replaceChildren(opContainer.children.item(0));
-    removePagination();
+    const opContainer = Edexal.$("article.message-threadStarterPost").parentNode;
+    const replyPosts = opContainer.querySelectorAll('article:not(.message-threadStarterPost).message--post');
+    toggleVisibility(replyPosts);
+    showHidePagination();
   }
 
-  function showFirstPostEvent(e) {
-    toggleEvent(e.target, () => showFirstPostOnly());
-  }
-
-  function removeDefaults() {
-    removeScrollbarBtns();
+  function hideDefaults() {
+    showHideScrollbarBtns();
   }
 
   async function initSettings() {
@@ -351,22 +298,25 @@
           showFirstPostOnly();
           break;
         case labels.breadcrumbs:
-          removeBreadcrumbs();
+          showHideBreadcrumbs();
           break;
         case labels.footer:
-          removeFooter();
+          showHideFooter();
           break;
         case labels.reply:
-          removeReplyItems();
+          showHideReplyItems();
           break;
         case labels.recommend:
-          removeRecomendations();
+          showHideRecomendations();
           break;
         case labels.account:
-          removeAccountItems();
+          showHideAccountItems();
           break;
         case labels.navbar:
-          removeNavbar();
+          showHideNavbar();
+          break;
+        case labels.rating:
+          showHideRating();
           break;
         default:
          await GM.deleteValue(labelName);
@@ -393,16 +343,16 @@
     createIcon();
     createTooltip();
     await initSettings();
-    removeDefaults();
+    hideDefaults();
     setClickEvent('#vmgpo-icon', toggleSettingsEvent);
-    setLabelEvent(labels.first_post, showFirstPostEvent);
-    setLabelEvent(labels.breadcrumbs, removeBreadcrumbsEvent);
-    setLabelEvent(labels.footer, removeFooterEvent);
-    setLabelEvent(labels.recommend, removeRecomendationsEvent);
-    setLabelEvent(labels.reply, removeReplyItemsEvent);
-    setLabelEvent(labels.account, removeAccountItemsEvent);
-    setLabelEvent(labels.navbar, removeNavbarEvent);
-    setLabelEvent(labels.refresh, () => location.reload());
+    setLabelEvent(labels.first_post, (e) => toggleEvent(e.target, showFirstPostOnly));
+    setLabelEvent(labels.breadcrumbs, (e) => toggleEvent(e.target, showHideBreadcrumbs));
+    setLabelEvent(labels.footer, (e) => toggleEvent(e.target, showHideFooter));
+    setLabelEvent(labels.recommend, (e) => toggleEvent(e.target, showHideRecomendations));
+    setLabelEvent(labels.reply, (e) => toggleEvent(e.target, showHideReplyItems));
+    setLabelEvent(labels.account, (e) => toggleEvent(e.target, showHideAccountItems));
+    setLabelEvent(labels.navbar, (e) => toggleEvent(e.target, showHideNavbar));
+    setLabelEvent(labels.rating, (e) => toggleEvent(e.target, showHideRating));
     setLabelEvent(labels.close, toggleSettingsEvent);
   }
 
