@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name        F95 Latest Priority Sort
+// @name        F95 Latest Match-based Sort
 // @namespace   1330126-edexal
 // @match       *://f95zone.to/sam/latest_alpha/*
 // @grant       GM.setValue
