@@ -69,3 +69,29 @@ class Edexal {
     Edexal.#runOn('account/bookmarks', callback);
   }
 }
+
+// Handles listening to page navigations on latest update page.
+class LUPageObserver {
+  #delayTimeMS = 1500;
+  #timerID;
+  
+  #onPageChange(records, obs, pageCB,canExecuteCB) {
+    if (this.#timerID ||  typeof canExecuteCB === "function" && !canExecuteCB()) {
+      return;
+    }
+    this.#timerID = setTimeout(() => {
+      pageCB();
+      this.#timerID = null;
+    }, this.#delayTimeMS);
+  }
+  
+  #initObserver(pageCB, canExecuteCB) {
+    const observer = new MutationObserver((records, obs) => this.#onPageChange(records, obs, pageCB, canExecuteCB));
+    const pageNavBar = Edexal.$("#sub-nav_inner .sub-nav_paging");
+    observer.observe(pageNavBar, {attributeFilter: ['class']});
+  }
+  
+  observe(pageChangeCB, canExecuteCB) {
+    this.#initObserver(pageChangeCB, canExecuteCB);
+  }
+}
