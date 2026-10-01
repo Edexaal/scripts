@@ -36,8 +36,16 @@
   }
 
   /*Chosen item*/
+  @keyframes glow {
+    0%, 100% {
+      box-shadow: #f27b5f 1px 0 10px 5px;
+    }
+    50% {
+      box-shadow: #f2d478 1px 0 14px 11px;
+    }
+  }
   #chosen {
-	  box-shadow: #d4c7c7 1px 0 10px 8px !important;
+	  animation: 7s ease infinite glow;
   }
     #chosen > a.resource-tile_link {
       color: yellow !important;
