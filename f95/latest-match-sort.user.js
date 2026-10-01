@@ -15,7 +15,7 @@
 // ==/UserScript==
 (async () => {
   Edexal.addCSS(`
-  #filter-block_priority  {
+  #filter-block_match  {
     padding: 0;
     border-top: 1px solid #3f4043;
     & div ul{
@@ -26,8 +26,15 @@
     & div:first-child {
       overflow: unset;
     }
+    & h4 {
+      color: #fc9b46 !important;
+    }
+    & hr {
+      color: #c15858;
+    }
   }
-  #priority-list {
+  
+  #match-list {
     background-color: rgb(36,38,41);
     & div:first-child {
       background-color: rgb(19,21,23);
@@ -52,7 +59,7 @@
       }
     }
   }
-  #priority-tags {
+  #match-tags {
     background-color: rgb(36,38,41);
     & ul li {
       display: flex;
@@ -60,14 +67,13 @@
       border: 1pt solid rgb(60, 61, 67);
       & p, & button {
         padding-left: 10px;
-        padding-right: 10px;
         margin: 0;
       }
       & button {
         height: 30px;
-        color: rgb(255, 116, 152);
-        background-color: rgb(36,38,41);
-        flex: 1 2 auto;
+        color: #ffffff;
+        background-color: #A3002C;
+        padding-right: 10px;
         &:hover {
           cursor: pointer;
           opacity: 0.9;
@@ -78,6 +84,8 @@
       }
       & p {
         flex: 2 1 auto;
+        color: #f9f920;
+        font: bold 1.1em Arial, Verdana, sans-serif;
         &:hover {
           opacity: 0.7;
           cursor: pointer;
@@ -95,9 +103,9 @@
     display: block !important;
   }
   `);
-  let CONFIG = {category: {}, priority: null, pList: [], saveTimerID:null, saveDelay: 2000, newPageTimerID:null, newPageDelay: 1500};
-  const CSS_SELECT = {priorityList: "#priority-list div:last-child ul", priorityTags: "#priority-tags ul", latestWrapper: "#latest-page_items-wrap_inner",
-                      navPageBar:"#sub-nav_inner .sub-nav_paging", includeFilter: '#filter-block_tags .selectize-input',prioritySect: '#filter-block_priority',
+  let CONFIG = {category: {}, matches: null, pList: [], saveTimerID:null, saveDelay: 2000, newPageTimerID:null, newPageDelay: 1500};
+  const CSS_SELECT = {matchList: "#match-list div:last-child ul", matchTags: "#match-tags ul", latestWrapper: "#latest-page_items-wrap_inner",
+                      navPageBar:"#sub-nav_inner .sub-nav_paging", includeFilter: '#filter-block_tags .selectize-input',matchSect: '#filter-block_match',
                       latestResources:'div.resource-tile',lTileTags:'div.resource-tile .resource-tile_label-wrap_left',rTileTags:'div.resource-tile .resource-tile_label-wrap_right'};
   const SIMILAR_CATEGORY_TAGS = new Set(['games', 'comics', 'animations']);
   const INVALID_CATEGORY_TAGS = new Set(['mods']);
@@ -109,21 +117,21 @@
   const ASSET_TAGS = {blender: 'as42',autodesk: 'as40',daz: 'as33',illusion: 'as36',other: 'as71',poser: 'as41',rpgm: 'as115',tutorial: 'as45',
   unity: 'as114',unreal: 'as110',vam: 'as35'};
 
-  function showPriorityListItem(tagCode,shouldHide) {
-    const priorityListItem = Edexal.$(`${CSS_SELECT.priorityList} li[data-tag-code="${tagCode}"]`);
-    if (!priorityListItem) {
+  function showMatchListItem(tagCode,shouldHide) {
+    const matchListItem = Edexal.$(`${CSS_SELECT.matchList} li[data-tag-code="${tagCode}"]`);
+    if (!matchListItem) {
       return;
     }
     const className = 'ed-hide';
     if (shouldHide) {
-      priorityListItem.classList.add(className);
+      matchListItem.classList.add(className);
     } else {
-      priorityListItem.classList.remove(className);
+      matchListItem.classList.remove(className);
     }
   }
 
-  function updatePriorityConfigList(tagCode) {
-    CONFIG.priority.delete(tagCode);
+  function updateMatchConfigList(tagCode) {
+    CONFIG.matches.delete(tagCode);
     CONFIG.pList.push(tagCode);
   }
 
@@ -132,16 +140,16 @@
       clearTimeout(CONFIG.saveTimerID);
     }
     CONFIG.saveTimerID = setTimeout(async () => {
-      await GM.setValue('priority', Array.from(CONFIG.priority));
+      await GM.setValue('matches', Array.from(CONFIG.matches));
     }, CONFIG.saveDelay);
   }
 
-  function priorityMatchCount(dataArr) {
-    return dataArr.reduce((accumVal, currentVal) => CONFIG.priority.has(currentVal) ? accumVal + 1 : accumVal, 0);
+  function matchTagsCount(dataArr) {
+    return dataArr.reduce((accumVal, currentVal) => CONFIG.matches.has(currentVal) ? accumVal + 1 : accumVal, 0);
   }
   
   function hasWatchIconCount(el) {
-    if (!CONFIG.priority.has(EXTRA_TAGS.watch)) {
+    if (!CONFIG.matches.has(EXTRA_TAGS.watch)) {
       return 0;
     }
     return el.querySelector('i.watch-icon') ? 1 : 0;
@@ -170,7 +178,7 @@
     let count = 0;
     for (const tileEl of tileEls) {
       const tagName = tileEl.textContent.toLowerCase();
-      if (CONFIG.priority.has(extraTags[tagName])){
+      if (CONFIG.matches.has(extraTags[tagName])){
         count += 1;
       }
     }
@@ -188,18 +196,18 @@
   
   function calculateTotalCount(el) {
     const basicTagsArr = el.dataset.tags.split(',');
-    return priorityMatchCount(basicTagsArr) + hasWatchIconCount(el) + TileCount(el);
+    return matchTagsCount(basicTagsArr) + hasWatchIconCount(el) + TileCount(el);
   }
   
   function organizeResources() {
     const latestWrapper = Edexal.$(CSS_SELECT.latestWrapper);
     const latestUpdatesArr = Array.from(latestWrapper.querySelectorAll(CSS_SELECT.latestResources));
     const sortedArr = latestUpdatesArr.toSorted((a,b) => {
-      const aPriorityCount = calculateTotalCount(a);
-      const bPriorityCount = calculateTotalCount(b);
-      if (aPriorityCount > bPriorityCount) {
+      const aMatchCount = calculateTotalCount(a);
+      const bMatchCount = calculateTotalCount(b);
+      if (aMatchCount > bMatchCount) {
         return -1;
-      } else if(aPriorityCount < bPriorityCount) {
+      } else if(aMatchCount < bMatchCount) {
         return 1;
       } else {
         return 0;
@@ -208,52 +216,52 @@
     latestWrapper.append(...sortedArr);
   }
 
-  function attachRemovePriorityEvent(btnEl) {
+  function attachRemoveMatchEvent(btnEl) {
     Edexal.on(btnEl,'click', (e) => {
       const liTag = e.target.parentElement;
       const tagCode = liTag.dataset.tagCode;
-      updatePriorityConfigList(tagCode);
+      updateMatchConfigList(tagCode);
       liTag.remove(liTag);
-      showPriorityListItem(tagCode, false);
+      showMatchListItem(tagCode, false);
       organizeResources();
       saveUserPriorities();
     });
   }
 
-  function updatePriorityConfigTags(tagCode) {
-    const priorityIndex = CONFIG.pList.indexOf(tagCode);
-    CONFIG.priority.add(tagCode);
-    if (priorityIndex !== -1) {
-      CONFIG.pList.splice(priorityIndex, 1);
+  function updateMatchConfigTags(tagCode) {
+    const matchIndex = CONFIG.pList.indexOf(tagCode);
+    CONFIG.matches.add(tagCode);
+    if (matchIndex !== -1) {
+      CONFIG.pList.splice(matchIndex, 1);
     }
   }
 
-  function addChosenPriorityTag(listEl){
-    const priorityTagsEl = Edexal.$(CSS_SELECT.priorityTags);
+  function addChosenMatchTag(listEl){
+    const matchTagsEl = Edexal.$(CSS_SELECT.matchTags);
     const li = Edexal.newEl({'element': 'LI', 'data-tag-code': listEl.dataset.tagCode});
     const p = Edexal.newEl({'element': 'P', 'text': listEl.textContent});
     const btn = Edexal.newEl({'element': 'BUTTON', 'text': 'x', 'type': 'button'});
-    attachRemovePriorityEvent(btn);
+    attachRemoveMatchEvent(btn);
     li.append(p, btn);
-    priorityTagsEl.append(li);
-    updatePriorityConfigTags(listEl.dataset.tagCode);
-    showPriorityListItem(listEl.dataset.tagCode, true);
+    matchTagsEl.append(li);
+    updateMatchConfigTags(listEl.dataset.tagCode);
+    showMatchListItem(listEl.dataset.tagCode, true);
   }
 
-  function applyChoiceEvent(priorityListEl) {
-    Edexal.on(priorityListEl,'click', (e) => {
+  function applyChoiceEvent(matchListEl) {
+    Edexal.on(matchListEl,'click', (e) => {
       if (e.target.classList.contains('ed-hide') || e.target.tagName.toLowerCase() !== 'li') {
         return;
       }
-      addChosenPriorityTag(e.target);
+      addChosenMatchTag(e.target);
       organizeResources();
       saveUserPriorities();
     });
   }
   
-  function addTagToSettings(tagName, tagCode, priorityListEl) {
-    const isInPriority = CONFIG.priority.has(tagCode);
-      if (!isInPriority) {
+  function addTagToSettings(tagName, tagCode, matchListEl) {
+    const isInMatches = CONFIG.matches.has(tagCode);
+      if (!isInMatches) {
         CONFIG.pList.push(tagCode);
       }
       const li = Edexal.newEl({
@@ -261,32 +269,32 @@
           text: tagName,
           'data-tag-code': tagCode
       });
-      priorityListEl.append(li);
-      if (isInPriority) {
-        addChosenPriorityTag(li);
+      matchListEl.append(li);
+      if (isInMatches) {
+        addChosenMatchTag(li);
       }
   }
   
-  function addExtraTags(priorityListEl) {
+  function addExtraTags(matchListEl) {
     const extraTags = getExtraTags();
     for (const tagName in extraTags) {
       const tagCode = extraTags[tagName];
       CONFIG.category[tagName] = tagCode;
-      addTagToSettings(tagName, tagCode, priorityListEl);
+      addTagToSettings(tagName, tagCode, matchListEl);
     }
   }
   
   function addTagsToSettings() {
     const dropDownTags = Edexal.$$('#filter-block_tags .selectize-dropdown-content .option');
-    const priorityList = Edexal.$(CSS_SELECT.priorityList);
-    addExtraTags(priorityList);
+    const matchList = Edexal.$(CSS_SELECT.matchList);
+    addExtraTags(matchList);
     dropDownTags.forEach((el) => {
       //Ex: '2d game' : 1112
       const tagName = el.querySelector('span:first-child').textContent;
       CONFIG.category[tagName] = el.dataset.value;
-      addTagToSettings(tagName, el.dataset.value, priorityList);
+      addTagToSettings(tagName, el.dataset.value, matchList);
     });
-    applyChoiceEvent(priorityList);
+    applyChoiceEvent(matchList);
     organizeResources();
   }
 
@@ -305,18 +313,18 @@
   function addSettingSection() {
     const filterBarEl = Edexal.$(".content-block_filter");
     const html = `
-    <div id="filter-block_priority">
+    <div id="filter-block_match">
       <div class="filter-block accordion-block">
-        <h4 class="filter-block_title accordion-toggle">Priority Sort</h4>
+        <h4 class="filter-block_title accordion-toggle">Match Sorting</h4>
         <div class="filter-block_content filter-block_v accordion-content">
-          <div id="priority-list">
+          <div id="match-list">
             <div>Select tags...</div>
             <div>
               <ul></ul>
             </div>
           </div>
           <hr/>
-          <div id="priority-tags">
+          <div id="match-tags">
             <ul></ul>
           </div>
         </div>
@@ -326,7 +334,7 @@
   }
 
   function addSettingEvent() {
-    const settingSect = Edexal.$('#filter-block_priority');
+    const settingSect = Edexal.$('#filter-block_match');
     Edexal.on(settingSect, 'click', (e) => {
       if (e.target.matches('h4')) {
         settingSect.querySelector('div.accordion-content').classList.toggle('ed-show');
@@ -349,10 +357,10 @@
     runOnTagReveal();
   }
 
-  function clearPriorityLists() {
-    const listEl = Edexal.$(CSS_SELECT.priorityList);
+  function clearMatchLists() {
+    const listEl = Edexal.$(CSS_SELECT.matchList);
     listEl.replaceChildren();
-    const tagListEl = Edexal.$(CSS_SELECT.priorityTags);
+    const tagListEl = Edexal.$(CSS_SELECT.matchTags);
     tagListEl.replaceChildren();
   }
 
@@ -360,7 +368,7 @@
     CONFIG.cat_loc = curCategory;
     CONFIG.category = {};
     CONFIG.pList = [];
-    clearPriorityLists();
+    clearMatchLists();
     initTagChoices();
   }
 
@@ -406,8 +414,8 @@
   }
 
   async function loadDB(curCatLoc){
-    const dbObj = await GM.getValues({'cat_loc': '', 'priority': []});
-    dbObj.priority = new Set(dbObj.priority);
+    const dbObj = await GM.getValues({'cat_loc': '', 'matches': []});
+    dbObj.matches = new Set(dbObj.matches);
     CONFIG = Object.assign(CONFIG, dbObj);
     CONFIG.cat_loc = curCatLoc;
     await GM.setValue('cat_loc', curCatLoc);
