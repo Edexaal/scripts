@@ -6,12 +6,12 @@
 // @grant       GM.getValues
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.1.4
+// @version     1.1.5
 // @author      Edexal
 // @description Visit bookmark page with the last tag filter selected.
 // @homepageURL https://sleazyfork.org/en/scripts/571484-resume-bookmark
 // @supportURL  https://github.com/Edexaal/scripts/issues
-// @require      https://cdn.jsdelivr.net/gh/Edexaal/scripts@20abbf4a49807e7d11a081eb3a8573d0cab83c1f/_lib/utility.js
+// @require     https://update.sleazyfork.org/scripts/598281/1948569/Edexal%27s%20Utility%20Library.js
 // ==/UserScript==
 (async () => {
   function addBtnEvent() {
