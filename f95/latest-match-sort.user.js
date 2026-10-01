@@ -6,12 +6,13 @@
 // @grant       GM.getValues
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     0.1.0
+// @version     1.0.0
 // @author      Edexal
 // @description Sorts resources on Latest Update page: top -> most-important; bottom -> least relevant.
-// @homepageURL 
+// @homepageURL -
 // @supportURL  https://github.com/Edexaal/scripts/issues
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@20abbf4a49807e7d11a081eb3a8573d0cab83c1f/_lib/utility.js
+// @require     https://update.sleazyfork.org/scripts/598281/1948569/Edexal%27s%20Utility%20Library.js
+// @require     https://update.sleazyfork.org/scripts/598285/1948454/Metadata.js
 // ==/UserScript==
 (async () => {
   Edexal.addCSS(`
@@ -101,15 +102,8 @@
   const CSS_SELECT = {matchList: "#match-list div:last-child ul", matchTags: "#match-tags ul", latestWrapper: "#latest-page_items-wrap_inner",
                       navPageBar:"#sub-nav_inner .sub-nav_paging", includeFilter: '#filter-block_tags .selectize-input',matchSect: '#filter-block_match',
                       latestResources:'div.resource-tile',lTileTags:'div.resource-tile .resource-tile_label-wrap_left',rTileTags:'div.resource-tile .resource-tile_label-wrap_right'};
-  const SIMILAR_CATEGORY_TAGS = new Set(['games', 'comics', 'animations']);
   const INVALID_CATEGORY_TAGS = new Set(['mods']);
-  const EXTRA_TAGS = {watch: 'x1', collection: 'x2'};
-  const GAME_TAGS = {"ren'py": 'g7', "unreal engine": 'g31', rpgm: 'g2', unity: 'g3', flash: 'g8', godot: 'g116', html: 'g4', adrift: 'g12', java: 'g6',
-  others: 'g14', qsp: 'g1', rags: 'g5', tads: 'g17', webgl: 'g47', "wolf rpg": 'g30', completed: 'g18', abandoned: 'g22', onhold: 'g20'};
-  const COMIC_TAGS = {cg: 'c49',comics: 'c16',manga: 'c43',pinup: 'c44'};
-  const ANIM_TAGS = {app: 'an59', video: 'an39', gif: 'an38', flash:'an37'};
-  const ASSET_TAGS = {blender: 'as42',autodesk: 'as40',daz: 'as33',illusion: 'as36',other: 'as71',poser: 'as41',rpgm: 'as115',tutorial: 'as45',
-  unity: 'as114',unreal: 'as110',vam: 'as35'};
+  const EXTRA_TAGS = {watch: 'x1'};
 
   function showMatchListItem(tagCode,shouldHide) {
     const matchListItem = Edexal.$(`${CSS_SELECT.matchList} li[data-tag-code="${tagCode}"]`);
@@ -148,21 +142,31 @@
     }
     return el.querySelector('i.watch-icon') ? 1 : 0;
   }
+  function flatTagObject(tagCodeObj) {
+    let tempObj = {};
+    for (const name in tagCodeObj) {
+      if (name === 'basic'){
+        continue;
+      }
+      tempObj = {...tempObj, ...tagCodeObj[name]};
+    }
+    return tempObj;
+  }
   
   function getExtraTags() {
     let obj = {};
     switch(CONFIG.cat_loc) {
       case "comics":
-        obj = COMIC_TAGS;
+        obj = flatTagObject(TAG_CODE.comic);
         break;
       case "animations":
-        obj = ANIM_TAGS;
+        obj = flatTagObject(TAG_CODE.animation);
         break;
       case "assets":
-        obj = ASSET_TAGS;
+        obj = flatTagObject(TAG_CODE.asset);
         break;
       default:
-        obj = GAME_TAGS;
+        obj = flatTagObject(TAG_CODE.game);
         break;
     }
     return Object.assign(obj, EXTRA_TAGS);
