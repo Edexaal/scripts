@@ -10,7 +10,7 @@
 // @description Automatically open the filter drawer when visiting the Latest Update page.
 // @homepageURL https://sleazyfork.org/en/scripts/541896-f95-auto-open-filter-drawer
 // @supportURL  https://github.com/Edexaal/scripts/issues
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@20abbf4a49807e7d11a081eb3a8573d0cab83c1f/_lib/utility.js
+// @require     https://update.sleazyfork.org/scripts/598281/1948569/Edexal%27s%20Utility%20Library.js
 // ==/UserScript==
 (() => {
   function openDrawer() {
