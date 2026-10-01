@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0.3
+// @version     1.0.4
 // @author      Edexal
 // @description Reset individual filters in the filter drawer on the latest update page.
 // @homepageURL https://sleazyfork.org/en/scripts/588436-reset-filters
