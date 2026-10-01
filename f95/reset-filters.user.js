@@ -10,7 +10,7 @@
 // @description Reset individual filters in the filter drawer on the latest update page.
 // @homepageURL https://sleazyfork.org/en/scripts/588436-reset-filters
 // @supportURL  https://github.com/Edexaal/scripts/issues
-// @require      https://cdn.jsdelivr.net/gh/Edexaal/scripts@20abbf4a49807e7d11a081eb3a8573d0cab83c1f/_lib/utility.js
+// @require     https://update.sleazyfork.org/scripts/598281/1948569/Edexal%27s%20Utility%20Library.js
 // ==/UserScript==
 (async () => {
   const SELECTOR = {
@@ -160,23 +160,13 @@
     location.replace(url);
   }
   
-  function observePageCB(records, obs) {
-    if (CONFIG.newPageTimerID) {
-      return;
-    }
-    CONFIG.newPageTimerID = setTimeout(() => {
-      initPrefixBtns();
-      CONFIG.newPageTimerID = null;
-    }, CONFIG.newPageDelay);
-  }
-  
-  function observePageChange() {
-    const observer = new MutationObserver((records, obs) => observePageCB(records, obs));
-    observer.observe(Edexal.$("#sub-nav_inner .sub-nav_paging"), {attributeFilter: ['class']});
+  function observePageChanges() {
+    const luObserver = new LUPageObserver();
+    luObserver.observe(initPrefixBtns);
   }
 
   function run() {
-    observePageChange();
+    observePageChanges();
     initButtons();
   }
 
