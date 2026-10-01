@@ -33,7 +33,6 @@
       color: #c15858;
     }
   }
-  
   #match-list {
     background-color: rgb(36,38,41);
     & div:first-child {
@@ -43,6 +42,8 @@
       text-align: center;
       padding-top: 5px;
       padding-bottom: 5px;
+      text-decoration: underline;
+      font-weight: bold;
     }
     & div:last-child {
       & ul {
@@ -65,15 +66,15 @@
       display: flex;
       align-items: center;
       border: 1pt solid rgb(60, 61, 67);
-      & p, & button {
-        padding-left: 10px;
-        margin: 0;
-      }
       & button {
-        height: 30px;
-        color: #ffffff;
+        flex: 1;
+        font: bold 1.1em Arial, Verdana, sans-serif;
         background-color: #A3002C;
-        padding-right: 10px;
+        color: #f9f920;
+        padding: inherit;
+        height: 30px;
+        margin: 0;
+        transition: 150ms opacity ease;
         &:hover {
           cursor: pointer;
           opacity: 0.9;
@@ -81,17 +82,10 @@
         &:active {
           opacity: 0.8;
         }
-      }
-      & p {
-        flex: 2 1 auto;
-        color: #f9f920;
-        font: bold 1.1em Arial, Verdana, sans-serif;
-        &:hover {
-          opacity: 0.7;
-          cursor: pointer;
-        }
-        &:active {
-          opacity: 0.5;
+        &::after {
+            content: "[x]";
+            color: inherit;
+            margin-left: 8px;
         }
       }
     }
@@ -239,10 +233,9 @@
   function addChosenMatchTag(listEl){
     const matchTagsEl = Edexal.$(CSS_SELECT.matchTags);
     const li = Edexal.newEl({'element': 'LI', 'data-tag-code': listEl.dataset.tagCode});
-    const p = Edexal.newEl({'element': 'P', 'text': listEl.textContent});
-    const btn = Edexal.newEl({'element': 'BUTTON', 'text': 'x', 'type': 'button'});
+    const btn = Edexal.newEl({'element': 'BUTTON', 'text': listEl.textContent, 'type': 'button'});
     attachRemoveMatchEvent(btn);
-    li.append(p, btn);
+    li.append(btn);
     matchTagsEl.append(li);
     updateMatchConfigTags(listEl.dataset.tagCode);
     showMatchListItem(listEl.dataset.tagCode, true);
