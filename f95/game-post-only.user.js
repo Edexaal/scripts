@@ -208,8 +208,6 @@
       });
     } else if (el instanceof Element) {
       el.classList.toggle(CSS_HIDE);
-    } else {
-      console.debug(`Unable to toggle visibility for ${el}! Element is of type: ${typeof el}.`);
     }
   }
   
@@ -277,7 +275,7 @@
   function showFirstPostOnly() {
     //Thread Post Container Ref
     const opContainer = Edexal.$("article.message-threadStarterPost").parentNode;
-    const replyPosts = opContainer.querySelectorAll('article:not(.message-threadStarterPost).message--post');
+    const replyPosts = opContainer.querySelectorAll('article.message--post:nth-child(n+2)');
     toggleVisibility(replyPosts);
     showHidePagination();
   }
