@@ -2,7 +2,7 @@
 // @name        Edexal's Utility Library
 // @namespace   1330126-edexal
 // @license     Unlicense
-// @version     3.1.1
+// @version     3.2.0
 // @author      Edexal
 // @description Utility library for common reusable tasks
 // ==/UserScript==

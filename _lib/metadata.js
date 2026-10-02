@@ -2,7 +2,7 @@
 // @name        Metadata
 // @namespace   1330126-edexal
 // @license     Unlicense
-// @version     0.1.0
+// @version     1.0.0
 // @author      Edexal
 // @description Useful metadata info
 // ==/UserScript==
