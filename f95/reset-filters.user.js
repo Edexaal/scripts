@@ -10,8 +10,8 @@
 // @description Reset individual filters in the filter drawer on the latest update page.
 // @homepageURL https://sleazyfork.org/en/scripts/588436-reset-filters
 // @supportURL  https://github.com/Edexaal/scripts/issues
-// @require     https://update.sleazyfork.org/scripts/598281/1948569/Edexal%27s%20Utility%20Library.js
-// @require     https://update.sleazyfork.org/scripts/598285/1948454/Metadata.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@0dcc3af3dcf4c10fe5d7e30d28bc5ab3fea72629/_lib/utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@0dcc3af3dcf4c10fe5d7e30d28bc5ab3fea72629/_lib/metadata.js
 // ==/UserScript==
 (async () => {
   const SELECTOR = {
