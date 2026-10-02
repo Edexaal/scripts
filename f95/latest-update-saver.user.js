@@ -8,12 +8,12 @@
 // @grant       GM.listValues
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     2.2.5
+// @version     2.2.6
 // @author      Edexal
 // @description Save your filters from the Latest Update Page & load them when you need it!
 // @homepageURL https://sleazyfork.org/en/scripts/523141-f95-latest-update-saver
 // @supportURL  https://github.com/Edexaal/scripts/issues
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@20abbf4a49807e7d11a081eb3a8573d0cab83c1f/_lib/utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@0dcc3af3dcf4c10fe5d7e30d28bc5ab3fea72629/_lib/utility.js
 // ==/UserScript==
 (async function () {
   /*NOTE: F95 uses FontAwesome v5.15.4*/

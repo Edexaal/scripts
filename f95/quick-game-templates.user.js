@@ -4,14 +4,14 @@
 // @match       *://f95zone.to/forums/game-requests.3/post-thread*
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @grant       none
-// @version     1.5.1
+// @version     1.5.2
 // @author      Edexal
 // @license     Unlicense
 // @description Adds more action buttons to the toolbar when making a game request on f95.
 // @homepageURL https://sleazyfork.org/en/scripts/500283-f95-quick-game-templates
 // @supportURL  https://github.com/Edexaal/scripts/issues
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@20abbf4a49807e7d11a081eb3a8573d0cab83c1f/_lib/utility.js
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@20abbf4a49807e7d11a081eb3a8573d0cab83c1f/_lib/game-request-templates.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@0dcc3af3dcf4c10fe5d7e30d28bc5ab3fea72629/_lib/utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@0dcc3af3dcf4c10fe5d7e30d28bc5ab3fea72629/_lib/game-request-templates.js
 // ==/UserScript==
 (() => {
   const TAG_PAGE = "https://f95zone.to/threads/tags-rules-and-list-updated-2024-01-29.10394";
