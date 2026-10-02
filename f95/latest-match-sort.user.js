@@ -6,10 +6,10 @@
 // @grant       GM.getValues
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0.1
+// @version     1.0.2
 // @author      Edexal
 // @description Sorts resources on Latest Update page: top -> most-important; bottom -> least relevant.
-// @homepageURL -
+// @homepageURL https://sleazyfork.org/en/scripts/598317-f95-latest-match-based-sort
 // @supportURL  https://github.com/Edexaal/scripts/issues
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@3852ea334ad4c2280f459a04f10e2638b9e90010/_lib/utility.js
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@3852ea334ad4c2280f459a04f10e2638b9e90010/_lib/metadata.js
