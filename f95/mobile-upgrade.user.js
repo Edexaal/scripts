@@ -10,7 +10,7 @@
 // @description Improves mobile experience
 // @homepageURL https://sleazyfork.org/en/scripts/546346-f95-mobile-upgrade
 // @supportURL  https://github.com/Edexaal/scripts/issues
-// @require     https://update.sleazyfork.org/scripts/598281/1948569/Edexal%27s%20Utility%20Library.js
+// @require     https://raw.githubusercontent.com/Edexaal/scripts/refs/heads/lib/_lib/utility.js
 // ==/UserScript==
 (async () => {
   /*NOTE: F95 uses FontAwesome v5.15.4*/
