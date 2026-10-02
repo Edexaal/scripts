@@ -11,9 +11,8 @@ const GLOBAL_TAG_CODE = {
   status: {completed: '18', abandoned: '22', onhold: '20'},
 };
 const TAG_CODE = {
-  prefix: {
-    game: {
-      basic: {
+  game: {
+    basic: {
         "2d game": "2214",
         "2dcg": "1507",
         "3d game": "1434",
@@ -485,7 +484,6 @@ const TAG_CODE = {
       },
       other: {'collection': GLOBAL_TAG_CODE.other.collection}
     }
-  }
 };
 // Prevents writable
 for (const obj of [GLOBAL_TAG_CODE, TAG_CODE]) {
