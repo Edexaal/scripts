@@ -5,12 +5,13 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0.4
+// @version     1.0.5
 // @author      Edexal
 // @description Reset individual filters in the filter drawer on the latest update page.
 // @homepageURL https://sleazyfork.org/en/scripts/588436-reset-filters
 // @supportURL  https://github.com/Edexaal/scripts/issues
 // @require     https://update.sleazyfork.org/scripts/598281/1948569/Edexal%27s%20Utility%20Library.js
+// @require     https://update.sleazyfork.org/scripts/598285/1948454/Metadata.js
 // ==/UserScript==
 (async () => {
   const SELECTOR = {
@@ -19,28 +20,23 @@
     PREFIXES: "#filter-block_prefixes div.filter-block div.filter-block_content",
     RESET_PREFIX_BTNS: "#filter-block_prefixes div.filter-block div.filter-block_content button"
   };
-  const STATUS_PREFIX = {name: "ed-status_prefixes", codes: ['18', '20', '22']};
-  const COLLECTION_CODE = '19';
-  const GAME_PREFIXES = [{
-    name: "ed-engine_prefixes",
-    codes: ['1', '2', '3', '4', '5', '6', '7', '8', '12', '14', '17', '30', '31', '47', '116']},
-    {name: "ed-other_prefixes", codes: ['13', COLLECTION_CODE, '23']},
-    {name: STATUS_PREFIX.name, codes: STATUS_PREFIX.codes}
+  const GAME_PREFIXES = [
+    {name: "ed-engine_prefixes", codes: Object.values(TAG_CODE.game.engine)},
+    {name: "ed-other_prefixes", codes: Object.values(TAG_CODE.game.other)},
+    {name: "ed-status_prefixes", codes: Object.values(TAG_CODE.game.status)}
   ];
   const ANIM_PREFIXES = [
-    {name: "ed-animation_prefixes", codes: ['37','38','39','59']},
-    {name: "ed-other_prefixes", codes: [COLLECTION_CODE]}
+    {name: "ed-animation_prefixes", codes: Object.values(TAG_CODE.animation.animation)},
+    {name: "ed-other_prefixes", codes: [GLOBAL_TAG_CODE.other.collection]}
   ];
   const ASSET_PREFIXES = [
-    {name: "ed-asets_prefixes", codes: ['33','35','36','40','41','42','45','71','110','114','115']},
-    {name: "ed-other_prefixes", codes: [COLLECTION_CODE]}
+    {name: "ed-assets_prefixes", codes: Object.values(TAG_CODE.asset.assets)},
+    {name: "ed-other_prefixes", codes: [GLOBAL_TAG_CODE.other.collection]}
   ];
   const COMIC_PREFIXES = [
-    {name: "ed-other_prefixes", codes: ['16',COLLECTION_CODE,'23','43','44','49']},
-    {name: STATUS_PREFIX.name, codes: STATUS_PREFIX.codes}
+    {name: "ed-other_prefixes", codes: Object.values(TAG_CODE.comic.other)},
+    {name: "ed-status_prefixes", codes: Object.values(TAG_CODE.comic.status)}
   ];
-  const CONFIG = {newPageDelay: 1500, newPageTimerID: null};
-  
   Edexal.addCSS(`
   .ed-filter_btn {
     display: block;
