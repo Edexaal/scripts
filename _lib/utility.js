@@ -72,9 +72,13 @@ class Edexal {
 
 // Handles listening to page navigations on latest update page.
 class LUPageObserver {
-  #delayTimeMS = 1500;
+  #delayTimeMS;
   #timerID;
-
+  
+  constructor(delayTimeMS = 1500) {
+    this.#delayTimeMS = delayTimeMS;
+  }
+    
   #onPageChange(records, obs, pageCB,canExecuteCB) {
     if (this.#timerID ||  typeof canExecuteCB === "function" && !canExecuteCB()) {
       return;
@@ -93,5 +97,52 @@ class LUPageObserver {
 
   observe(pageChangeCB, canExecuteCB) {
     this.#initObserver(pageChangeCB, canExecuteCB);
+  }
+}
+
+// Extract basic tags from the include tag setting on the latest update page 
+class BasicTagExtractor {
+  #tagList;
+  
+  #storeTagsToList() {
+    const dropDownTags = Edexal.$$('#filter-block_tags .selectize-dropdown-content .option');
+    this.#tagList = {};
+    dropDownTags.forEach((el) => {
+      //Ex: '2d game' : 1112
+      const tagName = el.querySelector('span:first-child').textContent;
+      this.#tagList[tagName] = el.dataset.value;
+    });
+    return this.#tagList;
+  }
+  
+  #observeTagReveal(records,obs,resolve) {
+    for (const record of records) {
+      for (const node of record.addedNodes) {
+        if (node.classList?.contains('option')) {
+          obs.disconnect();
+          resolve(this.#storeTagsToList());
+          return;
+        }
+      }
+    }
+  }
+  
+  #runOnTagReveal() {
+    return new Promise((resolve) => {
+      const observer = new MutationObserver((records, obs) => this.#observeTagReveal(records,obs,resolve));
+      observer.observe(Edexal.$('#filter-block_tags .selectize-dropdown-content'), {subtree: true, childList: true});
+    });
+  }
+  // Procs loading of all tags for current category
+  #procTagLoading() {
+    Edexal.$('#filter-block_tags .selectize-input').click();
+  }
+  
+  async getTagsAsync() {
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    await sleep(1500);
+    const result = this.#runOnTagReveal();
+    this.#procTagLoading();
+    return await result;
   }
 }
