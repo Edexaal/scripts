@@ -7,7 +7,7 @@
 // @grant       GM.deleteValue
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     4.0.2
+// @version     4.0.3
 // @author      Edexal
 // @description Display only the 1st post of a game thread. Also, hide other content from the thread.
 // @homepageURL https://sleazyfork.org/en/scripts/522360-f95-game-post-only
@@ -176,7 +176,7 @@
     Edexal.$(".message-attribution").append(vmGPO);
   }
 
-  function createIcon(opPostEl) {
+  function createIcon(postHeaderEl) {
     const li = Edexal.newEl({element: 'li'});
     const span = Edexal.newEl({
       element: 'span',
@@ -185,7 +185,7 @@
       title: "Game post settings"
     });
     li.append(span);
-    opPostEl.prepend(li);
+    postHeaderEl.prepend(li);
   }
 
   function setClickEvent(selector, callback) {
@@ -335,14 +335,18 @@
     }
     return isGame;
   }
+  function isFirstPost(postHeaderEl) {
+    const postNum = postHeaderEl.querySelector('li:last-child a').textContent;
+    return postNum.trim() === '#1';
+  }
 
   /*Checks if thread is a GAME type*/
   if (isGameThread()) {
-    const opStartEl = Edexal.$('.message-threadStarterPost .message-attribution-opposite--list');
-    if (!opStartEl){
+    const postHeaderEl = Edexal.$('.message-threadStarterPost .message-attribution-opposite--list');
+    if (!isFirstPost(postHeaderEl)){
       return;
     }
-    createIcon(opStartEl);
+    createIcon(postHeaderEl);
     createTooltip();
     await initSettings();
     hideDefaults();
