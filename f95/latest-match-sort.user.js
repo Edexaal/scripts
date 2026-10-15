@@ -6,7 +6,7 @@
 // @grant       GM.getValues
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0.2
+// @version     1.0.3
 // @author      Edexal
 // @description Sorts resources on Latest Update page: top -> most-important; bottom -> least relevant.
 // @homepageURL https://sleazyfork.org/en/scripts/598317-f95-latest-match-based-sort
@@ -101,7 +101,8 @@
   let CONFIG = {category: {}, matches: null, pList: [], saveTimerID:null, saveDelay: 2000, newPageTimerID:null, newPageDelay: 1500};
   const CSS_SELECT = {matchList: "#match-list div:last-child ul", matchTags: "#match-tags ul", latestWrapper: "#latest-page_items-wrap_inner",
                       navPageBar:"#sub-nav_inner .sub-nav_paging", includeFilter: '#filter-block_tags .selectize-input',matchSect: '#filter-block_match',
-                      latestResources:'div.resource-tile',lTileTags:'div.resource-tile .resource-tile_label-wrap_left',rTileTags:'div.resource-tile .resource-tile_label-wrap_right'};
+                      latestResources:'div.resource-tile',lTileTags:'div.resource-tile .resource-tile_label-wrap_left',rTileTags:'div.resource-tile .resource-tile_label-wrap_right',
+                     dropDownContent: '#filter-block_tags .selectize-dropdown-content', dropDown: '#filter-block_tags .selectize-dropdown'};
   const INVALID_CATEGORY_TAGS = new Set(['mods']);
   const EXTRA_TAGS = {watch: 'x1'};
 
@@ -135,7 +136,7 @@
   function matchTagsCount(dataArr) {
     return dataArr.reduce((accumVal, currentVal) => CONFIG.matches.has(currentVal) ? accumVal + 1 : accumVal, 0);
   }
-  
+
   function hasWatchIconCount(el) {
     if (!CONFIG.matches.has(EXTRA_TAGS.watch)) {
       return 0;
@@ -152,7 +153,7 @@
     }
     return tempObj;
   }
-  
+
   function getExtraTags() {
     let obj = {};
     switch(CONFIG.cat_loc) {
@@ -171,7 +172,7 @@
     }
     return Object.assign(obj, EXTRA_TAGS);
   }
-  
+
   function countTiles(tileEls,extraTags) {
     let count = 0;
     for (const tileEl of tileEls) {
@@ -182,7 +183,7 @@
     }
     return count;
   }
-  
+
   // Collection, engines, types, statuses, medias
   function TileCount(el) {
     const extraTags = getExtraTags();
@@ -191,12 +192,12 @@
     const rightTiles = el.querySelector(CSS_SELECT.rTileTags).children;
     return countTiles(leftTiles, extraTags) + countTiles(rightTiles, extraTags);
   }
-  
+
   function calculateTotalCount(el) {
     const basicTagsArr = el.dataset.tags.split(',');
     return matchTagsCount(basicTagsArr) + hasWatchIconCount(el) + TileCount(el);
   }
-  
+
   function organizeResources() {
     const latestWrapper = Edexal.$(CSS_SELECT.latestWrapper);
     const latestUpdatesArr = Array.from(latestWrapper.querySelectorAll(CSS_SELECT.latestResources));
@@ -255,7 +256,7 @@
       saveUserPriorities();
     });
   }
-  
+
   function addTagToSettings(tagName, tagCode, matchListEl) {
     const isInMatches = CONFIG.matches.has(tagCode);
       if (!isInMatches) {
@@ -271,7 +272,7 @@
         addChosenMatchTag(li);
       }
   }
-  
+
   function addExtraTags(matchListEl) {
     const extraTags = getExtraTags();
     for (const tagName in extraTags) {
@@ -280,9 +281,9 @@
       addTagToSettings(tagName, tagCode, matchListEl);
     }
   }
-  
+
   function addTagsToSettings() {
-    const dropDownTags = Edexal.$$('#filter-block_tags .selectize-dropdown-content .option');
+    const dropDownTags = Edexal.$$(`${CSS_SELECT.dropDownContent} .option`);
     const matchList = Edexal.$(CSS_SELECT.matchList);
     addExtraTags(matchList);
     dropDownTags.forEach((el) => {
@@ -341,12 +342,25 @@
 
   function runOnTagReveal() {
     const observer = new MutationObserver((records, obs) => observeCallback2(records,obs));
-    observer.observe(Edexal.$('#filter-block_tags .selectize-dropdown-content'), {subtree: true, childList: true});
+    observer.observe(Edexal.$(CSS_SELECT.dropDownContent), {subtree: true, childList: true});
+  }
+
+  function observeDropdown(records,obs) {
+    for (const record of records) {
+      if (record.target.classList.contains('focus') && record.target.classList.contains('dropdown-active')) {
+        Edexal.$(`${CSS_SELECT.includeFilter} input`).blur();
+        Edexal.$(CSS_SELECT.dropDown).style.display = 'none';
+        return obs.disconnect();
+      }
+    }
   }
 
   // Procs loading of all tags for current category
   function procTagLoading() {
-    Edexal.$(CSS_SELECT.includeFilter).click();
+    const includeFilterEl = Edexal.$(CSS_SELECT.includeFilter);
+    includeFilterEl.click();
+    const observer = new MutationObserver(observeDropdown);
+    observer.observe(includeFilterEl, {attributeFilter: ['class']});
   }
 
   function initTagChoices() {
