@@ -6,7 +6,7 @@
 // @grant       GM.getValues
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0.3
+// @version     1.1.0
 // @author      Edexal
 // @description Sorts resources on Latest Update page: top -> most-important; bottom -> least relevant.
 // @homepageURL https://sleazyfork.org/en/scripts/598317-f95-latest-match-based-sort
@@ -105,6 +105,12 @@
                      dropDownContent: '#filter-block_tags .selectize-dropdown-content', dropDown: '#filter-block_tags .selectize-dropdown'};
   const INVALID_CATEGORY_TAGS = new Set(['mods']);
   const EXTRA_TAGS = {watch: 'x1'};
+  const CAT_TAG_CODES = {
+    comics: TAG_CODE.comic,
+    animations: TAG_CODE.animation,
+    assets: TAG_CODE.asset,
+  };
+  const TIME_UNITS = ['min','hour','yesterday','day','week','month','year'];
 
   function showMatchListItem(tagCode,shouldHide) {
     const matchListItem = Edexal.$(`${CSS_SELECT.matchList} li[data-tag-code="${tagCode}"]`);
@@ -143,6 +149,7 @@
     }
     return el.querySelector('i.watch-icon') ? 1 : 0;
   }
+  
   function flatTagObject(tagCodeObj) {
     let tempObj = {};
     for (const name in tagCodeObj) {
@@ -155,22 +162,10 @@
   }
 
   function getExtraTags() {
-    let obj = {};
-    switch(CONFIG.cat_loc) {
-      case "comics":
-        obj = flatTagObject(TAG_CODE.comic);
-        break;
-      case "animations":
-        obj = flatTagObject(TAG_CODE.animation);
-        break;
-      case "assets":
-        obj = flatTagObject(TAG_CODE.asset);
-        break;
-      default:
-        obj = flatTagObject(TAG_CODE.game);
-        break;
-    }
-    return Object.assign(obj, EXTRA_TAGS);
+    return {
+      ...flatTagObject(CAT_TAG_CODES[CONFIG.cat_loc] || TAG_CODE.game),
+      ...EXTRA_TAGS
+    };
   }
 
   function countTiles(tileEls,extraTags) {
@@ -197,8 +192,58 @@
     const basicTagsArr = el.dataset.tags.split(',');
     return matchTagsCount(basicTagsArr) + hasWatchIconCount(el) + TileCount(el);
   }
+  
+  function parseDate(el) {
+    const dateDivEl = el.querySelector('.resource-tile_info-meta_time span');
+    const dateNum = parseInt(dateDivEl.textContent.trim()) || 0;
+    const dateType = getComputedStyle(dateDivEl, '::after').content.replace(/"/g, "").trim().toLowerCase();
+    return {
+      num: dateNum,
+      type: dateType
+    };
+  }
+  
+  function compareDateType(dateType) {
+    let num = 0;
+    for (const unit of TIME_UNITS){
+      if (dateType.startsWith(unit)){
+        return num;
+      }
+      num++;
+    }
+    return 0;
+  }
+  
+  function compareDateNums(aDateNum, bDateNum) {
+    if(aDateNum > bDateNum) {
+      return 1;
+    } else if(aDateNum < bDateNum) {
+      return -1;
+    }
+    return 0;
+  }
+  
+  function compareDates(aEl, bEl) {
+    const aDate = parseDate(aEl);
+    const bDate = parseDate(bEl);
+    const aSortNum = compareDateType(aDate.type);
+    const bSortNum = compareDateType(bDate.type);
+    if (aSortNum > bSortNum) {
+      return 1;
+    } else if(aSortNum < bSortNum) {
+      return -1;
+    } 
+    return compareDateNums(aDate.num, bDate.num);
+  }
+  
+  function hasSetMatches() {
+    return CONFIG.matches && CONFIG.matches.size;
+  }
 
   function organizeResources() {
+    if (!hasSetMatches()) {
+      return;
+    }
     const latestWrapper = Edexal.$(CSS_SELECT.latestWrapper);
     const latestUpdatesArr = Array.from(latestWrapper.querySelectorAll(CSS_SELECT.latestResources));
     const sortedArr = latestUpdatesArr.toSorted((a,b) => {
@@ -209,7 +254,7 @@
       } else if(aMatchCount < bMatchCount) {
         return 1;
       } else {
-        return 0;
+        return compareDates(a,b);
       }
     });
     latestWrapper.append(...sortedArr);
