@@ -6,7 +6,7 @@
 // @grant       GM.getValues
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.1.0
+// @version     1.1.1
 // @author      Edexal
 // @description Sorts resources on Latest Update page: top -> most-important; bottom -> least relevant.
 // @homepageURL https://sleazyfork.org/en/scripts/598317-f95-latest-match-based-sort
@@ -204,7 +204,7 @@
   }
   
   function compareDateType(dateType) {
-    let num = 0;
+    let num = 1;
     for (const unit of TIME_UNITS){
       if (dateType.startsWith(unit)){
         return num;
