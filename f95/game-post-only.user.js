@@ -7,12 +7,12 @@
 // @grant       GM.deleteValue
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     4.0.4
+// @version     4.0.5
 // @author      Edexal
 // @description Display only the 1st post of a game thread. Also, hide other content from the thread.
 // @homepageURL https://sleazyfork.org/en/scripts/522360-f95-game-post-only
 // @supportURL  https://github.com/Edexaal/scripts/issues
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@0cca91b20b6a8d61a69248cc8d52501a186f1f1f/_lib/utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@5c8a5c777d96257cd5281b6f4880e4bc360c387b/_lib/utility.js
 // ==/UserScript==
 (async () => {
   const labels = {
