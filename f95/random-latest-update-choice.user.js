@@ -4,13 +4,13 @@
 // @match       *://f95zone.to/sam/latest_alpha/*
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @grant       none
-// @version     1.2.7
+// @version     1.2.8
 // @author      Edexal
 // @license     Unlicense
 // @description Randomly selects a resource(e.g. game,asset,animation) from the 'Latest Update' page. Just press the '?' button in the filter drawer.
 // @homepageURL https://sleazyfork.org/en/scripts/499998-f95-random-latest-update-choice
 // @supportURL  https://github.com/Edexaal/scripts/issues
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@5c8a5c777d96257cd5281b6f4880e4bc360c387b/_lib/utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@f60c1de7534d5b794a21b4be75281143ac96a99d/_lib/utility.js
 // ==/UserScript==
 (() => {
   const LATEST_PAGE_QUERY = 'lppos';
