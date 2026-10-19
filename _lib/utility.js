@@ -2,11 +2,12 @@
 // @name        Edexal's Utility Library
 // @namespace   1330126-edexal
 // @license     Unlicense
-// @version     3.2.1
+// @version     3.3.0
 // @author      Edexal
 // @description Utility library for common reusable tasks
 // ==/UserScript==
 class Edexal {
+  static #bookmarkPaths = ['account/bookmarks','watched/threads?tab=bookmarks'];
   static addCSS(css) {
     let styleEl = document.querySelector("style");
     if (styleEl === null) {
@@ -57,7 +58,9 @@ class Edexal {
 
   static #runOn(includesPath, callback) {
     if (location.href.includes(includesPath)) {
-      callback();
+      if (callback) {
+        callback();
+      }
       return true;
     }
     return false;
@@ -66,9 +69,10 @@ class Edexal {
   static #runOnMulti(includesPaths, callback) {
     for (const path of includesPaths) {
       if (Edexal.#runOn(path, callback)){
-        return;
+        return true;
       }
     }
+    return false;
   }
 
   static runOnLatestUpdatePage(callback) {
@@ -76,7 +80,11 @@ class Edexal {
   }
 
   static runOnBookmarkPage(callback) {
-    Edexal.#runOnMulti(['account/bookmarks','watched/threads?tab=bookmarks'], callback);
+    Edexal.#runOnMulti(Edexal.#bookmarkPaths, callback);
+  }
+  
+  static isBookmarkPage() {
+    return Edexal.#runOnMulti(Edexal.#bookmarkPaths);
   }
 }
 
