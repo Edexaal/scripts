@@ -4,9 +4,10 @@
 // @match       *://f95zone.to/*
 // @grant       GM.setValue
 // @grant       GM.getValues
+// @grant       GM.getValue
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.1.10
+// @version     1.1.11
 // @author      Edexal
 // @description Visit bookmark page with the last tag filter selected.
 // @homepageURL https://sleazyfork.org/en/scripts/571484-resume-bookmark
@@ -14,6 +15,11 @@
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@f60c1de7534d5b794a21b4be75281143ac96a99d/_lib/utility.js
 // ==/UserScript==
 (async () => {
+  const EL = {
+    chosenLabel: 'div.f95wg-bar a[data-original-title], div.f95wg-bar a[title]',
+    labelsBtn: '.f95wg-labelMenu .menuTrigger',
+    removeLabelSearch: '.select2-selection__choice__remove'
+  };
   function addBtnEvent() {
     const button = Edexal.$('form[action*=bookmarks] span.menu-footer-controls button');
     Edexal.on(button, 'click', async () => {
@@ -32,24 +38,36 @@
 
   function removeBookmarkFilter() {
     setTimeout(() => {
-      const filterMenuActive = Edexal.$("div.menu[id].is-active");
+      const filterMenuActive = Edexal.$("div.menu.is-active");
       if (!filterMenuActive) return;
-      const filterBtnClose = Edexal.$(".select2-selection__choice__remove");
+      const filterBtnClose = Edexal.$(EL.removeLabelSearch);
       if (!filterBtnClose) return;
       filterBtnClose.click();
     }, 200);
   }
 
   function initBookmarkLabel() {
-    const filtersLink = Edexal.$(".filterBar-menuTrigger");
-    Edexal.on(filtersLink,"click",removeBookmarkFilter);
+    const filtersLink = Edexal.$(EL.labelsBtn);
+    Edexal.on(filtersLink, "click", removeBookmarkFilter);
+  }
+  
+  async function replaceBookmarkLink() {
+    const bmTab = Edexal.$('.tabs .hScroller a[href="/watched/threads?tab=bookmarks"]');
+    if (!bmTab) {
+      return;
+    }
+    const label = await GM.getValue('label');
+    if (!label) {
+      return;
+    }
+    bmTab.href = `${bmTab.href}&label=${label}`;
   }
 
   async function run() {
-    if (location.href.includes("account/bookmarks")) {
+    if (Edexal.isBookmarkPage()) {
       initBookmarkLabel();
       addBtnEvent();
-      addTagRemoveBtnEvent("div.filterBar ul.filterBar-filters a.filterBar-filterToggle");
+      addTagRemoveBtnEvent(EL.chosenLabel);
       const storage = await GM.getValues({was_bookmark: false, label: null});
       if (storage.was_bookmark) {
         return;
@@ -63,6 +81,7 @@
       }
     } else {
       await GM.setValue("was_bookmark", false);
+      await replaceBookmarkLink();
     }
   }
 
