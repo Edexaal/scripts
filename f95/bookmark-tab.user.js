@@ -8,7 +8,7 @@
 // @version     1.0.0
 // @author      Edexal
 // @description Restores 'bookmark' tab link on navigation bar. Also on Latest Update Page, replaces 'FORUMS' tab with 'BOOKMARK'.
-// @homepageURL -
+// @homepageURL https://sleazyfork.org/en/scripts/601301-f95-bookmark-tab
 // @supportURL  https://github.com/Edexaal/scripts/issues
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@f60c1de7534d5b794a21b4be75281143ac96a99d/_lib/utility.js
 // ==/UserScript==
