@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.8.12
+// @version     1.8.13
 // @author      Edexal
 // @description Improves mobile experience
 // @homepageURL https://sleazyfork.org/en/scripts/546346-f95-mobile-upgrade
@@ -243,7 +243,7 @@
 
   function initTabItems() {
     assignTabItem('Latest Updates', '/sam/latest_alpha/', ['far', 'fa-gem'], 1);
-    assignTabItem('Bookmarks', '/account/bookmarks/', ['far', 'fa-bookmark'], 2);
+    assignTabItem('Bookmarks', '/watched/threads?tab=bookmarks', ['far', 'fa-bookmark'], 2);
   }
 
   /*Removes all effects from tiles on Latest Update Page
@@ -357,7 +357,7 @@
 
   function removeBookmarkFilter() {
     setTimeout(() => {
-      const filterMenuActive = Edexal.$("div.menu[id].is-active");
+      const filterMenuActive = Edexal.$("div.menu.is-active");
       if (!filterMenuActive) return;
       const filterBtnClose = Edexal.$(".select2-selection__choice__remove");
       if (!filterBtnClose) return;
@@ -367,7 +367,7 @@
 
   function initBookmarkLabel() {
     Edexal.runOnBookmarkPage(() => {
-      const filtersLink = Edexal.$(".filterBar-menuTrigger");
+      const filtersLink = Edexal.$(".f95wg-labelMenu .menuTrigger");
       Edexal.on(filtersLink, "click", removeBookmarkFilter);
     });
   }
