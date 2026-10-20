@@ -9,7 +9,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.2.14
+// @version     1.2.15
 // @author      Edexal
 // @description Use Markdown syntax in threads, posts, and conversations.
 // @homepageURL https://sleazyfork.org/en/scripts/566411-f95-markdown
@@ -139,11 +139,12 @@
     return total;
   }
 
-  function blockParse(format) {
+  function blockParse(format, isOpenTagCB) {
     const textBoxEl = Edexal.$(EL.textbox);
     for (let i = 0; i < format.indexes.length; i++) {
       let type = getType(format, textBoxEl, i);
-      if (type || !!textBoxEl.children[format.indexes[i]].innerHTML.match(format.startRegex)) {
+      const isOpenTag = isOpenTagCB ? isOpenTagCB(i) : !!textBoxEl.children[format.indexes[i]].innerHTML.match(format.startRegex); 
+      if (type || isOpenTag) {
         let tag = `[${format.tags[0]}${type ? `=${type}` : ""}]`;
         textBoxEl.children[format.indexes[i]].outerHTML = `<p>${tag}</p>`;
       } else {
@@ -424,31 +425,62 @@
       lastIndex = i;
     }
     quoteParse();
-    blockParse(formats["code"]);
+    blockParse(formats["code"], (i) => i % 2 === 0);
     blockParse(formats["spoiler"]);
     alignParse(formats["alignment"]);
     textBoxEl.children[lastIndex].outerHTML = "<p>" + endListParse(textBoxEl.children[lastIndex].innerHTML, formats["list"]) + "</p>";
   }
   
-  // Resolves Issue: When pasting to textbox, all text are wrapped in a single <p>
-  function fixPastedTextIssue(textBoxEl) {
-    if (!textBoxEl.children.length === 1 && !textBoxEl.innerHTML.includes("<br><br>")) {
-      return;
+  function tagsWithPastedText(textBoxEl) {
+    const pastedTextIndices = [];
+    const textboxChildrenCopy = Array.from(textBoxEl.children);
+    for (const [i,el] of textboxChildrenCopy.entries()) {
+      if (el.tagName !== 'P'){
+        continue;
+      }
+      const brMatches = el.innerHTML.match(/<br>/g);
+      if (brMatches && brMatches.length > 1) {
+        pastedTextIndices.push(i);
+      }
     }
-    const contentArr = textBoxEl.innerHTML.split('<br><br>');
-    const fragment = new DocumentFragment();
-    for (const txt of contentArr) {
-      let p;
-      if (txt.startsWith('<br>')){
-        p = Edexal.newEl({element:'p'}); 
-        const br = Edexal.newEl({element:'br'}); 
-        p.append(br);
+    return pastedTextIndices;
+  }
+  
+  function splitPastedText(textBoxEl, childElIndices) {
+    const pastedTextInfo = {};
+    for (const i of childElIndices) {
+      pastedTextInfo[i] = textBoxEl.children[i].innerHTML.split('<br>');
+    }
+    return pastedTextInfo;
+  }
+  
+  function addTextToTextBox(textBoxEl, pastedTextInfo) {
+    for (const [elIndex, contentArr] of Object.entries(pastedTextInfo)) {
+      const fragment = new DocumentFragment();
+      for (const txt of contentArr) {
+        let p;
+        if (txt === ''){
+          p = Edexal.newEl({element:'p'}); 
+          const br = Edexal.newEl({element:'br'}); 
+          p.append(br);
+          fragment.append(p);
+        }
+        let newTxt = txt.replace(/&gt;/g,'>').replace(/&nbsp;/g, '  ');
+        p = Edexal.newEl({element: 'p', text: newTxt});
         fragment.append(p);
       }
-      p = Edexal.newEl({element: 'p', text: txt.replace('<p>', '').replace('</p>', '').replace('<br>','')});
-      fragment.append(p);
+      textBoxEl.children[elIndex].replaceWith(fragment);
     }
-    textBoxEl.replaceChildren(fragment);
+  }
+  
+  // Resolves Issue: When pasting to textbox, all text are wrapped in a single <p>
+  function fixPastedTextIssue(textBoxEl) {
+    const childElIndices = tagsWithPastedText(textBoxEl);
+    if (!childElIndices.length) {
+      return;
+    }
+    const pastedTextInfo = splitPastedText(textBoxEl, childElIndices);
+    addTextToTextBox(textBoxEl, pastedTextInfo);
   }
 
   function createButton(btnLayer, textboxEl) {
