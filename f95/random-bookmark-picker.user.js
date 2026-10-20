@@ -2,10 +2,10 @@
 // @name         F95 Random Bookmark Picker
 // @namespace    1330126-edexal
 // @license      Unlicense
-// @version      1.3.10
+// @version      1.3.11
 // @description  Randomly picks a bookmark from your f95-like bookmark page. Just press the 'Random' button.
 // @author       Edexal
-// @match        *://f95zone.to/account/bookmarks*
+// @match        *://f95zone.to/watched/threads?tab=bookmarks*
 // @icon         https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @grant        none
 // @homepageURL  https://sleazyfork.org/en/scripts/490810-f95-random-bookmark-picker
@@ -29,10 +29,16 @@
 		#randbtn:active{
 			background-color: #ec5555;
 		}
-		#chosen{
+		#chosen {
 			color: yellow;
 			text-shadow: #cc0000 1px 0 8px;
       display:inherit !important;
+      border-top: 1px solid #b5cb48;
+      border-bottom: 1px solid #b5cb48;
+      a, span, button, dt, dd {
+        color: yellow;
+        text-shadow: #cc0000 1px 0 3px;
+      }
 		}
     #randContainer{
       margin-top:20px;
@@ -60,10 +66,10 @@
       location.search.includes('&' + BOOKMARK_QUERY) ? location.href.indexOf('&' + BOOKMARK_QUERY) : location.href.indexOf(BOOKMARK_QUERY));// removes '&bmpos'  or 'bmpos' from URL
     history.replaceState({}, "", newURL); //Change the URL to one w/o 'bmpos' query param
 
-    let bookmarkListEl = Edexal.$("ol.listPlain");
+    let bookmarkEls = Edexal.$$(".structItemContainer > div[data-author], ol.listPlain > li");
 
-    let randBookmarkPos = getRandIntInc(0, bookmarkListEl.children.length - 1);// Pick a random bookmark position (usually 0-19, total 20)
-    let chosenBookmarkEl = bookmarkListEl.children[randBookmarkPos];
+    let randBookmarkPos = getRandIntInc(0, bookmarkEls.length - 1);// Pick a random bookmark position (usually 0-19, total 20)
+    let chosenBookmarkEl = bookmarkEls[randBookmarkPos];
     chosenBookmarkEl.id = "chosen";
     chosenBookmarkEl.scrollIntoView(false); //scroll selected bookmark into view from the bottom of the page
   }
@@ -105,41 +111,50 @@
     //Go To randomly chosen bookmark page
     location.replace(curURL.toString());
   }
+  
+  function addBtn() {
+    //Add button to F95
+    let entirePaginationEl = Edexal.$("nav > div.pageNav");
+    //Checks if there is only a single page of bookmarks or more
+    if (!!entirePaginationEl) {
+      // > 1
+      let isPageNavVisible = window.getComputedStyle(Edexal.$(".pageNavWrapper--mixed .pageNav")).getPropertyValue("display") === "none";
+      if (isPageNavVisible) {
+        //Mobile Pagination (w/ arrows)
+        let randContainerEl = Edexal.newEl({element: "div", id: "randContainer"});
+        randContainerEl.appendChild(randBtn);
+        let pageArrowsEl = Edexal.$(".block-outer--after");
+        pageArrowsEl.appendChild(randContainerEl);
+      } else {
+        //Desktop Pagination
+        entirePaginationEl.appendChild(randBtn);
+      }
+      Edexal.on(randBtn,"click",pickRandomBookmark);
 
-  //Add button to F95
-  let entirePaginationEl = Edexal.$("nav > div.pageNav");
-  //Checks if there is only a single page of bookmarks or more
-  if (!!entirePaginationEl) {
-    // > 1
-    let isPageNavVisible = window.getComputedStyle(Edexal.$(".pageNavWrapper--mixed .pageNav")).getPropertyValue("display") === "none";
-    if (isPageNavVisible) {
-      //Mobile Pagination (w/ arrows)
-      let randContainerEl = Edexal.newEl({element: "div", id: "randContainer"});
-      randContainerEl.appendChild(randBtn);
-      let pageArrowsEl = Edexal.$(".block-outer--after");
-      pageArrowsEl.appendChild(randContainerEl);
     } else {
-      //Desktop Pagination
-      entirePaginationEl.appendChild(randBtn);
+      // == 1
+      Edexal.$("div > div.breadcrumb.p-breadcrumb--bottom").prepend(randBtn);
+      Edexal.on(randBtn,"click",pickRandBookmarkOne);
+      Edexal.addCSS(`
+      #randbtn {
+        position: relative;
+        left: 50%;
+        width: 150px;
+        height: 40px;
+        font-size: 16px;
+        border: 1pt inset navajowhite;
+        box-shadow: 0 1px 5px #988787;
+        border-radius: 50px;
+      }
+      `);
     }
-    Edexal.on(randBtn,"click",pickRandomBookmark);
-
-  } else {
-    // == 1
-    Edexal.$("div > div.breadcrumb.p-breadcrumb--bottom").prepend(randBtn);
-    Edexal.on(randBtn,"click",pickRandBookmarkOne);
-    Edexal.addCSS(`
-		#randbtn {
-			position:relative;
-			left: 50%;
-			width:150px;
-			height:40px;
-			font-size: 16px;
-			border: 1pt inset navajowhite;
-			box-shadow: 0 1px 5px #988787;
-			border-radius: 50px;
-		}
-		`);
   }
-
+  
+  function runOnBMCategory() {
+    if (!location.search.includes('&bm=')) {
+      return;
+    }
+    addBtn();
+  }
+  runOnBMCategory();
 })();
