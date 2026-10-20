@@ -1,0 +1,58 @@
+// ==UserScript==
+// @name        F95 Bookmark Tab
+// @namespace   1330126-edexal
+// @match       *://f95zone.to/*
+// @grant       none
+// @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
+// @license     Unlicense
+// @version     1.0.0
+// @author      Edexal
+// @description Restores 'bookmark' tab link on navigation bar. Also on Latest Update Page, replaces 'FORUMS' tab with 'BOOKMARK'.
+// @homepageURL -
+// @supportURL  https://github.com/Edexaal/scripts/issues
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@f60c1de7534d5b794a21b4be75281143ac96a99d/_lib/utility.js
+// ==/UserScript==
+
+(() => {
+  Edexal.addCSS(`
+  .p-nav-list .p-navEl:hover::after {
+    right: 0;
+  }`);
+  const BM_LINK = '/watched/threads?tab=bookmarks';
+  
+  function swapForumNav() {
+    const forumLinkEl = Edexal.$('.p-nav-list li:nth-child(2) a');
+    forumLinkEl.href = BM_LINK;
+    forumLinkEl.querySelector('span').textContent = 'Bookmarks';
+  }
+  
+  function getMarkNav(subNav) {
+    for (const el of subNav.children) {
+      const spanEl = el.querySelector('span');
+      if (spanEl.textContent.toLowerCase().startsWith('mark')) {
+        return el;
+      }
+    }
+  }
+  
+  function addBMToSubNav() {
+    const subNav = Edexal.$('.p-sectionLinks-list');
+    if (!subNav){
+      return;
+    }
+    const markEl = getMarkNav(subNav);
+    if (!markEl) {
+      return;
+    }
+    const aTag = markEl.querySelector('a');
+    aTag.href = BM_LINK;
+    aTag.dataset.navId = "bookmarks";
+    markEl.querySelector('span').textContent = "Bookmarks";
+  }
+  
+  function run() {
+    Edexal.runOnLatestUpdatePage(swapForumNav);
+    addBMToSubNav();
+  }
+  run();
+})()
