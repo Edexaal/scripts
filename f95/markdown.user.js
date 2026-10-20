@@ -19,6 +19,11 @@
 // ==/UserScript==
 (async () => {
   const MARKDOWN_PATH = "/markdown";
+  const EL = {
+    textbox: 'div.bbWrapper div[spellcheck][class*=fr-element]',
+    toolbar: 'div.fr-toolbar',
+    buttonGroup: 'div.formButtonGroup-primary,div.formSubmitRow-controls'
+  };
   let formats = {};
   const CSS_MARKDOWN_PAGE = `
     #md-toc {
@@ -135,7 +140,7 @@
   }
 
   function blockParse(format) {
-    const textBoxEl = Edexal.$("div.bbWrapper div[spellcheck][class*=fr-element]");
+    const textBoxEl = Edexal.$(EL.textbox);
     for (let i = 0; i < format.indexes.length; i++) {
       let type = getType(format, textBoxEl, i);
       if (type || !!textBoxEl.children[format.indexes[i]].innerHTML.match(format.startRegex)) {
@@ -152,7 +157,7 @@
   }
 
   function alignParse(format) {
-    const textBoxEl = Edexal.$("div.bbWrapper div[spellcheck][class*=fr-element]");
+    const textBoxEl = Edexal.$(EL.textbox);
     for (let i = 0; i < format.indexes.length; i++) {
       format.type = getType(format, textBoxEl, i) ?? format.type;
       const alignTag = format.type === "right" ? format.tags[0] : format.tags[1];
@@ -170,7 +175,7 @@
   }
 
   function quoteParse() {
-    const textBoxEl = Edexal.$("div.bbWrapper div[spellcheck][class*=fr-element]");
+    const textBoxEl = Edexal.$(EL.textbox);
     const format = formats["blockQuote"];
     let count = 0;
     let type = undefined;
@@ -326,8 +331,39 @@
   function iBBCParse(lineTxt, format) {
     return multiFullLineParse(lineTxt, format, '[', ']');
   }
+  
+  // Protect Markdown links before processing inline formatting.
+  function protectLinks(lineTxt) {
+    const links = [];
+
+    lineTxt = lineTxt.replace(
+      formats.link.regex,
+      (match, text, url) => {
+        const token = `MDLINKPLACEHOLDER${links.length}END`;
+
+        links.push({
+          token,
+          html: `<a href="${url}">${text}</a>`
+        });
+
+        return token;
+      }
+    );
+    return { lineTxt, links };
+  }
+
+  // Restore links after all Markdown formatting.
+  function restoreLinks(lineTxt, links) {
+    for (const { token, html } of links) {
+      lineTxt = lineTxt.replace(token, () => html);
+    }
+    return lineTxt;
+  }
 
   function parse(lineTxt, i) {
+    const protectedLinks = protectLinks(lineTxt);
+    lineTxt = protectedLinks.lineTxt;
+    
     lineTxt = iHTMLParse(lineTxt, formats["bold"]);
     lineTxt = iHTMLParse(lineTxt, formats["italic"]);
     lineTxt = iHTMLParse(lineTxt, formats["strikethrough"]);
@@ -339,12 +375,11 @@
     infoGather(lineTxt, formats["code"], i);
     infoGather(lineTxt, formats["spoiler"], i);
     infoGather(lineTxt, formats["alignment"], i);
-    lineTxt = lineSubParse(lineTxt, formats["link"]);
     lineTxt = fullLineParse(lineTxt, formats["header1"]);
     lineTxt = fullLineParse(lineTxt, formats["header2"]);
     lineTxt = fullLineParse(lineTxt, formats["header3"]);
     lineTxt = listParse(lineTxt, formats["list"]);
-    return lineTxt;
+    return restoreLinks(lineTxt, protectedLinks.links);
   }
 
   function getOpenCloseTags(lineEl) {
@@ -394,12 +429,36 @@
     alignParse(formats["alignment"]);
     textBoxEl.children[lastIndex].outerHTML = "<p>" + endListParse(textBoxEl.children[lastIndex].innerHTML, formats["list"]) + "</p>";
   }
+  
+  // Resolves Issue: When pasting to textbox, all text are wrapped in a single <p>
+  function fixPastedTextIssue(textBoxEl) {
+    if (!textBoxEl.children.length === 1 && !textBoxEl.innerHTML.includes("<br><br>")) {
+      return;
+    }
+    const contentArr = textBoxEl.innerHTML.split('<br><br>');
+    const fragment = new DocumentFragment();
+    for (const txt of contentArr) {
+      let p;
+      if (txt.startsWith('<br>')){
+        p = Edexal.newEl({element:'p'}); 
+        const br = Edexal.newEl({element:'br'}); 
+        p.append(br);
+        fragment.append(p);
+      }
+      p = Edexal.newEl({element: 'p', text: txt.replace('<p>', '').replace('</p>', '').replace('<br>','')});
+      fragment.append(p);
+    }
+    textBoxEl.replaceChildren(fragment);
+  }
 
   function createButton(btnLayer, textboxEl) {
     const btn = Edexal.newEl({element: 'button', type: 'button', class: ['button']});
     const spanText = Edexal.newEl({element: 'span', class: ['button-text'], text: "PARSE MD", style: "color: yellow;"});
     btn.append(spanText);
-    Edexal.on(btn, 'click', () => parseMarkdown(textboxEl));
+    Edexal.on(btn, 'click', () => {
+      fixPastedTextIssue(textboxEl);
+      parseMarkdown(textboxEl);
+    });
     btnLayer.prepend(btn);
   }
 
@@ -407,9 +466,9 @@
     for (const record of records) {
       for (const addedNode of record.addedNodes) {
         if (addedNode.nodeType !== Node.ELEMENT_NODE) continue;
-        const buttonLayer = addedNode.querySelector("div.formButtonGroup-primary,div.formSubmitRow-controls");
-        const textBoxEl = addedNode.querySelector("div.bbWrapper div[spellcheck][class*=fr-element]");
-        const toolbarEl = addedNode.querySelector("div.fr-toolbar");
+        const buttonLayer = addedNode.querySelector(EL.buttonGroup);
+        const textBoxEl = addedNode.querySelector(EL.textbox);
+        const toolbarEl = addedNode.querySelector(EL.toolbar);
         if (!buttonLayer || !textBoxEl || !toolbarEl) continue;
         createButton(buttonLayer, textBoxEl);
         applyhelpBtn(toolbarEl);
@@ -480,18 +539,24 @@
     mainBodyEl.innerHTML = MARKDOWN_PAGE_HTML;
   }
 
+  
+  
   // Program Start
-  if (location.pathname !== MARKDOWN_PATH) {
-    Edexal.addCSS(CSS_TOOLBAR);
-    // The first textbox element found
-    setTimeout(() => {
-      createButton(Edexal.$("div.formButtonGroup-primary,div.formSubmitRow-controls"), Edexal.$("div.bbWrapper div[spellcheck][class*=fr-element]"));
-      applyhelpBtn(Edexal.$("div.fr-toolbar"));
-    }, 1000);
-    // Edit Posts
-    buttonObserver("div.block-container[data-lb-id]");
-  } else {
-    Edexal.addCSS(CSS_MARKDOWN_PAGE);
-    markdownPage();
+  function start() {
+    if (location.pathname !== MARKDOWN_PATH) {
+      Edexal.addCSS(CSS_TOOLBAR);
+      // The first textbox element found
+      setTimeout(() => {
+        createButton(Edexal.$(EL.buttonGroup), Edexal.$(EL.textbox));
+        applyhelpBtn(Edexal.$(EL.toolbar));
+      }, 1000);
+      // Edit Posts
+      buttonObserver("div.block-container[data-lb-id]");
+      } else {
+        Edexal.addCSS(CSS_MARKDOWN_PAGE);
+        markdownPage();
+      }
   }
+  
+  start();
 })()
