@@ -8,7 +8,7 @@
 // @grant       GM.listValues
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     2.2.11
+// @version     2.2.12
 // @author      Edexal
 // @description Save your filters from the Latest Update Page & load them when you need it!
 // @homepageURL https://sleazyfork.org/en/scripts/523141-f95-latest-update-saver
@@ -52,7 +52,7 @@
             opacity: 0;
           }
           .save-anim {
-            animation: 3s notice ease-in-out;
+            animation: 1.8s notice ease-in-out;
           }
           .save-bg {
             opacity: 0.6;
@@ -194,7 +194,7 @@
       setTimeout(() => {
         saveNotice.classList.remove('save-anim');
         saveNoticeBG.classList.remove('save-bg');
-      }, 3000)
+      }, 1800)
     }
   }
 
