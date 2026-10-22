@@ -5,12 +5,12 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0.1
+// @version     1.0.2
 // @author      Edexal
 // @description Restores 'bookmark' tab link on navigation bar. Also on Latest Update Page, replaces 'FORUMS' tab with 'BOOKMARK'.
 // @homepageURL https://sleazyfork.org/en/scripts/601301-f95-bookmark-tab
 // @supportURL  https://github.com/Edexaal/scripts/issues
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@89a1caba9a2b639ca66314018b4746d4cdecb029/_lib/utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@35084acca34cf8c995dfd2adb18e4755e694a2f5/_lib/utility.js
 // ==/UserScript==
 
 (() => {

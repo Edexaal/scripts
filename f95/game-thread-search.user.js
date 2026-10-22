@@ -5,12 +5,12 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.1.12
+// @version     1.1.13
 // @author      Edexal
 // @description On the Latest Update page, search for a game thread by 'TITLE' using the website's search query instead of through the filter drawer.
 // @homepageURL https://sleazyfork.org/en/scripts/543545-f95-game-thread-search
 // @supportURL  https://github.com/Edexaal/scripts/issues
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@89a1caba9a2b639ca66314018b4746d4cdecb029/_lib/utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@35084acca34cf8c995dfd2adb18e4755e694a2f5/_lib/utility.js
 // ==/UserScript==
 (() => {
 const btn = {
