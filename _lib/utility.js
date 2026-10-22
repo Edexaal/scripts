@@ -56,6 +56,12 @@ class Edexal {
   static $$(selectors) {
     return document.querySelectorAll(selectors);
   }
+  
+  static decodeHTMLEntities(txt) {
+    const textArea = Edexal.newEl({element: 'textarea');
+    textArea.innerHTML = txt;
+    return textArea.value;
+  }
 
   static #runOn(includesPath, callback) {
     if (location.href.includes(includesPath)) {
