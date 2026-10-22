@@ -2,7 +2,7 @@
 // @name        Edexal's Utility Library
 // @namespace   1330126-edexal
 // @license     Unlicense
-// @version     3.4.0
+// @version     3.5.0
 // @author      Edexal
 // @description Utility library for common reusable tasks
 // ==/UserScript==
@@ -58,7 +58,7 @@ class Edexal {
   }
   
   static decodeHTMLEntities(txt) {
-    const textArea = Edexal.newEl({element: 'textarea');
+    const textArea = Edexal.newEl({element: 'textarea'});
     textArea.innerHTML = txt;
     return textArea.value;
   }
