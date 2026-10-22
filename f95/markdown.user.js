@@ -9,7 +9,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.2.17
+// @version     1.2.18
 // @author      Edexal
 // @description Use Markdown syntax in threads, posts, and conversations.
 // @homepageURL https://sleazyfork.org/en/scripts/566411-f95-markdown
@@ -465,7 +465,8 @@
           p.append(br);
           fragment.append(p);
         }
-        let newTxt = txt.replace(/&gt;/g,'>').replace(/&nbsp;/g, '  ');
+        
+        let newTxt = Edexal.decodeHTMLEntities(txt); 
         p = Edexal.newEl({element: 'p', text: newTxt});
         fragment.append(p);
       }
@@ -544,14 +545,10 @@
     return button;
   }
 
-  function createToolbarSeparator() {
-    return Edexal.newEl({element: "div", role: "separator", "aria-orientation": "vertical"});
-  }
-
   function applyhelpBtn(toolbarEl) {
     const helpBtn = createhelpToolbarBtn();
-    const separatorEl = createToolbarSeparator();
-    toolbarEl.append(separatorEl, helpBtn);
+    const toolBtnGroups = toolbarEl.querySelectorAll(".fr-float-left");
+    toolBtnGroups[toolBtnGroups.length - 1].append(helpBtn);
   }
 
   function markdownPage() {
@@ -559,7 +556,9 @@
     // Removes all child elements
     mainBodyEl.querySelector("div.blockMessage").remove();
     //Removes Header
-    Edexal.$("div.uix_headerContainer").remove();
+    Edexal.$("header").remove();
+    // Removes navigation
+    Edexal.$("div.p-navSticky").remove();
     // Removes footer
     Edexal.$("footer").remove();
     // Removes arrow scroll buttons
@@ -568,7 +567,7 @@
     Edexal.$("head title").textContent = "F95 Markdown Syntax";
     const titleEl = Edexal.$("h1.p-title-value");
     titleEl.textContent = "F95 Markdown Syntax";
-    mainBodyEl.innerHTML = MARKDOWN_PAGE_HTML;
+    mainBodyEl.querySelector("div.p-body-pageContent").innerHTML = MARKDOWN_PAGE_HTML;
   }
 
   
