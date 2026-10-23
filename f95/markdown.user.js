@@ -9,13 +9,13 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.2.17
+// @version     1.2.18
 // @author      Edexal
 // @description Use Markdown syntax in threads, posts, and conversations.
 // @homepageURL https://sleazyfork.org/en/scripts/566411-f95-markdown
 // @supportURL  https://github.com/Edexaal/scripts/issues
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@35084acca34cf8c995dfd2adb18e4755e694a2f5/_lib/utility.js
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@35084acca34cf8c995dfd2adb18e4755e694a2f5/_lib/markdown-page-template.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@17861f671a93a6a1d41b8864391e3e37fac59e8f/_lib/utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@17861f671a93a6a1d41b8864391e3e37fac59e8f/_lib/markdown-page-template.js
 // ==/UserScript==
 (async () => {
   const MARKDOWN_PATH = "/markdown";
