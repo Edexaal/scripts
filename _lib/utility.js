@@ -2,7 +2,7 @@
 // @name        Edexal's Utility Library
 // @namespace   1330126-edexal
 // @license     Unlicense
-// @version     3.5.0
+// @version     3.6.0
 // @author      Edexal
 // @description Utility library for common reusable tasks
 // ==/UserScript==
@@ -87,6 +87,25 @@ class Edexal {
   
   static isLatestUpdatePage() {
     return Edexal.#runOn(Edexal.#latestUpdatePath);
+  }
+  
+  static isGameThread() {
+    let breadcrumbID = Edexal.$$("ul.p-breadcrumbs li:nth-of-type(2) a span[itemprop=name]");
+    let isGame = false;
+    if (!!breadcrumbID.length) {
+      breadcrumbID.forEach((curVal) => {
+        if (curVal.textContent.toLowerCase() === "Games".toLowerCase()) {
+          isGame = true;
+        }
+      });
+    }
+    return isGame;
+  }
+  
+  static runOnGameThread(callback) {
+    if (Edexal.isGameThread()) {
+      callback();
+    }
   }
 }
 
