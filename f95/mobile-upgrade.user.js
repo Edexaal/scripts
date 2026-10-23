@@ -15,13 +15,9 @@
 (async () => {
   // NOTE: F95 uses FontAwesome v5.15.4
   const SELECTOR = {
-    likeBtns: 'a.reaction.actionBar-action',
-    reactionBtns: 'button.reaction.actionBar-action',
-    thread: '.p-body-main',
     latestUpdate: '#latest-page_main-wrap',
     latestFilterDrawer: '#latest-page_filter-wrap',
   };
-  let REACTION_BAR;
   const MAX_SCREEN_WIDTH = 480;
   Edexal.addCSS(`
 @media (width <= ${MAX_SCREEN_WIDTH}px) {
@@ -73,39 +69,6 @@
     &::after {
       margin:initial;
     }
-  }
-  /*Styles for reactions*/
-  button.reaction.actionBar-action {
-    position: relative;
-    cursor: pointer;
-  }
-  .reactTooltip {
-    position: absolute;
-    bottom: 30px;
-    right: -70px;
-    width: 180px;
-    z-index: 5;
-    background-color: #242629;
-    border: 1px solid #343638;
-    border-radius: 8px;
-    max-width: unset;
-    gap: 2px;
-  }
-   .actionBar .reaction.reaction--imageHidden.reaction--1 i {
-      padding-right: 0;
-      margin-right: 0;
-  }
-  .reaction.reaction--imageHidden img {
-    display: unset;
-  }
-  .reaction.reaction--imageHidden > img {
-    display: none;
-  }
-  .reaction-text {
-    margin-left: 6px;
-  }
-  .has-reaction .reaction-text {
-    margin-left: 0;
   }
   /*Fixes: Some game threads sticky header bar is messed up. Ex: Jujutsu Trainer*/
   div.uix_headerContainer div.p-navSticky {
@@ -253,102 +216,6 @@
     });
   }
 
-  function createReaction(idNum, altName) {
-    const a = Edexal.newEl({
-      element: 'a',
-      href: `/posts/10864040/react?reaction_id=${idNum}`,
-      class: ['reaction', `reaction--${idNum}`],
-      'data-reaction-id': idNum
-    });
-    const img = Edexal.newEl({
-      element: 'img',
-      src: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
-      class: ['reaction-sprite', 'js-reaction'],
-      alt: altName,
-      title: altName,
-      'data-extra-class': "tooltip--basic tooltip--noninteractive",
-      'data-delay-in': 50,
-      'data-delay-out': 50
-    });
-    a.append(img);
-    return a;
-  }
-
-  function createReactionBar() {
-    const divBar = Edexal.newEl({element: 'div', class: ['reactTooltip']});
-    let reactions = [
-      createReaction(1, 'Like'),
-      createReaction(14, 'Heart'),
-      createReaction(13, "Jizzed my pants"),
-      createReaction(12, "Yay, update!"),
-      createReaction(3, "Haha"),
-      createReaction(9, "Hey there"),
-      createReaction(4, "Wow"),
-      createReaction(7, "Thinking Face"),
-      createReaction(5, "Sad"),
-      createReaction(18, "Disagree"),
-      createReaction(8, "Angry")
-    ];
-    divBar.append(...reactions);
-    REACTION_BAR = divBar;
-  }
-
-  function initReactionBtns(likeBtns) {
-    for (const likeBtn of likeBtns) {
-      let reactBtn;
-      if (!likeBtn.classList.contains('has-reaction')) {
-        reactBtn = Edexal.newEl({
-          element: 'button',
-          'data-post-id': likeBtn.getAttribute('data-th-react-plus-content-id')
-        });
-        likeBtn.classList.remove('reaction--small');
-      } else {
-        reactBtn = Edexal.newEl({element: 'a', href: likeBtn.href});
-      }
-      reactBtn.classList.add(...likeBtn.classList);
-      reactBtn.append(...likeBtn.childNodes);
-      likeBtn.replaceWith(reactBtn);
-    }
-  }
-
-  function updateReactionBtnURLs(postId) {
-    REACTION_BAR.querySelectorAll('a').forEach(el => {
-      el.href = el.href.replace(/\/[0-9]+\//, `/${postId}/`);
-    });
-  }
-
-  function addReactionBarEvent(e) {
-    updateReactionBtnURLs(e.currentTarget.dataset.postId);
-    e.currentTarget.append(REACTION_BAR);
-  }
-
-  function removeReactionBarEvent(e) {
-    if (!e.target.closest(SELECTOR.reactionBtns)) {
-      REACTION_BAR.remove();
-    }
-  }
-
-  function addReactionBtnEvents() {
-    const reactionBtns = Edexal.$$(SELECTOR.reactionBtns);
-    for (const reactBtn of reactionBtns) {
-      Edexal.on(reactBtn, 'click', addReactionBarEvent);
-    }
-  }
-
-  function setRemoval() {
-    const thread = Edexal.$(SELECTOR.thread);
-    Edexal.on(thread, 'click', removeReactionBarEvent);
-  }
-
-  function initReaction() {
-    const likeBtns = Edexal.$$(SELECTOR.likeBtns);
-    if (!likeBtns || !likeBtns.length) return;
-    createReactionBar();
-    initReactionBtns(likeBtns);
-    addReactionBtnEvents();
-    setRemoval();
-  }
-
   function removeBookmarkFilter() {
     setTimeout(() => {
       const filterMenuActive = Edexal.$("div.menu.is-active");
@@ -413,11 +280,9 @@
     if (Edexal.$("html").clientWidth > MAX_SCREEN_WIDTH) return;
     initTabItems();
     initScrollBtns();
-    initReaction();
     initBookmarkLabel();
     setTimeout(removeTileHoverEffects, 2000);
     removeAdBanner();
-    initImageGallery();
     stickyNavBar();
   }
 
