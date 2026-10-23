@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0.4
+// @version     1.1.0
 // @author      Edexal
 // @description Restores 'bookmark' tab link on navigation bar. Also on Latest Update Page, replaces a tab with 'BOOKMARK'.
 // @homepageURL https://sleazyfork.org/en/scripts/601301-f95-bookmark-tab

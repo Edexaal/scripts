@@ -9,7 +9,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.2.19
+// @version     1.3.0
 // @author      Edexal
 // @description Use Markdown syntax in threads, posts, and conversations.
 // @homepageURL https://sleazyfork.org/en/scripts/566411-f95-markdown
