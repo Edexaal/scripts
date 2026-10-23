@@ -24,6 +24,7 @@
     navbar: 'navbar',
     rating: 'rating',
     version: 'version',
+    scrollbtns: 'scrollbtns',
     close: 'close',
     first_post: 'first_post',
   };
@@ -94,6 +95,10 @@
           transform: scale(0.9);
         }
       }
+      & ul {
+        overflow-y: auto;
+        height:200px;
+      }
     }
     #vmgpo-icon {
       color: yellow;
@@ -146,6 +151,10 @@
     li.append(label, checkbox);
     return li;
   }
+  
+  function labelSort(a,b) {
+    return a.textContent.localeCompare(b.textContent);
+  }
 
   function createTooltip() {
     const vmGPO = Edexal.newEl({element: "div", id: "vm-gpo", class: ["tooltip", "tooltip--vmgpo"]});
@@ -157,21 +166,25 @@
     const h2 = Edexal.newEl({element: "h2", text: "Game Post Settings"});
 
     const ul = Edexal.newEl({element: "ul"});
-    const breadcrumbLI = createList("Breadcrumbs", labels.breadcrumbs);
-    const footerLI = createList("Footer", labels.footer);
-    const recommendLI = createList("Recommendations", labels.recommend);
-    const replyLI = createList("Reply", labels.reply);
-    const accountLI = createList("Account Items", labels.account);
-    const navbarLI = createList("Navigation Bar", labels.navbar);
-    const firstPostLI = createList("First Post Only", labels.first_post);
-    const ratingLI = createList("Star Ratings", labels.rating);
-    const versionLI = createList("Thread Version", labels.version);
+    const liItems = [
+      createList("Breadcrumbs", labels.breadcrumbs),
+      createList("Footer", labels.footer),
+      createList("Recommendations", labels.recommend),
+      createList("Reply", labels.reply),
+      createList("Account Items", labels.account),
+      createList("Navigation Bar", labels.navbar),
+      createList("First Post Only", labels.first_post),
+      createList("Star Ratings", labels.rating),
+      createList("Versioning", labels.version),
+      createList("Scroll Buttons", labels.scrollbtns),
+    ];
+    liItems.sort(labelSort);
     const closeLI = createList("", labels.close, ['fas', 'fa-times-circle']);
     closeLI.style.pointerEvents = "none";
     closeLI.style.visibility = "hidden";
     closeLI.style.position = "absolute";
 
-    ul.append(closeLI, firstPostLI, breadcrumbLI, footerLI, recommendLI, replyLI, accountLI, navbarLI, ratingLI, versionLI);
+    ul.append(closeLI, ...liItems);
     vmGPOInner.append(h2, ul);
     vmGPOContent.append(vmGPOInner);
     vmGPO.append(vmGPOContent);
@@ -182,10 +195,13 @@
     const li = Edexal.newEl({element: 'li'});
     const span = Edexal.newEl({
       element: 'span',
-      class: ["fas", "fa-cog"],
+      class: ['message-attribution-gadget'],
       id: "vmgpo-icon",
       title: "Game post settings"
     });
+    const icon = Edexal.newEl({element: 'i', class: ["fa--xf","fas", "fa-cog"]});
+    icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M487.4 315.7l-42.6-24.6c4.3-23.2 4.3-47 0-70.2l42.6-24.6c4.9-2.8 7.1-8.6 5.5-14-11.1-35.6-30-67.8-54.7-94.6-3.8-4.1-10-5.1-14.8-2.3L380.8 110c-17.9-15.4-38.5-27.3-60.8-35.1V25.8c0-5.6-3.9-10.5-9.4-11.7-36.7-8.2-74.3-7.8-109.2 0-5.5 1.2-9.4 6.1-9.4 11.7V75c-22.2 7.9-42.8 19.8-60.8 35.1L88.7 85.5c-4.9-2.8-11-1.9-14.8 2.3-24.7 26.7-43.6 58.9-54.7 94.6-1.7 5.4.6 11.2 5.5 14L67.3 221c-4.3 23.2-4.3 47 0 70.2l-42.6 24.6c-4.9 2.8-7.1 8.6-5.5 14 11.1 35.6 30 67.8 54.7 94.6 3.8 4.1 10 5.1 14.8 2.3l42.6-24.6c17.9 15.4 38.5 27.3 60.8 35.1v49.2c0 5.6 3.9 10.5 9.4 11.7 36.7 8.2 74.3 7.8 109.2 0 5.5-1.2 9.4-6.1 9.4-11.7v-49.2c22.2-7.9 42.8-19.8 60.8-35.1l42.6 24.6c4.9 2.8 11 1.9 14.8-2.3 24.7-26.7 43.6-58.9 54.7-94.6 1.5-5.5-.7-11.3-5.6-14.1zM256 336c-44.1 0-80-35.9-80-80s35.9-80 80-80 80 35.9 80 80-35.9 80-80 80z"/></svg>`;
+    span.append(icon);
     li.append(span);
     postHeaderEl.prepend(li);
   }
@@ -286,10 +302,6 @@
     showHidePagination();
   }
 
-  function hideDefaults() {
-    showHideScrollbarBtns();
-  }
-
   async function initSettings() {
     const keys = await GM.listValues();
     for (const labelName of keys) {
@@ -322,6 +334,12 @@
         case labels.rating:
           showHideRating();
           break;
+        case labels.version:
+          showHideThreadVersion();
+          break;
+        case labels.scrollbtns:
+          showHideScrollbarBtns();
+          break;
         default:
          await GM.deleteValue(labelName);
          break;
@@ -349,28 +367,30 @@
     const postNum = postHeaderEl.querySelector('li:last-child a').textContent;
     return postNum.trim() === '#1';
   }
-
-  /*Checks if thread is a GAME type*/
-  if (isGameThread()) {
-    const postHeaderEl = Edexal.$('article.message-threadStarterPost ul.message-attribution-opposite--list');
-    if (!isFirstPost(postHeaderEl)){
-      return;
-    }
-    createIcon(postHeaderEl);
-    createTooltip();
-    await initSettings();
-    hideDefaults();
-    setClickEvent('#vmgpo-icon', toggleSettingsEvent);
-    setLabelEvent(labels.first_post, (e) => toggleEvent(e.target, showFirstPostOnly));
-    setLabelEvent(labels.breadcrumbs, (e) => toggleEvent(e.target, showHideBreadcrumbs));
-    setLabelEvent(labels.footer, (e) => toggleEvent(e.target, showHideFooter));
-    setLabelEvent(labels.recommend, (e) => toggleEvent(e.target, showHideRecomendations));
-    setLabelEvent(labels.reply, (e) => toggleEvent(e.target, showHideReplyItems));
-    setLabelEvent(labels.account, (e) => toggleEvent(e.target, showHideAccountItems));
-    setLabelEvent(labels.navbar, (e) => toggleEvent(e.target, showHideNavbar));
-    setLabelEvent(labels.rating, (e) => toggleEvent(e.target, showHideRating));
-    setLabelEvent(labels.version, (e) => toggleEvent(e.target, showHideThreadVersion));
-    setLabelEvent(labels.close, toggleSettingsEvent);
+  
+  function run() {
+    /*Checks if thread is a GAME type*/
+    Edexal.runOnGameThread(async () => {
+      const postHeaderEl = Edexal.$('article.message-threadStarterPost ul.message-attribution-opposite--list');
+      if (!isFirstPost(postHeaderEl)){
+        return;
+      }
+      createIcon(postHeaderEl);
+      createTooltip();
+      await initSettings();
+      setClickEvent('#vmgpo-icon', toggleSettingsEvent);
+      setLabelEvent(labels.first_post, (e) => toggleEvent(e.target, showFirstPostOnly));
+      setLabelEvent(labels.breadcrumbs, (e) => toggleEvent(e.target, showHideBreadcrumbs));
+      setLabelEvent(labels.footer, (e) => toggleEvent(e.target, showHideFooter));
+      setLabelEvent(labels.recommend, (e) => toggleEvent(e.target, showHideRecomendations));
+      setLabelEvent(labels.reply, (e) => toggleEvent(e.target, showHideReplyItems));
+      setLabelEvent(labels.account, (e) => toggleEvent(e.target, showHideAccountItems));
+      setLabelEvent(labels.navbar, (e) => toggleEvent(e.target, showHideNavbar));
+      setLabelEvent(labels.rating, (e) => toggleEvent(e.target, showHideRating));
+      setLabelEvent(labels.version, (e) => toggleEvent(e.target, showHideThreadVersion));
+      setLabelEvent(labels.scrollbtns, (e) => toggleEvent(e.target, showHideScrollbarBtns));
+      setLabelEvent(labels.close, toggleSettingsEvent);
+    });
   }
-
+  run();
 })();
