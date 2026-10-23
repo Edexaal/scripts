@@ -7,7 +7,7 @@
 // @grant       GM.deleteValue
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     4.0.9
+// @version     4.1.0
 // @author      Edexal
 // @description Display only the 1st post of a game thread. Also, hide other content from the thread.
 // @homepageURL https://sleazyfork.org/en/scripts/522360-f95-game-post-only
@@ -23,6 +23,7 @@
     account: 'account',
     navbar: 'navbar',
     rating: 'rating',
+    version: 'version',
     close: 'close',
     first_post: 'first_post',
   };
@@ -164,12 +165,13 @@
     const navbarLI = createList("Navigation Bar", labels.navbar);
     const firstPostLI = createList("First Post Only", labels.first_post);
     const ratingLI = createList("Star Ratings", labels.rating);
+    const versionLI = createList("Thread Version", labels.version);
     const closeLI = createList("", labels.close, ['fas', 'fa-times-circle']);
     closeLI.style.pointerEvents = "none";
     closeLI.style.visibility = "hidden";
     closeLI.style.position = "absolute";
 
-    ul.append(closeLI, firstPostLI, breadcrumbLI, footerLI, recommendLI, replyLI, accountLI, navbarLI, ratingLI);
+    ul.append(closeLI, firstPostLI, breadcrumbLI, footerLI, recommendLI, replyLI, accountLI, navbarLI, ratingLI, versionLI);
     vmGPOInner.append(h2, ul);
     vmGPOContent.append(vmGPOInner);
     vmGPO.append(vmGPOContent);
@@ -265,11 +267,15 @@
   }
 
   function showHideNavbar() {
-    toggleVisibility(Edexal.$('div#top > div:first-child'));
+    toggleVisibility(Edexal.$('div#top div.p-navSticky'));
   }
 
   function showHideThreadWarning() {
     toggleVisibility(Edexal.$('div.blockMessage.blockMessage--warning'));
+  }
+  
+  function showHideThreadVersion() {
+    toggleVisibility(Edexal.$('div.f95wg-thread'));
   }
 
   function showFirstPostOnly() {
@@ -324,7 +330,7 @@
   }
 
   function isGameThread() {
-    let breadcrumbID = Edexal.$$("ul.p-breadcrumbs li:nth-of-type(3) a span[itemprop=name]");
+    let breadcrumbID = Edexal.$$("ul.p-breadcrumbs li:nth-of-type(2) a span[itemprop=name]");
     let isGame = false;
     if (!!breadcrumbID.length) {
       breadcrumbID.forEach((curVal) => {
@@ -342,7 +348,7 @@
 
   /*Checks if thread is a GAME type*/
   if (isGameThread()) {
-    const postHeaderEl = Edexal.$('.message-threadStarterPost .message-attribution-opposite--list');
+    const postHeaderEl = Edexal.$('article.message-threadStarterPost ul.message-attribution-opposite--list');
     if (!isFirstPost(postHeaderEl)){
       return;
     }
@@ -359,6 +365,7 @@
     setLabelEvent(labels.account, (e) => toggleEvent(e.target, showHideAccountItems));
     setLabelEvent(labels.navbar, (e) => toggleEvent(e.target, showHideNavbar));
     setLabelEvent(labels.rating, (e) => toggleEvent(e.target, showHideRating));
+    setLabelEvent(labels.version, (e) => toggleEvent(e.target, showHideThreadVersion));
     setLabelEvent(labels.close, toggleSettingsEvent);
   }
 
