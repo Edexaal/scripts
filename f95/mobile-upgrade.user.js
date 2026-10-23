@@ -113,6 +113,8 @@
     const spanTopText = Edexal.newEl({element: 'span', class: ['button-text']});
     const iTop = Edexal.newEl({element: 'i', class: ['fa--xf', 'far', 'fa-arrow-up'], "aria-hidden": "true"});
     const spanTopSR = Edexal.newEl({element: 'span', class: ['u-srOnly'], text: 'Top'});
+    iTop.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg>`;
+    
 
     const aBottomButton = Edexal.newEl({
       element: 'a',
@@ -122,7 +124,8 @@
     const spanBottomText = Edexal.newEl({element: 'span', class: ['button-text']});
     const iBottom = Edexal.newEl({element: 'i', class: ['fa--xf', 'far', 'fa-arrow-down'], "aria-hidden": "true"});
     const spanBottomSR = Edexal.newEl({element: 'span', class: ['u-srOnly'], text: 'Bottom'});
-
+    iBottom.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M413.1 222.5l22.2 22.2c9.4 9.4 9.4 24.6 0 33.9L241 473c-9.4 9.4-24.6 9.4-33.9 0L12.7 278.6c-9.4-9.4-9.4-24.6 0-33.9l22.2-22.2c9.5-9.5 25-9.3 34.3.4L184 343.4V56c0-13.3 10.7-24 24-24h32c13.3 0 24 10.7 24 24v287.4l114.8-120.5c9.3-9.8 24.8-10 34.3-.4z"/></svg>`;
+    
     Edexal.on(aTopButton, 'click', (e) => {
       e.preventDefault();
       const target = Edexal.$(topTargets[0]) ?? Edexal.$(topTargets[1]);
@@ -164,22 +167,11 @@
   }
 
   function initScrollBtns() {
-    const bottomTargets = ['div.block-outer:nth-child(4) > div:nth-child(1) > nav:nth-child(1) > div:nth-child(2)', '#footer.p-footer'];
+    const bottomTargets = ['div.block-outer:nth-child(4) > div:nth-child(1) > nav:nth-child(1) > div:nth-child(2)', '.message--post:last-child'];
     const topTargets = ['.block--messages', '#top'];
-    const hasNewBtn = setScrollBtn('.uix_fabBar .u-scrollButtons a:last-child',
-      bottomTargets[0],
-      'end',
-      bottomTargets[1]);
-    if (hasNewBtn) {
-      setScrollBtn('.uix_fabBar .u-scrollButtons a:first-child',
-        topTargets[0],
-        'start',
-        topTargets[1]);
-    } else {
-      const footer = Edexal.$("#footer.p-footer");
-      const scrollBtnDiv = createCustomScrollBtns(topTargets, bottomTargets);
-      footer.insertAdjacentElement('afterend', scrollBtnDiv);
-    }
+    const footer = Edexal.$("#footer.p-footer");
+    const scrollBtnDiv = createCustomScrollBtns(topTargets, bottomTargets);
+    footer.insertAdjacentElement('afterend', scrollBtnDiv);
   }
 
   function assignTabItem(name, pathURL, newFaIcons, svg, itemPos) {
@@ -272,10 +264,10 @@
     });
   }
   
-  function removeEl(selector) {
+  function removeEl(selector, useParent) {
     const el = Edexal.$(selector);
     if (el) {
-      el.remove();
+      useParent ? el.parentElement.remove() : el.remove();
     }
   }
 
@@ -284,7 +276,7 @@
   }
   
   function removeStickyReviewWidget() {
-    removeEl('footer + div .p-title-pageAction');
+    removeEl('footer ~ div .br-theme-fontawesome-stars',true);
   }
 
   function run() {
@@ -295,7 +287,7 @@
     initBookmarkLabel();
     setTimeout(removeTileHoverEffects, 2000);
     removeAdBanner();
-    removeStickyReviewWidget();
+    setTimeout(removeStickyReviewWidget, 1800);
     stickyNavBar();
   }
 
