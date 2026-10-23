@@ -2,7 +2,7 @@
 // @name        F95 Game Request Templates
 // @namespace   1330126-edexal
 // @license     Unlicense
-// @version     2.1
+// @version     2.2
 // @author      Edexal
 // @description Templates for creating game requests on F95
 // ==/UserScript==
@@ -20,7 +20,7 @@ function _getRules() {
 function getUpdateTempl() {
   return {
     label: 'Update Game',
-    title: "[Store][$Price] Game Name [Version]",
+    title: "Game Name [Version]",
     body: `Title:
 Thread: (link to thread on F95zone)
 Developer website:
@@ -30,21 +30,32 @@ ${_getRules()}`
   };
 }
 
-function getRequestTempl() {
-  return {
-    label: 'Request Game',
-    title: "[Store][$Price] Game Name [Version]",
-    body: `Title:
+function getRequestTempl(moreLabelTxt, bodyTxt) {
+  const obj = {
+    label: 'Request Game' + (moreLabelTxt || ''),
+    title: "Game Name [Version]",
+    body: bodyTxt || `Title:
 Developer website:
 Language:
 Samples:
 
-${_getRules()}`
-  };
+${_getRules()}`};
+  return obj;
 }
 
+function getRequestVNDBTempl() {
+  return getRequestTempl(' (JP VNDB)',`Title:
+Developer website:
+VNDB link:
+Language:
+Samples:
+
+${_getRules()}`);
+}
+
+
 function _getNewTemplTitle() {
-    return "[GAME ENGINE] Game Name [Version][Developer]";
+    return "[GAME ENGINE] Game Name [Version] [Developer]";
 }
 
 function _getNewTemplTop() {
