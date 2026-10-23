@@ -100,6 +100,15 @@
   }
 }`);
 
+  function getValidScrollTarget(targetSelectors) {
+    for (const targetSelector of targetSelectors) {
+      const target = Edexal.$(targetSelector);
+      if(target) {
+        return target;
+      }
+    }
+  }
+
   function createCustomScrollBtns(topTargets, bottomTargets) {
     const uixFabBar = Edexal.newEl({element: 'div', class: ['uix_fabBar', 'uix_fabBar--active']});
 
@@ -128,14 +137,14 @@
     
     Edexal.on(aTopButton, 'click', (e) => {
       e.preventDefault();
-      const target = Edexal.$(topTargets[0]) ?? Edexal.$(topTargets[1]);
+      const target = getValidScrollTarget(topTargets);
       target.scrollIntoView({
         block: 'start'
       });
     });
     Edexal.on(aBottomButton, 'click', (e) => {
       e.preventDefault();
-      const target = Edexal.$(bottomTargets[0]) ?? Edexal.$(bottomTargets[1]);
+      const target = getValidScrollTarget(bottomTargets);
       target.scrollIntoView({
         block: 'end'
       });
@@ -167,7 +176,7 @@
   }
 
   function initScrollBtns() {
-    const bottomTargets = ['div.block-outer:nth-child(4) > div:nth-child(1) > nav:nth-child(1) > div:nth-child(2)', '.message--post:last-child'];
+    const bottomTargets = ['div.block-outer:nth-child(4) > div:nth-child(1) > nav:nth-child(1) > div:nth-child(2)', '.message--post:last-child', '#footer.p-footer'];
     const topTargets = ['.block--messages', '#top'];
     const footer = Edexal.$("#footer.p-footer");
     const scrollBtnDiv = createCustomScrollBtns(topTargets, bottomTargets);
@@ -278,6 +287,26 @@
   function removeStickyReviewWidget() {
     removeEl('footer ~ div .br-theme-fontawesome-stars',true);
   }
+  
+  function reorderLeftDrawer(records, obs) {
+    const leftDrawer = Edexal.$('.offCanvasMenu-list');
+    if (!leftDrawer) {
+      obs.disconnect();
+      return;
+    }
+    for (const elItem of leftDrawer.children) {
+      const a = elItem.querySelector('a');
+      if (a && a.href.includes('latest_alpha')) {
+        leftDrawer.prepend(elItem);
+        obs.disconnect();
+        return;
+      }
+    }
+  }
+  function initLeftDrawerOrder() {
+    const observer = new MutationObserver(reorderLeftDrawer);
+    observer.observe(Edexal.$('.offCanvasMenu-content .sidePanel__tabPanel .js-offCanvasNavTarget'), {subtree:true, childList: true});
+  }
 
   function run() {
     //Run only on mobile
@@ -289,6 +318,7 @@
     removeAdBanner();
     setTimeout(removeStickyReviewWidget, 1800);
     stickyNavBar();
+    initLeftDrawerOrder();
   }
 
   run();
