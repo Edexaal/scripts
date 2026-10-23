@@ -7,7 +7,7 @@
 // @grant       GM.deleteValue
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     4.1.0
+// @version     4.1.1
 // @author      Edexal
 // @description Display only the 1st post of a game thread. Also, hide other content from the thread.
 // @homepageURL https://sleazyfork.org/en/scripts/522360-f95-game-post-only
@@ -341,7 +341,11 @@
     }
     return isGame;
   }
+  
   function isFirstPost(postHeaderEl) {
+    if (!postHeaderEl) {
+      return false;
+    }
     const postNum = postHeaderEl.querySelector('li:last-child a').textContent;
     return postNum.trim() === '#1';
   }
