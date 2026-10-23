@@ -25,7 +25,6 @@
     rating: 'rating',
     version: 'version',
     scrollbtns: 'scrollbtns',
-    close: 'close',
     first_post: 'first_post',
   };
   const CSS_HIDE = 'ed-hide';  // Hides/Shows DOM elements
@@ -75,9 +74,6 @@
             border-radius: 8px;
             border: 1px solid black;
             transition: opacity 375ms, transform 125ms, background-color .15s;
-            &[for="close"] {
-              color: #ffcb00;
-            }
           }
         }
       }
@@ -87,9 +83,6 @@
         &:hover {
           cursor: pointer;
           background-color: #822626;
-        }
-        &[for="close"]:hover {
-          background-color: #622;
         }
         &:active {
           transform: scale(0.9);
@@ -179,12 +172,8 @@
       createList("Scroll Buttons", labels.scrollbtns),
     ];
     liItems.sort(labelSort);
-    const closeLI = createList("", labels.close, ['fas', 'fa-times-circle']);
-    closeLI.style.pointerEvents = "none";
-    closeLI.style.visibility = "hidden";
-    closeLI.style.position = "absolute";
 
-    ul.append(closeLI, ...liItems);
+    ul.append(...liItems);
     vmGPOInner.append(h2, ul);
     vmGPOContent.append(vmGPOInner);
     vmGPO.append(vmGPOContent);
@@ -389,7 +378,6 @@
       setLabelEvent(labels.rating, (e) => toggleEvent(e.target, showHideRating));
       setLabelEvent(labels.version, (e) => toggleEvent(e.target, showHideThreadVersion));
       setLabelEvent(labels.scrollbtns, (e) => toggleEvent(e.target, showHideScrollbarBtns));
-      setLabelEvent(labels.close, toggleSettingsEvent);
     });
   }
   run();
