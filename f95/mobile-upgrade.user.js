@@ -13,7 +13,7 @@
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@17861f671a93a6a1d41b8864391e3e37fac59e8f/_lib/utility.js
 // ==/UserScript==
 (async () => {
-  /*NOTE: F95 uses FontAwesome v5.15.4*/
+  // NOTE: F95 uses FontAwesome v5.15.4
   const SELECTOR = {
     likeBtns: 'a.reaction.actionBar-action',
     reactionBtns: 'button.reaction.actionBar-action',
@@ -23,15 +23,6 @@
   };
   let REACTION_BAR;
   const MAX_SCREEN_WIDTH = 480;
-  const SWIPE_DOWN_CONFIG = {
-    isValidSwipeDuration: false,
-    lastDownYPos: 0,
-    //Time (ms)
-    galleryEventDelay: 200, // Time to wait for gallery to load so pointer events can be applied.
-    validSwipeTime: 300, // How much time until swiping down is no longer a valid option
-    // User configuration:
-    minSwipeDistance: 120,// Minimum swipe distance required (px)
-  };
   Edexal.addCSS(`
 @media (width <= ${MAX_SCREEN_WIDTH}px) {
   /*Fixes 'Your account' navigation menu*/
@@ -225,7 +216,7 @@
     }
   }
 
-  function assignTabItem(name, pathURL, newFaIcons, itemPos) {
+  function assignTabItem(name, pathURL, newFaIcons, svg, itemPos) {
     const tabItem = Edexal.$(`.uix_tabBar .uix_tabList .uix_tabItem:nth-of-type(${itemPos})`);
     if (!tabItem) return;
     tabItem.href = pathURL;
@@ -237,13 +228,16 @@
       }
     }
     icon.classList.add(...newFaIcons);
-    const labelDiv = tabItem.querySelector('div');
+    icon.innerHTML = svg;
+    const labelDiv = tabItem.querySelector('div.uix_tabLabel');
     labelDiv.textContent = name;
   }
 
   function initTabItems() {
-    assignTabItem('Latest Updates', '/sam/latest_alpha/', ['far', 'fa-gem'], 1);
-    assignTabItem('Bookmarks', '/watched/threads?tab=bookmarks', ['far', 'fa-bookmark'], 2);
+    let fontAwesomeSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M336 0H48C21.49 0 0 21.49 0 48v464l192-112 192 112V48c0-26.51-21.49-48-48-48zm0 428.43l-144-84-144 84V54a6 6 0 0 1 6-6h276c3.314 0 6 2.683 6 5.996V428.43z"/></svg>`;
+    assignTabItem('Latest Updates', '/sam/latest_alpha/', ['fa--xf', 'far', 'fa-gem'], fontAwesomeSVG, 1);
+    fontAwesomeSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M464 0H112c-4 0-7.8 2-10 5.4L2 152.6c-2.9 4.4-2.6 10.2.7 14.2l276 340.8c4.8 5.9 13.8 5.9 18.6 0l276-340.8c3.3-4.1 3.6-9.8.7-14.2L474.1 5.4C471.8 2 468.1 0 464 0zm-19.3 48l63.3 96h-68.4l-51.7-96h56.8zm-202.1 0h90.7l51.7 96H191l51.6-96zm-111.3 0h56.8l-51.7 96H68l63.3-96zm-43 144h51.4L208 352 88.3 192zm102.9 0h193.6L288 435.3 191.2 192zM368 352l68.2-160h51.4L368 352z"/></svg>`;
+    assignTabItem('Bookmarks', '/watched/threads?tab=bookmarks', ['fa--xf', 'far', 'fa-bookmark'], fontAwesomeSVG, 2);
   }
 
   /*Removes all effects from tiles on Latest Update Page
@@ -377,70 +371,6 @@
     if (banner) {
       banner.remove();
     }
-  }
-
-  function initImageGallery() {
-    const galleryImages = Edexal.$$('[data-message-selector] .js-lbImage');
-    if (!galleryImages || !galleryImages.length) {
-      return;
-    }
-    galleryImages.forEach(node => {
-      Edexal.on(node, "click", () => {
-        setTimeout(() => {
-          const gallery = Edexal.$("div.lg");
-          // In case 'close' button is pressed instead
-          const closeBtn = gallery.querySelector(".lg-close");
-          Edexal.on(closeBtn, "click", removeSwipeDownEvents);
-          Edexal.on(gallery, "pointerdown", swipeStartEvent);
-          Edexal.on(gallery, "pointerup", swipeEndEvent);
-        }, SWIPE_DOWN_CONFIG.galleryEventDelay);
-      });
-    });
-  }
-
-
-  function swipeStartEvent(e) {
-    if (e.pointerType !== "touch" || isZoomState()) {
-      return;
-    }
-    SWIPE_DOWN_CONFIG.isValidSwipeDuration = true;
-    SWIPE_DOWN_CONFIG.lastDownYPos = e.clientY;
-    setTimeout(() => {
-      resetSwipeDownStats();
-    }, SWIPE_DOWN_CONFIG.validSwipeTime);
-  }
-
-  function swipeEndEvent(e) {
-    if (e.pointerType !== "touch" || !SWIPE_DOWN_CONFIG.isValidSwipeDuration || isZoomState()) {
-      resetSwipeDownStats();
-      return;
-    }
-    if (SWIPE_DOWN_CONFIG.lastDownYPos + SWIPE_DOWN_CONFIG.minSwipeDistance < e.clientY) {
-      resetSwipeDownStats();
-      const closeBtn = Edexal.$(".lg-close");
-      Edexal.off(closeBtn, "click", removeSwipeDownEvents);
-      removeSwipeDownEvents();
-      closeBtn.click();
-    }
-  }
-
-  function isZoomState() {
-    return Edexal.$('.lg-outer').classList.contains("lg-zoomed");
-  }
-
-  function removeSwipeDownEvents(e) {
-    const imageGallery = Edexal.$("div.lg");
-    Edexal.off(imageGallery, "pointerdown", swipeStartEvent);
-    Edexal.off(imageGallery, "pointerup", swipeEndEvent);
-    // If 'close' button was pressed instead.
-    if (e) {
-      Edexal.off(e.target, "click", removeSwipeDownEvents);
-    }
-  }
-
-  function resetSwipeDownStats() {
-    SWIPE_DOWN_CONFIG.isValidSwipeDuration = false;
-    SWIPE_DOWN_CONFIG.lastDownYPos = 0;
   }
 
   function stickyNavBar() {
