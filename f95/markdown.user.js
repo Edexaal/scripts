@@ -500,18 +500,14 @@
 
   function applyButton(records, observer, shouldDisconnect) {
     for (const record of records) {
-      for (const addedNode of record.addedNodes) {
-        if (addedNode.nodeType !== Node.ELEMENT_NODE) continue;
-        const buttonLayer = addedNode.querySelector(EL.buttonGroup);
-        const textBoxEl = addedNode.querySelector(EL.textbox);
-        const toolbarEl = addedNode.querySelector(EL.toolbar);
-        if (!buttonLayer || !textBoxEl || !toolbarEl) continue;
-        createButton(buttonLayer, textBoxEl);
-        applyhelpBtn(toolbarEl);
-
-        if (shouldDisconnect) {
-          observer.disconnect();
-        }
+      if (!record.target.classList.contains('is-editing')) continue;
+      const buttonLayer = record.target.querySelector(EL.buttonGroup);
+      const textBoxEl = record.target.querySelector(EL.textbox);
+      const toolbarEl = record.target.querySelector(EL.toolbar);
+      createButton(buttonLayer, textBoxEl);
+      applyhelpBtn(toolbarEl);
+      if (shouldDisconnect) {
+        observer.disconnect();
       }
     }
   }
@@ -522,7 +518,7 @@
       return;
     }
     const obs = new MutationObserver((records, observer) => applyButton(records, observer, shouldDisconnect));
-    obs.observe(el, {subtree: true, childList: true});
+    obs.observe(el, {subtree: true, attributeFilter: ['class']});
   }
 
   function helpBtnClickEvent() {
@@ -576,7 +572,7 @@
     mainBodyEl.querySelector("div.p-body-pageContent").innerHTML = MARKDOWN_PAGE_HTML;
   }
   
-  function observeTextbox(records,obs){
+  function observeTextbox(records, obs){
     for (const record of records) {
       for (const node of record.addedNodes) {
         if (node.nodeType === Node.ELEMENT_NODE && node.classList.contains('fr-toolbar')) {
