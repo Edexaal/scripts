@@ -9,7 +9,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.3.0
+// @version     1.3.1
 // @author      Edexal
 // @description Use Markdown syntax in threads, posts, and conversations.
 // @homepageURL https://sleazyfork.org/en/scripts/566411-f95-markdown
@@ -384,27 +384,30 @@
   }
 
   function getOpenCloseTags(lineEl) {
-    let openingTag = '<p>';
+    let openTag = '<p>';
     let closeTag = '</p>';
     if (lineEl.outerHTML.includes("text-align: center")) {
-      openingTag = '<p style="text-align: center;">';
+      openTag = '<p style="text-align: center;">';
       closeTag = '</p>';
     } else if (lineEl.outerHTML.includes("text-align: right")) {
-      openingTag = '<p style="text-align: right;">';
+      openTag = '<p style="text-align: right;">';
       closeTag = '</p>';
     } else if (lineEl.nodeName === "UL") {
-      openingTag = '<ul>';
+      openTag = '<ul>';
       closeTag = '</ul>';
     } else if (lineEl.nodeName === "OL") {
-      openingTag = '<ol>';
+      openTag = '<ol>';
       closeTag = '</ol>';
     } else if (lineEl.nodeName === "LI") {
-      let listType = lineEl.getAttribute("data-xf-list-type");
-      openingTag = `<li data-xf-list-type=${listType}`;
+      const listType = lineEl.getAttribute("data-xf-list-type");
+      openTag = `<li data-xf-list-type=${listType}`;
       closeTag = '</li>';
-    }
-    return [openingTag, closeTag];
-
+    } else if (lineEl.nodeName === "BLOCKQUOTE") {
+      const dataset = lineEl.dataset;
+      openTag = `<blockquote data-quote="${dataset.quote}" data-source="${dataset.source}" data-attributes="${dataset.attributes}">`;
+      closeTag = '</blockquote>';
+;   }
+    return [openTag, closeTag];
   }
 
   function canSkip(lineEl) {
@@ -572,18 +575,30 @@
     titleEl.textContent = "F95 Markdown Syntax";
     mainBodyEl.querySelector("div.p-body-pageContent").innerHTML = MARKDOWN_PAGE_HTML;
   }
-
   
+  function observeTextbox(records,obs){
+    for (const record of records) {
+      for (const node of record.addedNodes) {
+        if (node.nodeType === Node.ELEMENT_NODE && node.classList.contains('fr-toolbar')) {
+          createButton(Edexal.$(EL.buttonGroup), Edexal.$(EL.textbox));
+          applyhelpBtn(Edexal.$(EL.toolbar));
+          obs.disconnect();
+          return;
+        }
+      }
+    }
+  }
+  
+  function initReplyTextbox() {
+    const observer = new MutationObserver(observeTextbox);
+    observer.observe(Edexal.$('.message-editorWrapper'), {subtree: true, childList: true});
+  }
   
   // Program Start
   function start() {
     if (location.pathname !== MARKDOWN_PATH) {
       Edexal.addCSS(CSS_TOOLBAR);
-      // The first textbox element found
-      setTimeout(() => {
-        createButton(Edexal.$(EL.buttonGroup), Edexal.$(EL.textbox));
-        applyhelpBtn(Edexal.$(EL.toolbar));
-      }, 1000);
+      initReplyTextbox();
       // Edit Posts
       buttonObserver("div.block-container[data-lb-id]");
       } else {
