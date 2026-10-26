@@ -2,7 +2,7 @@
 // @name         F95 Random Bookmark Picker
 // @namespace    1330126-edexal
 // @license      Unlicense
-// @version      1.3.15
+// @version      1.3.16
 // @description  Randomly picks a bookmark from your f95-like bookmark page. Just press the 'Random' button.
 // @author       Edexal
 // @match        *://f95zone.to/watched/threads?tab=bookmarks*
@@ -133,7 +133,7 @@
 
     } else {
       // == 1
-      Edexal.$("div > div.breadcrumb.p-breadcrumb--bottom").prepend(randBtn);
+      Edexal.$(".p-body-inner").append(randBtn);
       Edexal.on(randBtn,"click",pickRandBookmarkOne);
       Edexal.addCSS(`
       #randbtn {
@@ -145,6 +145,7 @@
         border: 1pt inset navajowhite;
         box-shadow: 0 1px 5px #988787;
         border-radius: 50px;
+        margin-top: 10px;
       }
       `);
     }
