@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     2.0.0
+// @version     2.1.0
 // @author      Edexal
 // @description Improves mobile experience
 // @homepageURL https://sleazyfork.org/en/scripts/546346-f95-mobile-upgrade
@@ -97,6 +97,11 @@
     position: sticky;
     z-index: 220;
     top: 60px;
+  }
+  /*Tag dropdown when bookmarking thread*/
+  div.tagify__dropdown__wrapper {
+    overflow-y: auto;
+    height: min(30vh, 240px);
   }
 }`);
 
@@ -285,7 +290,7 @@
   }
   
   function removeStickyReviewWidget() {
-    removeEl('footer ~ div .br-theme-fontawesome-stars',true);
+    removeEl('footer ~ div .f95rv-banner', true);
   }
   
   function reorderLeftDrawer(records, obs) {
