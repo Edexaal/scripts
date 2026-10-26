@@ -7,7 +7,7 @@
 // @grant       GM.getValue
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.1.15
+// @version     1.1.16
 // @author      Edexal
 // @description Visit bookmark page with the last tag filter selected.
 // @homepageURL https://sleazyfork.org/en/scripts/571484-resume-bookmark
@@ -18,13 +18,13 @@
   const EL = {
     chosenLabel: 'div.f95wg-bar a[data-original-title], div.f95wg-bar a[title]',
     labelsBtn: '.f95wg-labelMenu .menuTrigger',
-    removeLabelSearch: '.select2-selection__choice__remove'
+    removeLabelSearch: '.tagify__tag__removeBtn'
   };
   function addBtnEvent() {
     const button = Edexal.$('form[action*=bookmarks] span.menu-footer-controls button');
     Edexal.on(button, 'click', async () => {
-      const textBoxEl = Edexal.$("form[action*=bookmarks] li.select2-selection__choice");
-      await GM.setValue("label", textBoxEl ? textBoxEl.title : null);
+      const tagEl = Edexal.$(".tagify__tag-text");
+      await GM.setValue("label", tagEl ? tagEl.textContent : null);
     });
   }
 
