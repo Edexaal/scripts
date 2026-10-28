@@ -83,7 +83,7 @@
     initBtns();
     if (!STORAGE.was_bookmark) {
       await save(KEY_ID.was_bookmark, true);
-      if (STORAGE.bm_url) {
+      if (STORAGE.bm_url && STORAGE.bm_url !== location.search) {
         location.search = STORAGE.bm_url;
       }
     }
@@ -94,11 +94,25 @@
       await save(KEY_ID.was_bookmark, false);
     }
   }
+  
+  /* Transforms all links to bookmark page to resume
+  from last configurations set*/
+  function presetBookmarkLinks() {
+    if (!STORAGE.bm_url) {
+      return;
+    }
+    const path = '/watched/threads';
+    const bmLinks = Edexal.$$(`a[href="${path}?tab=bookmarks"]`);
+    for (const el of bmLinks) {
+      el.href = `${path}${STORAGE.bm_url}`;
+    }
+  }
 
   async function run() {
     // DEPRECATED: Removes deprecated 'label' key from storage
     await GM.deleteValue('label');
     STORAGE = await GM.getValues(Object.values(KEY_ID));
+    presetBookmarkLinks();
     if (Edexal.isBookmarkPage()) {
       initBookmarkPage();
     } else {
