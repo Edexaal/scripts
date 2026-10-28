@@ -7,7 +7,7 @@
 // @grant       GM.deleteValue
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     2.0.0
+// @version     2.1.0
 // @author      Edexal
 // @description Bookmark page resumes from the last saved configuration set.
 // @homepageURL https://sleazyfork.org/en/scripts/571484-resume-bookmark
@@ -79,7 +79,25 @@
     }
   }
   
+  function removeBookmarkFilter() {
+    setTimeout(() => {
+      const filterMenuActive = Edexal.$("div.menu.is-active");
+      if (!filterMenuActive) return;
+      const filterBtnClose = Edexal.$(".tagify__tag__removeBtn");
+      if (!filterBtnClose) return;
+      filterBtnClose.click();
+    }, 200);
+  }
+
+  function initBookmarkLabel() {
+    Edexal.runOnBookmarkPage(() => {
+      const filtersLink = Edexal.$(".f95wg-labelMenu .menuTrigger");
+      Edexal.on(filtersLink, "click", removeBookmarkFilter);
+    });
+  }
+  
   async function initBookmarkPage() {
+    initBookmarkLabel();
     initBtns();
     if (!STORAGE.was_bookmark) {
       await save(KEY_ID.was_bookmark, true);
