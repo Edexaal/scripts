@@ -2,7 +2,7 @@
 // @name        Edexal's Utility Library
 // @namespace   1330126-edexal
 // @license     Unlicense
-// @version     3.6.0
+// @version     3.7.0
 // @author      Edexal
 // @description Utility library for common reusable tasks
 // ==/UserScript==
@@ -106,6 +106,11 @@ class Edexal {
     if (Edexal.isGameThread()) {
       callback();
     }
+  }
+  
+  //Inclusive random number generator
+  static getRandIntInc(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 }
 
