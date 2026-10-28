@@ -4,7 +4,7 @@
 // @match       *://f95zone.to/sam/latest_alpha/*
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @grant       none
-// @version     1.2.13
+// @version     1.2.14
 // @author      Edexal
 // @license     Unlicense
 // @description Randomly selects a resource(e.g. game,asset,animation) from the 'Latest Update' page. Just press the '?' button in the filter drawer.
@@ -72,12 +72,6 @@
 
   `);
 
-  //Random number
-  function getRandIntInc(min, max) {
-    //Inclusive random number generator
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
   //Chooses a random item on the page
   function selectAnItem() {
     if (!location.search.includes(LATEST_PAGE_QUERY)) {
@@ -90,7 +84,7 @@
 
     //Selects a random item on the page
     let allItemsEls = Edexal.$$(".resource-tile"); // Gets all resource tiles
-    let randNumChoice = getRandIntInc(1, allItemsEls.length);
+    let randNumChoice = Edexal.getRandIntInc(1, allItemsEls.length);
     let chosenEl = allItemsEls[randNumChoice - 1];
     chosenEl.id = "chosen";
     chosenEl.scrollIntoView(false);//scroll selected bookmark into view from the bottom of the page
@@ -99,7 +93,7 @@
   //Chooses a random page and goes to it
   function goToAPage() {
     let maxPageNum = Edexal.$(".sub-nav_info-paging_nums .nav_num:last-child").dataset.page;
-    let chosenNum = getRandIntInc(1, +maxPageNum);
+    let chosenNum = Edexal.getRandIntInc(1, +maxPageNum);
     let curURL = new URL(location.href);//Get the current URL
     //Customize URL to add latest page query parameter
     curURL.searchParams.set(LATEST_PAGE_QUERY, '1');
