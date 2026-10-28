@@ -229,7 +229,7 @@
     setTimeout(() => {
       const filterMenuActive = Edexal.$("div.menu.is-active");
       if (!filterMenuActive) return;
-      const filterBtnClose = Edexal.$(".select2-selection__choice__remove");
+      const filterBtnClose = Edexal.$(".tagify__tag__removeBtn");
       if (!filterBtnClose) return;
       filterBtnClose.click();
     }, 200);
