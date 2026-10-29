@@ -2,7 +2,7 @@
 // @name         F95 Random Bookmark Picker
 // @namespace    1330126-edexal
 // @license      Unlicense
-// @version      2.0.0
+// @version      2.0.1
 // @description  Randomly picks a bookmark from your f95 bookmark page.
 // @author       Edexal
 // @match        *://f95zone.to/watched/threads?tab=bookmarks*
@@ -105,7 +105,9 @@
   
   function addRandSection() {
     const container = Edexal.newEl({element: 'div', class: ['block'], id: 'ed-rand-sect'});
-    const chosenSect = Edexal.$(EL.bookmarks).cloneNode(true);
+    let chosenSect = Edexal.$(EL.bookmarks);
+    if (!chosenSect) return;
+    chosenSect = chosenSect.cloneNode(true);
     if (chosenSect.nodeName === 'LI') {
       chosenSect.querySelector('label').remove();
     }
