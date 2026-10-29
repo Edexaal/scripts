@@ -9,7 +9,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.3.3
+// @version     1.4.0
 // @author      Edexal
 // @description Use Markdown syntax in threads, posts, and conversations.
 // @homepageURL https://sleazyfork.org/en/scripts/566411-f95-markdown
@@ -64,6 +64,20 @@
     #md-syntax-1 i {
       color: yellow;
     }
+    .ed-review-btnlayer button {
+      text-align: center;
+      background: linear-gradient(to top left, rgb(0 0 0 / 0.2), rgb(0 0 0 / 0.2) 30%, rgb(0 0 0 / 0)) #ba4545 !important;
+      border: 1px solid #a4a4a4;
+      border-radius: 5px;
+      width: 100%;
+      padding: 0;
+      transition: opacity .2s cubic-bezier(0.4, 0, 0.2, 1);
+      &:hover {
+        opacity: 0.8;
+        cursor: pointer;
+        border-color: #9adc49;
+      }
+    }
   `;
 
   function initHeader(tags, regex) {
@@ -108,7 +122,7 @@
       header2: initHeader(["SIZE=6", "SIZE"], /^(?:\s|&nbsp;)*(?<!\\)##(?!#)(?:\s|&nbsp;)*/),
       header3: initHeader(["SIZE=5", "SIZE"], /^(?:\s|&nbsp;)*(?<!\\)###(?:\s|&nbsp;)*/),
       list: initListFormat(["LIST", "LIST=1", "*"], /^(?:\s|&nbsp;)*-(?:\s|&nbsp;)*/, /^(?:\s|&nbsp;)*\d+\.(?:\s|&nbsp;)*/),
-      spoiler: initSpoilerFormat(["SPOILER"], /^(?:\s|&nbsp;)*:{3}(?:\s|&nbsp;)*(?:spoiler)?/, /^(?:\s|&nbsp;)*:{3}(?:\s|&nbsp;)*spoiler/, /^(?:\s|&nbsp;)*:{3}(?:\s|&nbsp;)*spoiler=(.+)/, ":::"),
+      spoiler: initSpoilerFormat(["SPOILER"], /^(?:\s|&nbsp;)*:{3}(?:\s|&nbsp;)*(?:spoiler)?/, /(?:\s|&nbsp;)*:{3}(?:\s|&nbsp;)*spoiler/, /^(?:\s|&nbsp;)*:{3}(?:\s|&nbsp;)*spoiler=(.+)/, ":::"),
       inlineSpoiler: initFormat(["ISPOILER"], /(?<!\\)\|\|/),
       alignment: initSpoilerFormat(["RIGHT", "CENTER"], /^(?:\s|&nbsp;)*(?:&lt;){3}(?:\s|&nbsp;)*(?:right|center)?/, /^(?:\s|&nbsp;)*(?:&lt;){3}(?:\s|&nbsp;)*(?:right|center)/, /^(?:\s|&nbsp;)*(?:&lt;){3}(?:\s|&nbsp;)*(right|center)/, "&lt;&lt;&lt;"),
       color: initColorFormat(["COLOR"], /(?<!\\)%#[a-fA-F0-9]{6}%/, /(?<!\\)%{2}/, /%(#[a-fA-F0-9]{6})%/),
@@ -146,7 +160,8 @@
       const isOpenTag = isOpenTagCB ? isOpenTagCB(i) : !!textBoxEl.children[format.indexes[i]].innerHTML.match(format.startRegex); 
       if (type || isOpenTag) {
         let tag = `[${format.tags[0]}${type ? `=${type}` : ""}]`;
-        textBoxEl.children[format.indexes[i]].outerHTML = `<p>${tag}</p>`;
+        const newTxt = textBoxEl.children[format.indexes[i]].innerHTML.replace(type ? format.typeRegex : format.startRegex, tag); 
+        textBoxEl.children[format.indexes[i]].outerHTML = `<p>${newTxt}</p>`;
       } else {
         let tag = `[/${format.tags[0]}]`;
         let lineTxt = textBoxEl.children[format.indexes[i]].innerHTML;
@@ -592,6 +607,47 @@
     observer.observe(replyTextBox, {subtree: true, childList: true});
   }
   
+  function createReviewBtnLayer() {
+    let btnSect = Edexal.$('.ed-review-btnlayer');
+    if (btnSect) return btnSect;
+    btnSect = Edexal.newEl({element: 'div', class: ["ed-review-btnlayer"]});
+    Edexal.$('.f95rv-dialog-count').after(btnSect);
+    return btnSect;
+  }
+  
+  function observeReviewToolbar(records, obs) {
+    for(const record of records) {
+      for (const node of record.addedNodes) {
+        if (node.nodeType === Node.ELEMENT_NODE && node.classList.contains('fr-toolbar')) {
+          const buttonLayer = createReviewBtnLayer();
+          const textBoxEl = record.target.querySelector(EL.textbox);
+          const toolbarEl = record.target.querySelector(EL.toolbar);
+          createButton(buttonLayer, textBoxEl);
+          applyhelpBtn(toolbarEl);
+          obs.disconnect();
+          return;
+        }
+      }
+    }
+  }
+  
+  function observeReviewDialog(records, obs) {
+    for (const record of records) {
+      if (record.target.classList.contains('is-modalOpen')) {
+        const observer = new MutationObserver(observeReviewToolbar);
+        observer.observe(Edexal.$('.f95rv-dialog-text'), {subtree: true, childList: true});
+        obs.disconnect();
+        return;
+      }
+    }
+  }
+  
+  function initReviewPost() {
+    if (!location.pathname.endsWith('reviews/')) return;
+    const observer = new MutationObserver(observeReviewDialog); 
+    observer.observe(Edexal.$('body'), {attributeFilter: ['class']});
+  }
+  
   // Program Start
   function start() {
     if (location.pathname !== MARKDOWN_PATH) {
@@ -599,6 +655,8 @@
       initReplyTextbox();
       // Edit Posts
       buttonObserver("div.block-container[data-lb-id]");
+      // Review Page
+      initReviewPost();
       } else {
         Edexal.addCSS(CSS_MARKDOWN_PAGE);
         markdownPage();
