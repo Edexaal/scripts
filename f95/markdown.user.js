@@ -9,7 +9,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.3.2
+// @version     1.3.3
 // @author      Edexal
 // @description Use Markdown syntax in threads, posts, and conversations.
 // @homepageURL https://sleazyfork.org/en/scripts/566411-f95-markdown
@@ -586,8 +586,10 @@
   }
   
   function initReplyTextbox() {
+    const replyTextBox = Edexal.$('.message-editorWrapper');
+    if (!replyTextBox) return;
     const observer = new MutationObserver(observeTextbox);
-    observer.observe(Edexal.$('.message-editorWrapper'), {subtree: true, childList: true});
+    observer.observe(replyTextBox, {subtree: true, childList: true});
   }
   
   // Program Start
