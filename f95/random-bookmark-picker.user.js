@@ -2,7 +2,7 @@
 // @name         F95 Random Bookmark Picker
 // @namespace    1330126-edexal
 // @license      Unlicense
-// @version      2.0.1
+// @version      2.1.0
 // @description  Randomly picks a bookmark from your f95 bookmark page.
 // @author       Edexal
 // @match        *://f95zone.to/watched/threads?tab=bookmarks*
@@ -45,7 +45,7 @@
     bookmarks: '.p-body-pageContent .structItemContainer > div, ol.listPlain > li',
     chosenSect: "#ed-rand-sect > div, #ed-rand-sect > li"
   };
-  const GLOBAL = {prevPageNum: null, prevBMIndex: null};
+  const GLOBAL = {prevPageNum: null, prevBMIndex: null, cachePages: {}};
   
   function isGamesOrPostsOnlyPage() {
     return location.search.includes('bm=games') || location.search.includes('bm=posts');
@@ -95,8 +95,12 @@
   async function randomBMEvent() {
     try {
       const pageNum = getRandomPageNum();
-      const res = await getPageAsync(pageNum);
-      const bookmarkEls = getPageBMElements(res.response);
+      let bookmarkEls = GLOBAL.cachePages[pageNum];
+      if (!GLOBAL.cachePages[pageNum]) {
+        const res = await getPageAsync(pageNum);
+        bookmarkEls = getPageBMElements(res.response);
+        GLOBAL.cachePages[pageNum] = bookmarkEls;
+      }
       chooseBM(bookmarkEls);
     } catch(err) {
       console.error(err);
