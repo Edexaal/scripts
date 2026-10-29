@@ -2,160 +2,122 @@
 // @name         F95 Random Bookmark Picker
 // @namespace    1330126-edexal
 // @license      Unlicense
-// @version      1.3.17
-// @description  Randomly picks a bookmark from your f95-like bookmark page. Just press the 'Random' button.
+// @version      2.0.0
+// @description  Randomly picks a bookmark from your f95 bookmark page.
 // @author       Edexal
 // @match        *://f95zone.to/watched/threads?tab=bookmarks*
 // @icon         https://external-content.duckduckgo.com/ip3/f95zone.to.ico
-// @grant        none
+// @grant        GM.xmlhttpRequest
 // @homepageURL  https://sleazyfork.org/en/scripts/490810-f95-random-bookmark-picker
 // @supportURL   https://github.com/Edexaal/scripts/issues
 // @require      https://cdn.jsdelivr.net/gh/Edexaal/scripts@23f86bce8d8c88bc66704d0971ba7eb11be92caa/_lib/utility.js
 // ==/UserScript==
 (() => {
   'use strict';
-  const BOOKMARK_QUERY = 'bmpos';
-
-  //CSS styles
   Edexal.addCSS(`
-		#randbtn{
-			color:yellow;
-			border: 1px solid #343638;
-		}
-		#randbtn:hover{
-			cursor: pointer;
-			opacity: 0.7;
-		}
-		#randbtn:active{
-			background-color: #ec5555;
-		}
-		#chosen {
-			color: yellow;
-			text-shadow: #cc0000 1px 0 8px;
-      display:inherit !important;
-      border-top: 1px solid #b5cb48;
-      border-bottom: 1px solid #b5cb48;
-      a, span, button, dt, dd {
-        color: yellow;
-        text-shadow: #cc0000 1px 0 3px;
-      }
-		}
-    #randContainer{
-      margin-top:20px;
+  #ed-rand-sect {
+    & > div, & > li {
+      background: #242629;
+      outline: 2px solid #8c2d2d;
+    }
+    & > li {
+      list-style: none;
+    }
+    & > button {
+      color: yellow;
+      background: linear-gradient(to top left, rgb(0 0 0 / 0.2), rgb(0 0 0 / 0.2) 30%, rgb(0 0 0 / 0)) #ba4545;
       text-align: center;
-      height: 50px;
-      #randbtn {
-        width: 50%;
-        height: 100%;
-        font-size: 1.25em;
-        border-radius: 4px;
+      width: 100%;
+      border-radius: 10px;
+      font-weight: bold;
+      margin-top: 10px;
+      transition: opacity .2s cubic-bezier(0.4, 0, 0.2, 1);
+      &:hover {
+          opacity: 0.8;
+          cursor: pointer;
+          border-color: #9adc49;
       }
     }
-	`);
-
-  function getRandIntInc(min, max) {
-    //Inclusive random number generator
-    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
-
-  function highlightBookmarkChoice() {
-    if (!location.search.includes(BOOKMARK_QUERY)) {
-      return;
-    }
-    let newURL = location.href.substring(0,
-      location.search.includes('&' + BOOKMARK_QUERY) ? location.href.indexOf('&' + BOOKMARK_QUERY) : location.href.indexOf(BOOKMARK_QUERY));// removes '&bmpos'  or 'bmpos' from URL
-    history.replaceState({}, "", newURL); //Change the URL to one w/o 'bmpos' query param
-
-    let bookmarkEls = Edexal.$$(".structItemContainer > div[data-author], ol.listPlain > li");
-
-    let randBookmarkPos = getRandIntInc(0, bookmarkEls.length - 1);// Pick a random bookmark position (usually 0-19, total 20)
-    let chosenBookmarkEl = bookmarkEls[randBookmarkPos];
-    chosenBookmarkEl.id = "chosen";
-    chosenBookmarkEl.scrollIntoView(false); //scroll selected bookmark into view from the bottom of the page
-  }
-
-  highlightBookmarkChoice();
-
-  let randBtn = Edexal.newEl({
-    element: 'button',
-    name: "random",
-    type: "button",
-    id: "randbtn",
-    class: ["pageNav-jump", "pageNav-jump--next"],
-    text: 'Random'
-  });
-
-  //Pick bookmark from a selection of all pages
-  function pickRandomBookmark() {
-    let pagination = Edexal.$("ul.pageNav-main");//Select pagination
-    let lastPageNum = pagination.children[pagination.children.length - 1].children[0].textContent;//Get the last page number of the pagination
-    let randPageChoiceNum = getRandIntInc(1, Number(lastPageNum));//Pick a random page number
-    let curURL = new URL(location.href);//Get the current URL
-    curURL.searchParams.set("page", randPageChoiceNum);//Customize URL to point to the randomly chosen page number
-
-    //Customize URL to add bookmark query parameter
-    curURL.searchParams.set("bmpos", '1');
-
-    //Go To randomly chosen bookmark page
-    location.replace(curURL.toString());
-  }
-
-  //Pick bookmark on the first page (if 1 page is only available)
-  function pickRandBookmarkOne() {
-    let curURL = new URL(location.href);//Get the current URL
-    curURL.searchParams.set("page", '1');//Customize URL to point to the randomly chosen page number
-
-    //Customize URL to add bookmark query parameter
-    curURL.searchParams.set("bmpos", '1');
-
-    //Go To randomly chosen bookmark page
-    location.replace(curURL.toString());
+  `);
+  const EL = {
+    pageNav:'.pageNav ul li:last-child a', 
+    bookmarks: '.p-body-pageContent .structItemContainer > div, ol.listPlain > li',
+    chosenSect: "#ed-rand-sect > div, #ed-rand-sect > li"
+  };
+  const GLOBAL = {prevPageNum: null, prevBMIndex: null};
+  
+  function isGamesOrPostsOnlyPage() {
+    return location.search.includes('bm=games') || location.search.includes('bm=posts');
   }
   
-  function addBtn() {
-    //Add button to F95
-    let entirePaginationEl = Edexal.$("nav > div.pageNav");
-    //Checks if there is only a single page of bookmarks or more
-    if (!!entirePaginationEl) {
-      // > 1
-      let isPageNavVisible = window.getComputedStyle(Edexal.$(".pageNavWrapper--mixed .pageNav")).getPropertyValue("display") === "none";
-      if (isPageNavVisible) {
-        //Mobile Pagination (w/ arrows)
-        let randContainerEl = Edexal.newEl({element: "div", id: "randContainer"});
-        randContainerEl.appendChild(randBtn);
-        let pageArrowsEl = Edexal.$(".block-outer--after");
-        pageArrowsEl.appendChild(randContainerEl);
-      } else {
-        //Desktop Pagination
-        entirePaginationEl.appendChild(randBtn);
-      }
-      Edexal.on(randBtn,"click",pickRandomBookmark);
+  function distinctRandomNumInc(min, max, globalObjName) {
+    if (max <= min) return min;
+    let pageNum;
+    do {
+      pageNum = Edexal.getRandIntInc(min, max);
+    } while (pageNum === GLOBAL[globalObjName]);
+    GLOBAL[globalObjName] = pageNum;
+    return pageNum;
+  }
 
-    } else {
-      // == 1
-      Edexal.$(".p-body-inner").append(randBtn);
-      Edexal.on(randBtn,"click",pickRandBookmarkOne);
-      Edexal.addCSS(`
-      #randbtn {
-        position: relative;
-        left: 50%;
-        width: 150px;
-        height: 40px;
-        font-size: 16px;
-        border: 1pt inset navajowhite;
-        box-shadow: 0 1px 5px #988787;
-        border-radius: 50px;
-        margin-top: 10px;
-      }
-      `);
+  function getRandomPageNum() {
+    const lastPage = Edexal.$(EL.pageNav); 
+    const totalPages = !lastPage ? 1 : +lastPage.textContent;  // converts to Number
+    return distinctRandomNumInc(1, totalPages, 'prevPageNum');
+  }
+  
+  function getPageAsync(pageNum) {
+    const url = new URL(location.href);
+    url.searchParams.set('page', pageNum);
+    return new Promise((resolve,reject) => {
+      GM.xmlhttpRequest({
+        url: url.href,
+        method: 'GET',
+        onerror: reject,
+        onload: resolve
+      });
+    });
+  }
+  
+  function getPageBMElements(resTxt) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(resTxt, 'text/html');
+    return doc.querySelectorAll(EL.bookmarks);
+  }
+  
+  function chooseBM(bmEls) {
+    const chosenNum = distinctRandomNumInc(0, bmEls.length - 1, 'prevBMIndex');
+    const chosenBM = bmEls[chosenNum].cloneNode(true);
+    Edexal.$(EL.chosenSect).replaceWith(chosenBM);
+  }
+  
+  async function randomBMEvent() {
+    try {
+      const pageNum = getRandomPageNum();
+      const res = await getPageAsync(pageNum);
+      const bookmarkEls = getPageBMElements(res.response);
+      chooseBM(bookmarkEls);
+    } catch(err) {
+      console.error(err);
     }
   }
   
-  function runOnBMCategory() {
-    if (!location.search.includes('&bm=')) {
-      return;
+  function addRandSection() {
+    const container = Edexal.newEl({element: 'div', class: ['block'], id: 'ed-rand-sect'});
+    const chosenSect = Edexal.$(EL.bookmarks).cloneNode(true);
+    if (chosenSect.nodeName === 'LI') {
+      chosenSect.querySelector('label').remove();
     }
-    addBtn();
+    const btn = Edexal.newEl({element: 'button', text: 'Random'});
+    Edexal.on(btn, 'click', async () => await randomBMEvent());
+    container.append(chosenSect, btn);
+    Edexal.$('form.block').before(container);
   }
-  runOnBMCategory();
+  
+  function run() {
+    if (!isGamesOrPostsOnlyPage()) return;
+    addRandSection();
+  }
+  run();
 })();
