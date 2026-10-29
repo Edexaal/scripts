@@ -8,7 +8,7 @@
 // @version     1.0.0
 // @author      Edexal
 // @description Show full review automatically, with no "Read more" button.
-// @homepageURL -
+// @homepageURL https://sleazyfork.org/en/scripts/602704-f95-full-review
 // @supportURL  https://github.com/Edexaal/scripts/issues
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@23f86bce8d8c88bc66704d0971ba7eb11be92caa/_lib/utility.js
 // ==/UserScript==
