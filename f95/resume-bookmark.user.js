@@ -7,7 +7,7 @@
 // @grant       GM.deleteValue
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     2.1.1
+// @version     2.1.2
 // @author      Edexal
 // @description Bookmark page resumes from the last saved configuration set.
 // @homepageURL https://sleazyfork.org/en/scripts/571484-resume-bookmark
@@ -27,7 +27,7 @@
     &:hover {
         opacity: 0.8;
         cursor: pointer;
-        border-color: #3a46ff;
+        border-color: #9adc49;
     }
   }
   .ed-icon-center {
