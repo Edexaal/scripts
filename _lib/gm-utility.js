@@ -2,16 +2,16 @@
 // @name        Edexal's GM API Library
 // @namespace   1330126-edexal
 // @license     Unlicense
-// @version     0.1.0
+// @version     0.1.1
 // @author      Edexal
 // @description Utility library for useful GM.* tasks.
 // ==/UserScript==
 
 class EdexalGM {
-  // REQUIRES: GM.httpxmlRequest permission
+  // REQUIRES: GM.xmlhttpRequest permission
   static getAsync(url, resType){
     return new Promise((resolve, reject) => {
-      GM.httpxmlRequest({
+      GM.xmlhttpRequest({
         method: 'GET',
         url,
         onload: resolve,
