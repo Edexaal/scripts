@@ -5,12 +5,12 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.3.22
+// @version     1.3.23
 // @author      Edexal
 // @description Automatically open the filter drawer when visiting the Latest Update page.
 // @homepageURL https://sleazyfork.org/en/scripts/541896-f95-auto-open-filter-drawer
 // @supportURL  https://github.com/Edexaal/scripts/issues
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@1615a2ca1db8433fc73aafb74753ad5c37e3d359/_lib/utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/utility.js
 // ==/UserScript==
 (() => {
   function openDrawer() {

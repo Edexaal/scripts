@@ -5,14 +5,14 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0.17
+// @version     1.0.18
 // @author      Edexal
 // @description Reset individual filters in the filter drawer on the latest update page.
 // @homepageURL https://sleazyfork.org/en/scripts/588436-reset-filters
 // @supportURL  https://github.com/Edexaal/scripts/issues
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@1615a2ca1db8433fc73aafb74753ad5c37e3d359/_lib/utility.js
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@1615a2ca1db8433fc73aafb74753ad5c37e3d359/_lib/metadata.js
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@1615a2ca1db8433fc73aafb74753ad5c37e3d359/_lib/lu-utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/metadata.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/lu-utility.js
 // ==/UserScript==
 (async () => {
   const SELECTOR = {

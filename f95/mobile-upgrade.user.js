@@ -5,13 +5,13 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     2.1.4
+// @version     2.1.5
 // @author      Edexal
 // @description Improves mobile experience
 // @homepageURL https://sleazyfork.org/en/scripts/546346-f95-mobile-upgrade
 // @supportURL  https://github.com/Edexaal/scripts/issues
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@1615a2ca1db8433fc73aafb74753ad5c37e3d359/_lib/utility.js
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@1615a2ca1db8433fc73aafb74753ad5c37e3d359/_lib/bm-utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/bm-utility.js
 // ==/UserScript==
 (async () => {
   // NOTE: F95 uses FontAwesome v5.15.4

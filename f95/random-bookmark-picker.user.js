@@ -2,7 +2,7 @@
 // @name         F95 Random Bookmark Picker
 // @namespace    1330126-edexal
 // @license      Unlicense
-// @version      2.1.1
+// @version      2.1.2
 // @description  Randomly picks a bookmark from your f95 bookmark page.
 // @author       Edexal
 // @match        *://f95zone.to/watched/threads?tab=bookmarks*
@@ -10,8 +10,8 @@
 // @grant        GM.xmlhttpRequest
 // @homepageURL  https://sleazyfork.org/en/scripts/490810-f95-random-bookmark-picker
 // @supportURL   https://github.com/Edexaal/scripts/issues
-// @require      https://cdn.jsdelivr.net/gh/Edexaal/scripts@1615a2ca1db8433fc73aafb74753ad5c37e3d359/_lib/utility.js
-// @require      https://cdn.jsdelivr.net/gh/Edexaal/scripts@1615a2ca1db8433fc73aafb74753ad5c37e3d359/_lib/gm-utility.js
+// @require      https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/utility.js
+// @require      https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/gm-utility.js
 // ==/UserScript==
 (() => {
   'use strict';
