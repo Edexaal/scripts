@@ -2,18 +2,19 @@
 // @name        F95 Game Request Templates
 // @namespace   1330126-edexal
 // @license     Unlicense
-// @version     2.2
+// @version     2.2.1
 // @author      Edexal
 // @description Templates for creating game requests on F95
 // ==/UserScript==
 function _getRules() {
-  return `[CENTER][B][COLOR=#ff0000]Rules - Remove this before posting.[/COLOR][/B][/CENTER]
+  return `[CENTER][B][COLOR=#FF4747]!!! Rules - read in full before posting !!![/COLOR][/B][/CENTER]
 [LIST]
 [*][COLOR=#FFA500]Any [U]Online only[/U] or [U]Multiplayer[/U] requests will be [B]denied[/B] and [B]deleted[/B][/COLOR]
 [*][COLOR=#FFA500][B]Don't[/B] ask for games that haven't been released yet[/COLOR]
 [*][COLOR=#FFA500][B]Don't[/B] request more than 1 game per request (this includes site-rips)[/COLOR]
 [*][COLOR=#FFA500]The requested game [I]must[/I] be available in [B]English[/B]! Otherwise, use the [URL='https://f95zone.to/forums/request.119/'][U]Translation Request subforum[/U][/URL] instead[/COLOR]
 [*][COLOR=#FFA500]If the game is a translated game (from any language to English) a link to the translator's page is required, eg [URL='https://ulmf.org/'][U]ULMF[/U][/URL][/COLOR]
+[*][COLOR=#FF4747][B]Remove ALL rule text above before posting![/B][/COLOR]
 [/LIST]`;
 }
 
@@ -21,12 +22,12 @@ function getUpdateTempl() {
   return {
     label: 'Update Game',
     title: "Game Name [Version]",
-    body: `Title:
+    body: `${_getRules()}
+    
+Title:
 Thread: (link to thread on F95zone)
 Developer website:
-Version:
-
-${_getRules()}`
+Version:`
   };
 }
 
@@ -34,23 +35,23 @@ function getRequestTempl(moreLabelTxt, bodyTxt) {
   const obj = {
     label: 'Request Game' + (moreLabelTxt || ''),
     title: "Game Name [Version]",
-    body: bodyTxt || `Title:
+    body: bodyTxt || `${_getRules()}
+    
+Title:
 Developer website:
 Language:
-Samples:
-
-${_getRules()}`};
+Previews:`};
   return obj;
 }
 
 function getRequestVNDBTempl() {
-  return getRequestTempl(' (JP VNDB)',`Title:
+  return getRequestTempl(' (JP VNDB)',`${_getRules()}
+  
+Title:
 Developer website:
 VNDB link:
 Language:
-Samples:
-
-${_getRules()}`);
+Previews:`);
 }
 
 
