@@ -13,6 +13,7 @@
 // @homepageURL https://sleazyfork.org/en/scripts/571484-resume-bookmark
 // @supportURL  https://github.com/Edexaal/scripts/issues
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@dafe3f6b3497ea15a2de012c4828598b7c197ead/_lib/utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@dafe3f6b3497ea15a2de012c4828598b7c197ead/_lib/bm-utility.js
 // ==/UserScript==
 (async () => {
   Edexal.addCSS(`
@@ -58,7 +59,7 @@
       svgHTML: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M433.941 129.941l-83.882-83.882A48 48 0 0 0 316.118 32H48C21.49 32 0 53.49 0 80v352c0 26.51 21.49 48 48 48h352c26.51 0 48-21.49 48-48V163.882a48 48 0 0 0-14.059-33.941zM272 80v80H144V80h128zm122 352H54a6 6 0 0 1-6-6V86a6 6 0 0 1 6-6h42v104c0 13.255 10.745 24 24 24h176c13.255 0 24-10.745 24-24V83.882l78.243 78.243a6 6 0 0 1 1.757 4.243V426a6 6 0 0 1-6 6zM224 232c-48.523 0-88 39.477-88 88s39.477 88 88 88 88-39.477 88-88-39.477-88-88-88zm0 128c-22.056 0-40-17.944-40-40s17.944-40 40-40 40 17.944 40 40-17.944 40-40 40z"/></svg>`,
       callback: async () => await save(KEY_ID.bm_url, location.search),
     }, {
-      title: 'Go To URL',
+      title: 'Go to saved page',
       svgHTML: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M336.5 160C322 70.7 287.8 8 248 8s-74 62.7-88.5 152h177zM152 256c0 22.2 1.2 43.5 3.3 64h185.3c2.1-20.5 3.3-41.8 3.3-64s-1.2-43.5-3.3-64H155.3c-2.1 20.5-3.3 41.8-3.3 64zm324.7-96c-28.6-67.9-86.5-120.4-158-141.6 24.4 33.8 41.2 84.7 50 141.6h108zM177.2 18.4C105.8 39.6 47.8 92.1 19.3 160h108c8.7-56.9 25.5-107.8 49.9-141.6zM487.4 192H372.7c2.1 21 3.3 42.5 3.3 64s-1.2 43-3.3 64h114.6c5.5-20.5 8.6-41.8 8.6-64s-3.1-43.5-8.5-64zM120 256c0-21.5 1.2-43 3.3-64H8.6C3.2 212.5 0 233.8 0 256s3.2 43.5 8.6 64h114.6c-2-21-3.2-42.5-3.2-64zm39.5 96c14.5 89.3 48.7 152 88.5 152s74-62.7 88.5-152h-177zm159.3 141.6c71.4-21.2 129.4-73.7 158-141.6h-108c-8.8 56.9-25.6 107.8-50 141.6zM19.3 352c28.6 67.9 86.5 120.4 158 141.6-24.4-33.8-41.2-84.7-50-141.6h-108z"/></svg>`,
       callback: async () => {
         if (STORAGE.bm_url) {
@@ -79,25 +80,9 @@
     }
   }
   
-  function removeBookmarkFilter() {
-    setTimeout(() => {
-      const filterMenuActive = Edexal.$("div.menu.is-active");
-      if (!filterMenuActive) return;
-      const filterBtnClose = Edexal.$(".tagify__tag__removeBtn");
-      if (!filterBtnClose) return;
-      filterBtnClose.click();
-    }, 200);
-  }
-
-  function initBookmarkLabel() {
-    Edexal.runOnBookmarkPage(() => {
-      const filtersLink = Edexal.$(".f95wg-labelMenu .menuTrigger");
-      Edexal.on(filtersLink, "click", removeBookmarkFilter);
-    });
-  }
-  
   async function initBookmarkPage() {
-    initBookmarkLabel();
+    const autoLabelRemover = new BMAutoLabelRemover();
+    autoLabelRemover.start();
     initBtns();
     if (!STORAGE.was_bookmark) {
       await save(KEY_ID.was_bookmark, true);

@@ -11,6 +11,7 @@
 // @homepageURL  https://sleazyfork.org/en/scripts/490810-f95-random-bookmark-picker
 // @supportURL   https://github.com/Edexaal/scripts/issues
 // @require      https://cdn.jsdelivr.net/gh/Edexaal/scripts@dafe3f6b3497ea15a2de012c4828598b7c197ead/_lib/utility.js
+// @require      https://cdn.jsdelivr.net/gh/Edexaal/scripts@dafe3f6b3497ea15a2de012c4828598b7c197ead/_lib/gm-utility.js
 // ==/UserScript==
 (() => {
   'use strict';
@@ -70,20 +71,7 @@
   function getPageAsync(pageNum) {
     const url = new URL(location.href);
     url.searchParams.set('page', pageNum);
-    return new Promise((resolve,reject) => {
-      GM.xmlhttpRequest({
-        url: url.href,
-        method: 'GET',
-        onerror: reject,
-        onload: resolve
-      });
-    });
-  }
-  
-  function getPageBMElements(resTxt) {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(resTxt, 'text/html');
-    return doc.querySelectorAll(EL.bookmarks);
+    return EdexalGM.getAsync(url.href);
   }
   
   function chooseBM(bmEls) {
@@ -98,7 +86,7 @@
       let bookmarkEls = GLOBAL.cachePages[pageNum];
       if (!GLOBAL.cachePages[pageNum]) {
         const res = await getPageAsync(pageNum);
-        bookmarkEls = getPageBMElements(res.response);
+        bookmarkEls = res.response.querySelectorAll(EL.bookmarks);
         GLOBAL.cachePages[pageNum] = bookmarkEls;
       }
       chooseBM(bookmarkEls);

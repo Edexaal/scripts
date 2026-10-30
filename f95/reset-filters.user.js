@@ -12,6 +12,7 @@
 // @supportURL  https://github.com/Edexaal/scripts/issues
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@dafe3f6b3497ea15a2de012c4828598b7c197ead/_lib/utility.js
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@dafe3f6b3497ea15a2de012c4828598b7c197ead/_lib/metadata.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@dafe3f6b3497ea15a2de012c4828598b7c197ead/_lib/lu-utility.js
 // ==/UserScript==
 (async () => {
   const SELECTOR = {

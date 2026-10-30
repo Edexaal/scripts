@@ -11,6 +11,7 @@
 // @homepageURL https://sleazyfork.org/en/scripts/546346-f95-mobile-upgrade
 // @supportURL  https://github.com/Edexaal/scripts/issues
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@dafe3f6b3497ea15a2de012c4828598b7c197ead/_lib/utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@dafe3f6b3497ea15a2de012c4828598b7c197ead/_lib/bm-utility.js
 // ==/UserScript==
 (async () => {
   // NOTE: F95 uses FontAwesome v5.15.4
@@ -225,24 +226,6 @@
     });
   }
 
-  function removeBookmarkFilter() {
-    setTimeout(() => {
-      const filterMenuActive = Edexal.$("div.menu.is-active");
-      if (!filterMenuActive) return;
-      const filterBtnClose = Edexal.$(".tagify__tag__removeBtn");
-      if (!filterBtnClose) return;
-      filterBtnClose.click();
-    }, 200);
-  }
-
-  function initBookmarkLabel() {
-    Edexal.runOnBookmarkPage(() => {
-      const filtersLink = Edexal.$(".f95wg-labelMenu .menuTrigger");
-      Edexal.on(filtersLink, "click", removeBookmarkFilter);
-    });
-  }
-  
-
   function stickyNavBar() {
     Edexal.runOnLatestUpdatePage(() => {
       modifyHeaderLinks();
@@ -316,9 +299,10 @@
   function run() {
     //Run only on mobile
     if (Edexal.$("html").clientWidth > MAX_SCREEN_WIDTH) return;
+    const autoLabelRemover = new BMAutoLabelRemover();
     initTabItems();
     initScrollBtns();
-    initBookmarkLabel();
+    autoLabelRemover.start();
     setTimeout(removeTileHoverEffects, 2000);
     removeAdBanner();
     setTimeout(removeStickyReviewWidget, 1800);
