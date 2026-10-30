@@ -7,12 +7,12 @@
 // @grant       GM.deleteValue
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     2.1.2
+// @version     2.1.3
 // @author      Edexal
 // @description Bookmark page resumes from the last saved configuration set.
 // @homepageURL https://sleazyfork.org/en/scripts/571484-resume-bookmark
 // @supportURL  https://github.com/Edexaal/scripts/issues
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@23f86bce8d8c88bc66704d0971ba7eb11be92caa/_lib/utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@6f21f564da48e53fa3a53075b1316731f4cf07e4/_lib/utility.js
 // ==/UserScript==
 (async () => {
   Edexal.addCSS(`
