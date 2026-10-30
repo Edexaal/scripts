@@ -7,35 +7,30 @@
 // @grant       GM.deleteValue
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     2.1.6
+// @version     2.1.7
 // @author      Edexal
 // @description Bookmark page resumes from the last saved configuration set.
 // @homepageURL https://sleazyfork.org/en/scripts/571484-resume-bookmark
 // @supportURL  https://github.com/Edexaal/scripts/issues
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/utility.js
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/bm-utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/css.js
 // ==/UserScript==
 (async () => {
-  Edexal.addCSS(`
+  function applyCSS() {
+    Edexal.addCSS(`
   .ed-bm-btn {
-    color: yellow;
-    background: linear-gradient(to top left, rgb(0 0 0 / 0.2), rgb(0 0 0 / 0.2) 30%, rgb(0 0 0 / 0)) #ba4545;
-    border: 1px solid #a4a4a4;
-    border-radius: 5px;
     width: 28px;
     height: 28px;
-    transition: opacity .2s cubic-bezier(0.4, 0, 0.2, 1);
-    &:hover {
-        opacity: 0.8;
-        cursor: pointer;
-        border-color: #9adc49;
-    }
+    ${EdexalCSS.btnRules()}
   }
   .ed-icon-center {
     position: relative;
     top: 2px;
   }
   `);
+  }
+  
   const KEY_ID = {was_bookmark:'was_bookmark', bm_url:'bm_url'};
   let STORAGE;
   
@@ -112,11 +107,12 @@
   }
 
   async function run() {
-    // DEPRECATED: Removes deprecated 'label' key from storage
+    // DEPRECATED: Removes deprecated 'label' key from storage.
     await GM.deleteValue('label');
     STORAGE = await GM.getValues(Object.values(KEY_ID));
     presetBookmarkLinks();
     if (Edexal.isBookmarkPage()) {
+      applyCSS();
       initBookmarkPage();
     } else {
       initOtherPages();

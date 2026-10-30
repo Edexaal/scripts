@@ -5,13 +5,14 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     2.1.5
+// @version     2.1.6
 // @author      Edexal
 // @description Improves mobile experience
 // @homepageURL https://sleazyfork.org/en/scripts/546346-f95-mobile-upgrade
 // @supportURL  https://github.com/Edexaal/scripts/issues
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/utility.js
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/bm-utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/css.js
 // ==/UserScript==
 (async () => {
   // NOTE: F95 uses FontAwesome v5.15.4
@@ -100,10 +101,7 @@
     top: 60px;
   }
   /*Tag dropdown when bookmarking thread*/
-  div.tagify__dropdown__wrapper {
-    overflow-y: auto;
-    height: min(30vh, 240px);
-  }
+  ${EdexalCSS.bmScrollLabelMenu()}
 }`);
 
   function getValidScrollTarget(targetSelectors) {

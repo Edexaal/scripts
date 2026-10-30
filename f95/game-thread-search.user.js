@@ -5,12 +5,13 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.1.20
+// @version     1.1.21
 // @author      Edexal
 // @description On the Latest Update page, search for a game thread by 'TITLE' using the website's search query instead of through the filter drawer.
 // @homepageURL https://sleazyfork.org/en/scripts/543545-f95-game-thread-search
 // @supportURL  https://github.com/Edexaal/scripts/issues
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/css.js
 // ==/UserScript==
 (() => {
 const btn = {
@@ -27,25 +28,12 @@ const btn = {
   Edexal.addCSS(`
 #${btn.id} {
     display: block;
-    background: linear-gradient(to top left, rgb(0 0 0 / 0.2), rgb(0 0 0 / 0.2) 30%, rgb(0 0 0 / 0)) #ba4545;
-    color: yellow;
     width: 100%;
     height: 35px;
     margin: 10px auto 5px auto;
     font-size: 0.875em;
     font-weight: bold;
-    border: 1px solid #a4a4a4;
-    border-radius: 5px;
-    transition: opacity .2s cubic-bezier(0.4, 0, 0.2, 1);
-
-    &:hover {
-        opacity: 0.8;
-        cursor: pointer;
-    }
-
-    &:active {
-        opacity: 0.6;
-    }
+    ${EdexalCSS.btnRules()}
 }`);
 
   function initElements() {

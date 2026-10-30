@@ -2,7 +2,7 @@
 // @name         F95 Random Bookmark Picker
 // @namespace    1330126-edexal
 // @license      Unlicense
-// @version      2.1.2
+// @version      2.1.3
 // @description  Randomly picks a bookmark from your f95 bookmark page.
 // @author       Edexal
 // @match        *://f95zone.to/watched/threads?tab=bookmarks*
@@ -12,6 +12,7 @@
 // @supportURL   https://github.com/Edexaal/scripts/issues
 // @require      https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/utility.js
 // @require      https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/gm-utility.js
+// @require      https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/css.js
 // ==/UserScript==
 (() => {
   'use strict';
@@ -25,19 +26,12 @@
       list-style: none;
     }
     & > button {
-      color: yellow;
-      background: linear-gradient(to top left, rgb(0 0 0 / 0.2), rgb(0 0 0 / 0.2) 30%, rgb(0 0 0 / 0)) #ba4545;
       text-align: center;
       width: 100%;
-      border-radius: 10px;
       font-weight: bold;
       margin-top: 10px;
-      transition: opacity .2s cubic-bezier(0.4, 0, 0.2, 1);
-      &:hover {
-          opacity: 0.8;
-          cursor: pointer;
-          border-color: #9adc49;
-      }
+      ${EdexalCSS.btnRules()}
+      border-radius: 10px;
     }
   }
   `);
