@@ -6,13 +6,13 @@
 // @grant       GM.getValues
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.1.11
+// @version     1.1.12
 // @author      Edexal
 // @description Sorts resources on Latest Update page: top -> most-important; bottom -> least relevant.
 // @homepageURL https://sleazyfork.org/en/scripts/598317-f95-latest-match-based-sort
 // @supportURL  https://github.com/Edexaal/scripts/issues
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@dafe3f6b3497ea15a2de012c4828598b7c197ead/_lib/utility.js
-// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@dafe3f6b3497ea15a2de012c4828598b7c197ead/_lib/metadata.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@1615a2ca1db8433fc73aafb74753ad5c37e3d359/_lib/utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@1615a2ca1db8433fc73aafb74753ad5c37e3d359/_lib/metadata.js
 // ==/UserScript==
 (async () => {
   Edexal.addCSS(`
