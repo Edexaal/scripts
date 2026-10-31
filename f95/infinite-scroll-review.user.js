@@ -5,13 +5,13 @@
 // @grant       GM.xmlhttpRequest
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0.0
+// @version     1.0.1
 // @author      Edexal
-// @description Infinitely scroll on the review page.
-// @homepageURL -
+// @description Infinitely scroll through reviews on the reviews page.
+// @homepageURL https://sleazyfork.org/en/scripts/603070-f95-infinite-scroll-review
 // @supportURL  https://github.com/Edexaal/scripts/issues
-// @require      https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/utility.js
-// @require      https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/gm-utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/gm-utility.js
 // ==/UserScript==
 (() => {
   Edexal.addCSS(`
