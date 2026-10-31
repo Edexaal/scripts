@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0.1
+// @version     1.0.2
 // @author      Edexal
 // @description Make unread alerts/posts/threads visibly clearer.
 // @homepageURL https://sleazyfork.org/en/scripts/603074-f95-unread-alert
@@ -29,7 +29,7 @@
   .f95st .is-unread  {
     background: var(--ed-alert-bg-color);
     &:hover {
-      background: #313234;
+      background: #28292b;
     }
     & a {
       color: var(--ed-alert-text-color);
