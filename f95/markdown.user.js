@@ -9,7 +9,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.4.4
+// @version     1.4.5
 // @author      Edexal
 // @description Use Markdown syntax in threads, posts, and conversations.
 // @homepageURL https://sleazyfork.org/en/scripts/566411-f95-markdown
@@ -379,7 +379,9 @@
   function parse(lineTxt, i) {
     const protectedLinks = protectLinks(lineTxt);
     lineTxt = protectedLinks.lineTxt;
-    
+    if (lineTxt.match(/^<[^>]+>.+<\/[^>]+>/)) {
+      return restoreLinks(lineTxt, protectedLinks.links);
+    }
     lineTxt = iHTMLParse(lineTxt, formats["bold"]);
     lineTxt = iHTMLParse(lineTxt, formats["italic"]);
     lineTxt = iHTMLParse(lineTxt, formats["strikethrough"]);
