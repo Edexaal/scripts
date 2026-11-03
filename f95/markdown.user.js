@@ -4,6 +4,7 @@
 // @match       *://f95zone.to/threads/*
 // @match       *://f95zone.to/forums/*/post-thread
 // @match       *://f95zone.to/conversations/*
+// @match       *://f95zone.to/direct-messages/*
 // @match       *://f95zone.to/markdown
 // @match       *://f95zone.to/account/signature
 // @grant       none
@@ -11,13 +12,14 @@
 // @license     Unlicense
 // @version     1.4.5
 // @author      Edexal
-// @description Use Markdown syntax in threads, posts, and conversations.
+// @description Use Markdown syntax in threads, posts, signatures and conversations.
 // @homepageURL https://sleazyfork.org/en/scripts/566411-f95-markdown
 // @supportURL  https://github.com/Edexaal/scripts/issues
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/utility.js
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/markdown-page-template.js
 // ==/UserScript==
 (async () => {
+  // BBCODE cheatsheet found at '/help/bb-codes/'
   const MARKDOWN_PATH = "/markdown";
   const EL = {
     textbox: 'div.bbWrapper div[spellcheck][class*=fr-element]',
@@ -118,9 +120,9 @@
       link: initSubFormat(/\[(.+?)]\((.+?)\)/g, '<a href="$2">$1</a>'),
       blockQuote: initQuoteFormat(["QUOTE"], /^(?:\s|&nbsp;)*(?:>|&gt;)(?:\s|&nbsp;)*/, /^(?:\s|&nbsp;)*(?:>|&gt;){2,}(?:\s|&nbsp;)*(.+)/, /^(?:\s|&nbsp;)*(?:>|&gt;)(?:\s|&nbsp;)*(?!.+)/, "&nbsp;"),
       code: initSpoilerFormat(["CODE"], /^(?:\s|&nbsp;)*```/, /^(?:\s|&nbsp;)*```/, /^(?:\s|&nbsp;)*```(.+)/, "```"),
-      header1: initHeader(["SIZE=7", "SIZE"], /^(?:\s|&nbsp;)*(?<!\\)#(?!#)(?:\s|&nbsp;)*/),
-      header2: initHeader(["SIZE=6", "SIZE"], /^(?:\s|&nbsp;)*(?<!\\)##(?!#)(?:\s|&nbsp;)*/),
-      header3: initHeader(["SIZE=5", "SIZE"], /^(?:\s|&nbsp;)*(?<!\\)###(?:\s|&nbsp;)*/),
+      header1: initHeader(["HEADING=1", "HEADING"], /^(?:\s|&nbsp;)*(?<!\\)#(?!#)(?:\s|&nbsp;)*/),
+      header2: initHeader(["HEADING=2", "HEADING"], /^(?:\s|&nbsp;)*(?<!\\)##(?!#)(?:\s|&nbsp;)*/),
+      header3: initHeader(["HEADING=3", "HEADING"], /^(?:\s|&nbsp;)*(?<!\\)###(?:\s|&nbsp;)*/),
       list: initListFormat(["LIST", "LIST=1", "*"], /^(?:\s|&nbsp;)*-(?:\s|&nbsp;)*/, /^(?:\s|&nbsp;)*\d+\.(?:\s|&nbsp;)*/),
       spoiler: initSpoilerFormat(["SPOILER"], /^(?:\s|&nbsp;)*:{3}(?:\s|&nbsp;)*(?:spoiler)?/, /(?:\s|&nbsp;)*:{3}(?:\s|&nbsp;)*spoiler/, /^(?:\s|&nbsp;)*:{3}(?:\s|&nbsp;)*spoiler=(.+)/, ":::"),
       inlineSpoiler: initFormat(["ISPOILER"], /(?<!\\)\|\|/),
@@ -555,7 +557,6 @@
       "data-cmd": "md-syntax"
     });
     const i = Edexal.newEl({element: "i", class: ["fab", "fa-markdown"], "aria-hidden": "true"});
-    i.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M593.8 59.1H46.2C20.7 59.1 0 79.8 0 105.2v301.5c0 25.5 20.7 46.2 46.2 46.2h547.7c25.5 0 46.2-20.7 46.1-46.1V105.2c0-25.4-20.7-46.1-46.2-46.1zM338.5 360.6H277v-120l-61.5 76.9-61.5-76.9v120H92.3V151.4h61.5l61.5 76.9 61.5-76.9h61.5v209.2zm135.3 3.1L381.5 256H443V151.4h61.5V256H566z"/></svg>`;
     const span = Edexal.newEl({element: "span", class: ["fr-sr-only"], text: "Markdown syntax"})
     button.append(i, span)
     Edexal.on(button,"click",helpBtnClickEvent);
@@ -582,6 +583,8 @@
     Edexal.$(".uix_fabBar").remove();
     // Removes section links
     Edexal.$("#top .p-sectionLinks").remove();
+    // Removes Side menu
+    Edexal.$(".uix_sidebarNav").remove();
     // Change site title
     Edexal.$("head title").textContent = "F95 Markdown Syntax";
     const titleEl = Edexal.$("h1.p-title-value");
@@ -603,7 +606,7 @@
   }
   
   function initReplyTextbox() {
-    const replyTextBox = Edexal.$('.message-editorWrapper');
+    const replyTextBox = Edexal.$('.message-editorWrapper, .js-inlineNewPostFields, form[action*="signature"] .formRow.formRow--input');
     if (!replyTextBox) return;
     const observer = new MutationObserver(observeTextbox);
     observer.observe(replyTextBox, {subtree: true, childList: true});
