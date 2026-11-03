@@ -11,12 +11,16 @@
 // @homepageURL https://sleazyfork.org/en/scripts/546346-f95-mobile-upgrade
 // @supportURL  https://github.com/Edexaal/scripts/issues
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/utility.js
+// @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/css.js
 // ==/UserScript==
 (() => {
   const BOOKMARK_LABEL = 'Bookmarks';
   Edexal.addCSS(`
   .uix_sidebarNav a.p-navEl-link:not(.mdi):not(.fa)[data-nav-id="${BOOKMARK_LABEL}"]::before {
     content: "\\f02e";
+  }
+  .uix_sidebarNav ul li a[data-nav-id="${BOOKMARK_LABEL}"] {
+    color: ${EdexalCSS.secTxtColor} !important;
   }`);
   const EL = {sideMenu: '.uix_sidebarNav ul'};
   
