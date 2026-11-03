@@ -15,7 +15,7 @@
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/css.js
 // ==/UserScript==
 (async () => {
-  // NOTE: F95 uses FontAwesome v5.15.4
+  // NOTE: F95 uses FontAwesome v7
   const SELECTOR = {
     latestUpdate: '#latest-page_main-wrap',
     latestFilterDrawer: '#latest-page_filter-wrap',
