@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0.1
+// @version     1.0.2
 // @author      Edexal
 // @description Shrink large images to a reasonable size.
 // @homepageURL https://sleazyfork.org/en/scripts/603069-f95-constrain-images
@@ -21,7 +21,7 @@
   const OBSERVER_STATS = {totalImages: 0, imagesObservedNum: 0};
 
   function applySizeConstraint(el) {
-      if (el.height <= CONFIG.MAX_HEIGHT_ALLOWED) return;
+      if (el.height <= CONFIG.maxHeightAllowed) return;
       el.width = Math.min(CONFIG.maxWidth, el.width);
   }
 
