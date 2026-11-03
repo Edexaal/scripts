@@ -7,7 +7,7 @@
 // @grant       GM.deleteValue
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     2.1.7
+// @version     2.2.0
 // @author      Edexal
 // @description Bookmark page resumes from the last saved configuration set.
 // @homepageURL https://sleazyfork.org/en/scripts/571484-resume-bookmark
@@ -32,6 +32,7 @@
   }
   
   const KEY_ID = {was_bookmark:'was_bookmark', bm_url:'bm_url'};
+  const BM_PATH = '/watched/threads';
   let STORAGE;
   
   async function save(key, item) {
@@ -99,22 +100,30 @@
     if (!STORAGE.bm_url) {
       return;
     }
-    const path = '/watched/threads';
-    const bmLinks = Edexal.$$(`a[href="${path}?tab=bookmarks"]`);
+    const bmLinks = Edexal.$$(`a[href*="${BM_PATH}?tab=bookmarks"]`);
     for (const el of bmLinks) {
-      el.href = `${path}${STORAGE.bm_url}`;
+      el.href = `${BM_PATH}${STORAGE.bm_url}`;
     }
+  }
+  
+  function presetSideMenuBMLink() {
+     if (!STORAGE.bm_url) {
+      return;
+    }
+    const bmLink = Edexal.$('.uix_sidebarNav a[href*=bookmark]');
+    bmLink.href = `${BM_PATH}${STORAGE.bm_url}`;
   }
 
   async function run() {
     // DEPRECATED: Removes deprecated 'label' key from storage.
     await GM.deleteValue('label');
     STORAGE = await GM.getValues(Object.values(KEY_ID));
-    presetBookmarkLinks();
     if (Edexal.isBookmarkPage()) {
       applyCSS();
+      presetSideMenuBMLink();
       initBookmarkPage();
     } else {
+      presetBookmarkLinks();
       initOtherPages();
     }
   }
