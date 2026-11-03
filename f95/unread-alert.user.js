@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0.2
+// @version     1.1.0
 // @author      Edexal
 // @description Make unread alerts/posts/threads visibly clearer.
 // @homepageURL https://sleazyfork.org/en/scripts/603074-f95-unread-alert
@@ -26,7 +26,9 @@
   /* all Forum sections. */
   .p-body-pageContent .structItemContainer .is-unread,
   /* Bottom homepage widget*/
-  .f95st .is-unread  {
+  .f95st .is-unread,
+  /*Mobile side menu alert section*/
+  .js-alertsMenuBody + .menu-scroller ol.listPlain .is-unread {
     background: var(--ed-alert-bg-color);
     &:hover {
       background: #28292b;
