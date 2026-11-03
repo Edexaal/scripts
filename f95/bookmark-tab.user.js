@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.1.5
+// @version     1.1.6
 // @author      Edexal
 // @description Restores 'bookmark' tab link on navigation bar. Also on Latest Update Page, replaces a tab with 'BOOKMARK'.
 // @homepageURL https://sleazyfork.org/en/scripts/601301-f95-bookmark-tab
@@ -19,6 +19,7 @@
     right: 0;
   }`);
   const BM_LINK = '/watched/threads?tab=bookmarks';
+  const BM_LABEL = 'Bookmarks';
   
   // Swap FORUM if available otherwise swap out SEARCH (usually on mobile)
   function swapForBM() {
@@ -27,7 +28,7 @@
       headerLinkEl = Edexal.$('.p-nav-list li:first-child a'); // SEARCH
     }
     headerLinkEl.href = BM_LINK;
-    headerLinkEl.querySelector('span').textContent = 'Bookmarks';
+    headerLinkEl.querySelector('span').textContent = BM_LABEL;
   }
   
   function getMarkNav(subNav) {
@@ -50,8 +51,8 @@
     }
     const aTag = markEl.querySelector('a');
     aTag.href = BM_LINK;
-    aTag.dataset.navId = "bookmarks";
-    markEl.querySelector('span').textContent = "Bookmarks";
+    aTag.dataset.navId = BM_LABEL.toLowerCase();
+    markEl.querySelector('span').textContent = BM_LABEL;
   }
   
   function run() {
