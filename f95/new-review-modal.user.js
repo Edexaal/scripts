@@ -5,10 +5,10 @@
 // @grant       -
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0.0
+// @version     1.0.1
 // @author      Edexal
 // @description Improvements when creating new reviews.
-// @homepageURL https://sleazyfork.org/en/scripts/522360-f95-game-post-only
+// @homepageURL https://sleazyfork.org/en/scripts/603855-f95-new-review-modal
 // @supportURL  https://github.com/Edexaal/scripts/issues
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/utility.js
 // ==/UserScript==

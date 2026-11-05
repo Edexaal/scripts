@@ -7,10 +7,10 @@
 // @grant       GM.deleteValue
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0.0
+// @version     1.0.1
 // @author      Edexal
 // @description Remove components on reviews page.
-// @homepageURL -
+// @homepageURL https://sleazyfork.org/en/scripts/603858-f95-reviews-only
 // @supportURL  https://github.com/Edexaal/scripts/issues
 // @require     https://cdn.jsdelivr.net/gh/Edexaal/scripts@2f4f36215375a30485901a0374cb58a78412ddf3/_lib/utility.js
 // ==/UserScript==
