@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     2.2.0
+// @version     2.3.0
 // @author      Edexal
 // @description Improves mobile experience
 // @homepageURL https://sleazyfork.org/en/scripts/546346-f95-mobile-upgrade
@@ -19,8 +19,11 @@
   const SELECTOR = {
     latestUpdate: '#latest-page_main-wrap',
     latestFilterDrawer: '#latest-page_filter-wrap',
+    sideMenu: '.offCanvasMenu--nav .offCanvasMenu-content',
+    sideMenuBM: '.offCanvasMenu--nav .offCanvasMenu-content .offCanvasMenu-link[data-nav-id="Bookmarks"]'
   };
   const MAX_SCREEN_WIDTH = 480;
+  const BM_LINK = '/watched/threads?tab=bookmarks';
   Edexal.addCSS(`
 @media (width <= ${MAX_SCREEN_WIDTH}px) {
   /*Fixes scroll buttons appearing behind threads*/
@@ -68,6 +71,56 @@
   .offCanvasMenu--nav .offCanvasMenu-content .offCanvasMenu-link[data-nav-id="Bookmarks"]::before {
     content: "\\f02e";
   }
+  
+  /*Styles for bottom nav bar*/
+  .ed-bottom-nav {
+    position: fixed;
+    
+    width: 100%;
+    bottom: 0;
+    & ul {
+      display: flex;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    & ul li {
+      flex: 1 0 auto;
+    }
+    & ul li button {
+      color: #dddddd;
+      background: #ec5555;
+      width: 100%;
+      cursor: pointer;
+      text-align: center;
+      height: 50px;
+      border: 0;
+      & p {
+        margin: 0;
+        font-size: 0.8em;
+      }
+      & i {
+        font-size: 1.4em;
+      }
+      &:hover {
+        color: #ffffff;
+      }
+    }
+  }
+  .ed-badge {
+    position: relative;
+    &::before {
+      position: absolute;
+      content: attr(data-badge);
+      top: -5px;
+      right: 5px;
+      background: #e02e2e;
+      color: white;
+      padding: 2px 4px; 
+      border-radius: 3px;
+    }
+  }
+  
 }`);
 
   function getValidScrollTarget(targetSelectors) {
@@ -213,9 +266,10 @@
   }
   
   function addBMToLeftDrawer(leftDrawer,latestUpdateList) {
+    if (Edexal.$(SELECTOR.sideMenuBM)) return;
     const bookmarkList = latestUpdateList.cloneNode(true);
     const a = bookmarkList.querySelector('a');
-    a.href = `${location.origin}/watched/threads?tab=bookmarks`;
+    a.href = `${location.origin}${BM_LINK}`;
     const bmLabel = 'Bookmarks';
     a.dataset.navId = bmLabel;
     const span = a.querySelector('span');
@@ -241,9 +295,76 @@
   }
   
   function initLeftDrawer() {
+    if (!Edexal.$(SELECTOR.sideMenu)) return; 
     const observer = new MutationObserver(observeLeftDrawer);
     observer.observe(Edexal.$('.offCanvasMenu-content .sidePanel__tabPanel .js-offCanvasNavTarget'), {subtree:true, childList: true});
   }
+  
+  function sideMenuTabEvent(sideTabAttrName) {
+    return () => {
+      Edexal.$(`.p-navSticky .p-nav-inner > button:first-child`).click(); // Opens side menu
+      Edexal.$(`${SELECTOR.sideMenu} li a[data-attr="${sideTabAttrName}"]`).click(); // Selects a side menu tab 
+    };
+  }
+  
+  function goToLinkEvent(path) {
+    return () => {
+      location.assign(path);
+    }
+  }
+  
+  function createBottomNavItem(eventFunc, btnTxt, classes, svgHTML) {
+    const li = Edexal.newEl({element: 'li'});
+    const button = Edexal.newEl({element: 'button', "data-attr": btnTxt.toLowerCase()});
+    Edexal.on(button,'click', eventFunc);
+    const p = Edexal.newEl({element: 'p', text: btnTxt});
+    const i = Edexal.newEl({element: 'i', class: ['fa--xf', ...classes]});
+    i.innerHTML = svgHTML;
+    button.append(i,p);
+    li.append(button);
+    return li;
+  }
+  
+  function observeBadge(records, obs) {
+    for (const record of records) {
+      const newBadgeCount = record.target.dataset.badge;
+      const tabName = record.target.dataset.attr;
+      const bottomNavTabEl = Edexal.$(`.ed-bottom-nav [data-attr="${tabName}"]`);
+      bottomNavTabEl.dataset.badge = newBadgeCount;
+      newBadgeCount !== "0" ? bottomNavTabEl.classList.add('ed-badge') : bottomNavTabEl.classList.remove('ed-badge');
+    }
+  }
+  
+  function initBadgeObservers(sideMenuTabNames) {
+    const observer = new MutationObserver(observeBadge);
+    sideMenuTabNames.forEach(name => {
+      const target = Edexal.$(`${SELECTOR.sideMenu} li [data-attr="${name}"]`);
+      observer.observe(target,{attributeFilter: ['data-badge']});
+    });
+  }
+  
+  function createBottomNav() { 
+    const navContainer = Edexal.newEl({element: 'div', class: ['ed-bottom-nav']});
+    const ul = Edexal.newEl({element: 'ul'});
+    const listItems = [
+      createBottomNavItem(goToLinkEvent(BM_LINK), 'Bookmarks', ['far','fa-bookmark'], `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc. --><path fill="currentColor" d="M128 128C128 92.7 156.7 64 192 64L448 64C483.3 64 512 92.7 512 128L512 545.1C512 570.7 483.5 585.9 462.2 571.7L320 476.8L177.8 571.7C156.5 585.9 128 570.6 128 545.1L128 128zM192 112C183.2 112 176 119.2 176 128L176 515.2L293.4 437C309.5 426.3 330.5 426.3 346.6 437L464 515.2L464 128C464 119.2 456.8 112 448 112L192 112z"/></svg>`),
+      createBottomNavItem(goToLinkEvent('/sam/latest_alpha/'), 'Latest Updates', ['far','fa-gem'],  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc. --><path fill="currentColor" d="M232.5 136L320 229L407.5 136L232.5 136zM447.9 163.1L375.6 240L504.6 240L448 163.1zM497.9 288L142.1 288L320 484.3L497.9 288zM135.5 240L264.5 240L192.2 163.1L135.6 240zM569.8 280.1L337.8 536.1C333.3 541.1 326.8 544 320 544C313.2 544 306.8 541.1 302.2 536.1L70.2 280.1C62.5 271.6 61.9 258.9 68.7 249.7L180.7 97.7C185.2 91.6 192.4 87.9 200 87.9L440 87.9C447.6 87.9 454.8 91.5 459.3 97.7L571.3 249.7C578.1 258.9 577.4 271.6 569.8 280.1z"/></svg>`),
+      createBottomNavItem(sideMenuTabEvent('inbox'), 'Inbox', ['far', 'fa-inbox'], `<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true"><use href="/data/local/icons/regular.svg?v=1793814515#inbox"></use></svg>`),
+      createBottomNavItem(sideMenuTabEvent('alerts'),'Alerts', ['far', 'fa-bell'], `<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true"><use href="/data/local/icons/regular.svg?v=1793812801#bell"></use></svg>`),
+    ];
+    initBadgeObservers(['inbox','alerts']);
+    ul.append(...listItems);
+    navContainer.append(ul);
+    return navContainer;
+  }
+  
+  function initCustomNav() {
+    if (!Edexal.$(SELECTOR.sideMenu)) return; 
+    const body = Edexal.$('body');
+    const bottomNav = createBottomNav();
+    body.append(bottomNav);
+  }
+  
 
   function run() {
     //Run only on mobile
@@ -255,6 +376,7 @@
     removeAdBanner();
     stickyNavBar();
     initLeftDrawer();
+    initCustomNav();
   }
 
   run();
