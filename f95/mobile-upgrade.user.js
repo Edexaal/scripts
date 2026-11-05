@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     2.3.0
+// @version     2.3.1
 // @author      Edexal
 // @description Improves mobile experience
 // @homepageURL https://sleazyfork.org/en/scripts/546346-f95-mobile-upgrade
@@ -75,7 +75,7 @@
   /*Styles for bottom nav bar*/
   .ed-bottom-nav {
     position: fixed;
-    
+    z-index: 10;
     width: 100%;
     bottom: 0;
     & ul {
