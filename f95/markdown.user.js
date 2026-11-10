@@ -10,7 +10,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.5.0
+// @version     1.5.1
 // @author      Edexal
 // @description Use Markdown syntax in threads, posts, signatures and conversations.
 // @homepageURL https://sleazyfork.org/en/scripts/566411-f95-markdown
@@ -381,9 +381,7 @@
   function parse(lineTxt, i) {
     const protectedLinks = protectLinks(lineTxt);
     lineTxt = protectedLinks.lineTxt;
-    if (lineTxt.match(/^<[^>]+>.+<\/[^>]+>/)) {
-      return restoreLinks(lineTxt, protectedLinks.links);
-    }
+    
     lineTxt = iHTMLParse(lineTxt, formats["bold"]);
     lineTxt = iHTMLParse(lineTxt, formats["italic"]);
     lineTxt = iHTMLParse(lineTxt, formats["strikethrough"]);
@@ -391,13 +389,16 @@
     lineTxt = iBBCParse(lineTxt, formats["inlineSpoiler"]);
     lineTxt = iBBCParse(lineTxt, formats["inlineCode"]);
     lineTxt = colorParse(lineTxt, formats["color"]);
+    lineTxt = fullLineParse(lineTxt, formats["header1"]);
+    lineTxt = fullLineParse(lineTxt, formats["header2"]);
+    lineTxt = fullLineParse(lineTxt, formats["header3"]);
     infoGather(lineTxt, formats["blockQuote"], i);
     infoGather(lineTxt, formats["code"], i);
     infoGather(lineTxt, formats["spoiler"], i);
     infoGather(lineTxt, formats["alignment"], i);
-    lineTxt = fullLineParse(lineTxt, formats["header1"]);
-    lineTxt = fullLineParse(lineTxt, formats["header2"]);
-    lineTxt = fullLineParse(lineTxt, formats["header3"]);
+    if (lineTxt.match(/^<[^>]+>.+<\/[^>]+>$/)) {
+      return restoreLinks(lineTxt, protectedLinks.links);
+    }
     lineTxt = listParse(lineTxt, formats["list"]);
     return restoreLinks(lineTxt, protectedLinks.links);
   }
@@ -450,7 +451,10 @@
     blockParse(formats["code"], (i) => i % 2 === 0);
     blockParse(formats["spoiler"]);
     alignParse(formats["alignment"]);
-    textBoxEl.children[lastIndex].outerHTML = "<p>" + endListParse(textBoxEl.children[lastIndex].innerHTML, formats["list"]) + "</p>";
+    const lastEl = textBoxEl.children[lastIndex];
+    if (lastEl.nodeName !== "UL") {
+      textBoxEl.children[lastIndex].outerHTML = "<p>" + endListParse(textBoxEl.children[lastIndex].innerHTML, formats["list"]) + "</p>";
+    }
   }
   
   function tagsWithPastedText(textBoxEl) {
