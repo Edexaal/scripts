@@ -10,7 +10,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.5.1
+// @version     1.5.2
 // @author      Edexal
 // @description Use Markdown syntax in threads, posts, signatures and conversations.
 // @homepageURL https://sleazyfork.org/en/scripts/566411-f95-markdown
@@ -26,6 +26,8 @@
     toolbar: 'div.fr-toolbar',
     buttonGroup: 'div.formButtonGroup-primary,div.formSubmitRow-controls'
   };
+  const CONFIG = {skipAll: false, skipType: undefined};
+  const SKIP_TYPE = {code:'code', none: undefined};
   let formats = {};
   const CSS_MARKDOWN_PAGE = `
     #md-toc {
@@ -377,8 +379,34 @@
     }
     return lineTxt;
   }
-
+  
+  function canSkipStartAll(lineTxt) {
+    return lineTxt.includes("[CODE");
+  }
+  
+  function canSkipEndAll(lineTxt) {
+    return lineTxt.includes("/CODE]");
+  }
+  
+  function configSkip(lineTxt,i) {
+    if (CONFIG.skipAll && canSkipEndAll(lineTxt)) {
+      CONFIG.skipAll = false;
+    } else if (!CONFIG.skipAll && canSkipStartAll(lineTxt)) {
+      CONFIG.skipAll = true;
+    } else if (!CONFIG.skipType && lineTxt.trimStart().startsWith('```')) {
+      CONFIG.skipType = SKIP_TYPE.code;
+      infoGather(lineTxt, formats["code"], i);
+    }else if (CONFIG.skipType === SKIP_TYPE.code && lineTxt.trimEnd().endsWith('```')) {
+      CONFIG.skipType = SKIP_TYPE.none;
+      infoGather(lineTxt, formats["code"], i);
+    }
+  }
+  
   function parse(lineTxt, i) {
+    configSkip(lineTxt, i);
+    if (CONFIG.skipAll || CONFIG.skipType){
+      return lineTxt;
+    } 
     const protectedLinks = protectLinks(lineTxt);
     lineTxt = protectedLinks.lineTxt;
     
@@ -393,7 +421,6 @@
     lineTxt = fullLineParse(lineTxt, formats["header2"]);
     lineTxt = fullLineParse(lineTxt, formats["header3"]);
     infoGather(lineTxt, formats["blockQuote"], i);
-    infoGather(lineTxt, formats["code"], i);
     infoGather(lineTxt, formats["spoiler"], i);
     infoGather(lineTxt, formats["alignment"], i);
     if (lineTxt.match(/^<[^>]+>.+<\/[^>]+>$/)) {
