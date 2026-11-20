@@ -5,7 +5,7 @@
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     2.3.1
+// @version     2.4.0
 // @author      Edexal
 // @description Improves mobile experience
 // @homepageURL https://sleazyfork.org/en/scripts/546346-f95-mobile-upgrade
@@ -28,7 +28,6 @@
 @media (width <= ${MAX_SCREEN_WIDTH}px) {
   /*Fixes scroll buttons appearing behind threads*/
   .uix_fabBar {
-    z-index: 50;
     & .u-scrollButtons {
       position: inherit;
       gap: 10px;
@@ -75,9 +74,14 @@
   /*Styles for bottom nav bar*/
   .ed-bottom-nav {
     position: fixed;
-    z-index: 10;
-    width: 100%;
+    z-index: 100;
+    width: 100vw;
     bottom: 0;
+    transition: opacity 0.2s ease, visibility 0.2s;
+    &.nav-hide {
+      opacity: 0;
+      visibility: hidden;
+    }
     & ul {
       display: flex;
       list-style: none;
@@ -107,6 +111,7 @@
       }
     }
   }
+  
   .ed-badge {
     position: relative;
     &::before {
@@ -358,13 +363,22 @@
     return navContainer;
   }
   
+  function observePageBottom(bottomNav,entries,obs) {
+    for (const entry of entries) {
+      bottomNav.classList[entry.isIntersecting ? "add" : "remove"]('nav-hide');
+    }
+  } 
+  
   function initCustomNav() {
     if (!Edexal.$(SELECTOR.sideMenu)) return; 
     const body = Edexal.$('body');
     const bottomNav = createBottomNav();
     body.append(bottomNav);
+    const targetEl = Edexal.$('footer#footer');
+    if (!targetEl) return;
+    const obs = new IntersectionObserver((entries, obs) => observePageBottom(bottomNav, entries, obs), {delay: 1000, threshold: "0.25"});
+    obs.observe(targetEl);
   }
-  
 
   function run() {
     //Run only on mobile
