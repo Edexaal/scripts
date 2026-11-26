@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name        F95 Random Latest Update Choice
 // @namespace   1330126-edexal
-// @match       *://f95zone.to/sam/latest_alpha/*
+// @match       https://f95zone.to/sam/latest_alpha/*
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @grant       none
-// @version     1.2.18
+// @version     1.2.19
 // @author      Edexal
 // @license     Unlicense
 // @description Randomly selects a resource(e.g. game,asset,animation) from the 'Latest Update' page. Just press the '?' button in the filter drawer.

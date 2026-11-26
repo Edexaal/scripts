@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name        F95 Unread Alert
 // @namespace   1330126-edexal
-// @match       *://f95zone.to/*
+// @match       https://f95zone.to/*
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.1.0
+// @version     1.1.1
 // @author      Edexal
 // @description Make unread alerts/posts/threads visibly clearer.
 // @homepageURL https://sleazyfork.org/en/scripts/603074-f95-unread-alert

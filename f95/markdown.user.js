@@ -1,16 +1,16 @@
 // ==UserScript==
 // @name        F95 Markdown
 // @namespace   1330126-edexal
-// @match       *://f95zone.to/threads/*
-// @match       *://f95zone.to/forums/*/post-thread
-// @match       *://f95zone.to/conversations/*
-// @match       *://f95zone.to/direct-messages/*
-// @match       *://f95zone.to/markdown
-// @match       *://f95zone.to/account/signature
+// @match       https://f95zone.to/threads/*
+// @match       https://f95zone.to/forums/*/post-thread
+// @match       https://f95zone.to/conversations/*
+// @match       https://f95zone.to/direct-messages/*
+// @match       https://f95zone.to/markdown
+// @match       https://f95zone.to/account/signature
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.5.2
+// @version     1.5.3
 // @author      Edexal
 // @description Use Markdown syntax in threads, posts, signatures and conversations.
 // @homepageURL https://sleazyfork.org/en/scripts/566411-f95-markdown

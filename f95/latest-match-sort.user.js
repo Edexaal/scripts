@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name        F95 Latest Match-based Sort
 // @namespace   1330126-edexal
-// @match       *://f95zone.to/sam/latest_alpha/*
+// @match       https://f95zone.to/sam/latest_alpha/*
 // @grant       GM.setValue
 // @grant       GM.getValues
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.1.13
+// @version     1.1.14
 // @author      Edexal
 // @description Sorts resources on Latest Update page: top -> most-important; bottom -> least relevant.
 // @homepageURL https://sleazyfork.org/en/scripts/598317-f95-latest-match-based-sort

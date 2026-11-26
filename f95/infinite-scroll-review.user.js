@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name        F95 Infinite Scroll Review
 // @namespace   1330126-edexal
-// @match       *://f95zone.to/*/reviews/
+// @match       https://f95zone.to/*/reviews/
 // @grant       GM.xmlhttpRequest
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0.1
+// @version     1.0.2
 // @author      Edexal
 // @description Infinitely scroll through reviews on the reviews page.
 // @homepageURL https://sleazyfork.org/en/scripts/603070-f95-infinite-scroll-review

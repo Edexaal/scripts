@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name        F95 Side Menu Upgrade
 // @namespace   1330126-edexal
-// @match       *://f95zone.to/*
+// @match       https://f95zone.to/*
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0.0
+// @version     1.0.1
 // @author      Edexal
 // @description Improves side menu.
 // @homepageURL https://sleazyfork.org/en/scripts/546346-f95-mobile-upgrade

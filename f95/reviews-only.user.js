@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name        F95 Reviews Only
 // @namespace   1330126-edexal
-// @match       *://f95zone.to/*/reviews/
+// @match       https://f95zone.to/*/reviews/
 // @grant       GM.setValue
 // @grant       GM.listValues
 // @grant       GM.deleteValue
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0.1
+// @version     1.0.2
 // @author      Edexal
 // @description Remove components on reviews page.
 // @homepageURL https://sleazyfork.org/en/scripts/603858-f95-reviews-only

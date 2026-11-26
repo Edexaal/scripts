@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name        F95 Constrain Images
 // @namespace   1330126-edexal
-// @match       *://f95zone.to/threads/*
+// @match       https://f95zone.to/threads/*
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.0.2
+// @version     1.0.3
 // @author      Edexal
 // @description Shrink large images to a reasonable size.
 // @homepageURL https://sleazyfork.org/en/scripts/603069-f95-constrain-images

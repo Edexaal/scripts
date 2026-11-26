@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name        F95 Game Thread Search
 // @namespace   1330126-edexal
-// @match       *://f95zone.to/sam/latest_alpha/*
+// @match       https://f95zone.to/sam/latest_alpha/*
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.1.21
+// @version     1.1.22
 // @author      Edexal
 // @description On the Latest Update page, search for a game thread by 'TITLE' using the website's search query instead of through the filter drawer.
 // @homepageURL https://sleazyfork.org/en/scripts/543545-f95-game-thread-search

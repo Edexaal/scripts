@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name        F95 Bookmark Tab
 // @namespace   1330126-edexal
-// @match       *://f95zone.to/*
+// @match       https://f95zone.to/*
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     1.1.6
+// @version     1.1.7
 // @author      Edexal
 // @description Restores 'bookmark' tab link on navigation bar. Also on Latest Update Page, replaces a tab with 'BOOKMARK'.
 // @homepageURL https://sleazyfork.org/en/scripts/601301-f95-bookmark-tab

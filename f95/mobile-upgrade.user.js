@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name        F95 Mobile Upgrade
 // @namespace   1330126-edexal
-// @match       *://f95zone.to/*
+// @match       https://f95zone.to/*
 // @grant       none
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     2.4.0
+// @version     2.4.1
 // @author      Edexal
 // @description Improves mobile experience
 // @homepageURL https://sleazyfork.org/en/scripts/546346-f95-mobile-upgrade

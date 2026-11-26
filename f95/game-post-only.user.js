@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name        F95 Game Post Only
 // @namespace   1330126-edexal
-// @match       *://f95zone.to/threads/*
+// @match       https://f95zone.to/threads/*
 // @grant       GM.setValue
 // @grant       GM.listValues
 // @grant       GM.deleteValue
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @license     Unlicense
-// @version     5.0.6
+// @version     5.0.7
 // @author      Edexal
 // @description Display only the 1st post of a game thread. Also, hide other content from the thread.
 // @homepageURL https://sleazyfork.org/en/scripts/522360-f95-game-post-only

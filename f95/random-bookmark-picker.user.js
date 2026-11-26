@@ -2,10 +2,10 @@
 // @name         F95 Random Bookmark Picker
 // @namespace    1330126-edexal
 // @license      Unlicense
-// @version      2.1.3
+// @version      2.1.4
 // @description  Randomly picks a bookmark from your f95 bookmark page.
 // @author       Edexal
-// @match        *://f95zone.to/watched/threads?tab=bookmarks*
+// @match        https://f95zone.to/watched/threads?tab=bookmarks*
 // @icon         https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @grant        GM.xmlhttpRequest
 // @homepageURL  https://sleazyfork.org/en/scripts/490810-f95-random-bookmark-picker

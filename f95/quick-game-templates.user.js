@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name        F95 Quick Game Templates
 // @namespace   1330126-edexal
-// @match       *://f95zone.to/forums/game-requests.3/post-thread*
+// @match       https://f95zone.to/forums/game-requests.3/post-thread*
 // @icon        https://external-content.duckduckgo.com/ip3/f95zone.to.ico
 // @grant       none
-// @version     1.6.7
+// @version     1.6.8
 // @author      Edexal
 // @license     Unlicense
 // @description Adds more action buttons to the toolbar when making a game request on f95.
